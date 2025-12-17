@@ -1,0 +1,376 @@
+<!-- Navigation Bar -->
+<nav class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <span class="text-2xl font-bold text-green-600">JobSim</span>
+        <span class="text-2xl font-bold text-gray-900 ml-1">Senegal</span>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-8">
+        <a (click)="scrollToSection('features')" class="text-gray-700 hover:text-green-600 cursor-pointer transition">Features</a>
+        <a (click)="scrollToSection('simulations')" class="text-gray-700 hover:text-green-600 cursor-pointer transition">Simulations</a>
+        <a (click)="scrollToSection('testimonials')" class="text-gray-700 hover:text-green-600 cursor-pointer transition">Testimonials</a>
+
+        <ng-container *ngIf="(isAuthenticated$ | async); else authButtons">
+          <a routerLink="/dashboard" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+            Dashboard
+          </a>
+        </ng-container>
+
+        <ng-template #authButtons>
+          <a (click)="navigateToLogin()" class="text-gray-700 hover:text-green-600 cursor-pointer transition">Sign In</a>
+          <a (click)="navigateToRegister()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition cursor-pointer">
+            Get Started
+          </a>
+        </ng-template>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <div class="md:hidden">
+        <button class="text-gray-700 hover:text-green-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-green-50 via-white to-blue-50 py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <!-- Left: Hero Content -->
+      <div class="text-center md:text-left">
+        <div class="inline-flex items-center bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+          <span class="mr-2">🎓</span>
+          Empowering Senegal's Future Workforce
+        </div>
+
+        <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
+          Bridge the Gap Between
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600"> Education & Employment</span>
+        </h1>
+
+        <p class="text-xl text-gray-600 mb-8 max-w-lg mx-auto md:mx-0">
+          Practice real-world job tasks through interactive simulations. Get expert feedback, build your portfolio, and land your dream job in Senegal.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">
+          <button
+            (click)="navigateToRegister()"
+            class="bg-green-600 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:bg-green-700 transition duration-300 transform hover:scale-105"
+          >
+            Start Your Journey Free
+          </button>
+          <button
+            (click)="navigateToLogin()"
+            class="bg-white text-green-600 font-bold py-4 px-8 rounded-xl shadow-lg border-2 border-green-600 hover:bg-green-50 transition duration-300"
+          >
+            Sign In
+          </button>
+        </div>
+
+        <!-- Trust Indicators -->
+        <div class="mt-8 flex items-center justify-center md:justify-start space-x-6 text-sm text-gray-500">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+            </svg>
+            <span>500+ Students</span>
+          </div>
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Industry Verified</span>
+          </div>
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+            </svg>
+            <span>85% Success Rate</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Hero Visual -->
+      <div class="relative">
+        <div class="bg-gradient-to-br from-green-400 to-blue-500 rounded-3xl p-8 shadow-2xl transform rotate-3 hover:rotate-0 transition duration-500">
+          <div class="bg-white rounded-2xl p-6 -rotate-3">
+            <div class="space-y-4">
+              <!-- Simulation Card Preview -->
+              <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-semibold text-green-700 bg-green-100 px-3 py-1 rounded-full">Marketing</span>
+                  <span class="text-xs text-gray-500">2-3 hours</span>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-2">Digital Campaign Analysis</h3>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-green-600 h-2 rounded-full" style="width: 75%"></div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">75% Complete</p>
+              </div>
+
+              <!-- Stats Preview -->
+              <div class="grid grid-cols-3 gap-3">
+                <div class="bg-purple-50 rounded-lg p-3 text-center">
+                  <div class="text-2xl font-bold text-purple-700">12</div>
+                  <div class="text-xs text-purple-600">Completed</div>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-3 text-center">
+                  <div class="text-2xl font-bold text-blue-700">850</div>
+                  <div class="text-xs text-blue-600">Points</div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-3 text-center">
+                  <div class="text-2xl font-bold text-green-700">⭐</div>
+                  <div class="text-xs text-green-600">Top 10%</div>
+                </div>
+              </div>
+
+              <!-- Achievement Badge -->
+              <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-4 border-2 border-yellow-200">
+                <div class="flex items-center">
+                  <div class="text-3xl mr-3">🏆</div>
+                  <div>
+                    <div class="font-bold text-gray-900">Achievement Unlocked!</div>
+                    <div class="text-xs text-gray-600">Marketing Master Badge</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Elements -->
+        <div class="absolute -top-4 -right-4 bg-yellow-400 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold shadow-lg animate-bounce">
+          100%
+        </div>
+        <div class="absolute -bottom-4 -left-4 bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold shadow-lg">
+          ✓
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="bg-green-600 py-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div *ngFor="let stat of stats" class="text-center">
+        <div class="text-4xl md:text-5xl font-extrabold text-white mb-2">{{ stat.value }}</div>
+        <div class="text-green-100 text-sm md:text-base">{{ stat.label }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-extrabold text-gray-900 mb-4">Why Choose JobSim Senegal?</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        We provide the most comprehensive job simulation platform tailored for Senegal's job market
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div *ngFor="let feature of features" class="text-center p-6 rounded-2xl hover:bg-gray-50 transition duration-300 hover:shadow-xl">
+        <div class="text-5xl mb-4">{{ feature.icon }}</div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">{{ feature.title }}</h3>
+        <p class="text-gray-600">{{ feature.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Simulations Preview Section -->
+<section id="simulations" class="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-extrabold text-gray-900 mb-4">Popular Job Simulations</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Choose from a wide range of realistic job scenarios across different industries
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <div *ngFor="let sim of simulations" class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 transform hover:-translate-y-2">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-4">
+            <span class="px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="sim.color">
+              {{ sim.category }}
+            </span>
+            <span class="text-sm text-gray-500">{{ sim.duration }}</span>
+          </div>
+
+          <h3 class="text-xl font-bold text-gray-900 mb-3">{{ sim.title }}</h3>
+
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-sm text-gray-600">Difficulty: <span class="font-semibold">{{ sim.difficulty }}</span></span>
+            <div class="flex items-center">
+              <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+              </svg>
+              <span class="ml-1 text-sm text-gray-600">4.8</span>
+            </div>
+          </div>
+
+          <button (click)="navigateToRegister()" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+            Start Simulation
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-12">
+      <button (click)="navigateToRegister()" class="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold border-2 border-green-600 hover:bg-green-50 transition">
+        View All 50+ Simulations
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-extrabold text-gray-900 mb-4">How It Works</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Start your journey in just 3 simple steps
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-12">
+      <div class="text-center">
+        <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <span class="text-3xl font-bold text-green-600">1</span>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-3">Sign Up Free</h3>
+        <p class="text-gray-600">Create your account and choose your career path. No credit card required.</p>
+      </div>
+
+      <div class="text-center">
+        <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <span class="text-3xl font-bold text-blue-600">2</span>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-3">Complete Simulations</h3>
+        <p class="text-gray-600">Work through realistic job tasks and receive instant feedback from mentors.</p>
+      </div>
+
+      <div class="text-center">
+        <div class="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <span class="text-3xl font-bold text-purple-600">3</span>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-3">Get Hired</h3>
+        <p class="text-gray-600">Showcase your portfolio to employers and land your dream job in Senegal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section id="testimonials" class="py-20 bg-gradient-to-br from-green-50 to-blue-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-extrabold text-gray-900 mb-4">Success Stories</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Hear from students who transformed their careers with JobSim
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <div *ngFor="let testimonial of testimonials" class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition duration-300">
+        <div class="flex items-center mb-6">
+          <div class="text-5xl mr-4">{{ testimonial.image }}</div>
+          <div>
+            <div class="font-bold text-gray-900">{{ testimonial.name }}</div>
+            <div class="text-sm text-gray-600">{{ testimonial.role }}</div>
+          </div>
+        </div>
+        <p class="text-gray-700 italic">"{{ testimonial.quote }}"</p>
+        <div class="flex mt-4">
+          <svg *ngFor="let star of [1,2,3,4,5]" class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-r from-green-600 to-blue-600">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6">
+      Ready to Start Your Journey?
+    </h2>
+    <p class="text-xl text-green-100 mb-8">
+      Join 500+ students already building their careers with JobSim Senegal
+    </p>
+    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center">
+      <button (click)="navigateToRegister()" class="bg-white text-green-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition transform hover:scale-105 shadow-xl">
+        Get Started Free
+      </button>
+      <button (click)="navigateToLogin()" class="bg-green-700 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition border-2 border-white">
+        Sign In
+      </button>
+    </div>
+    <p class="text-green-100 text-sm mt-6">No credit card required • Free forever</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-gray-300 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid md:grid-cols-4 gap-8">
+      <div>
+        <div class="flex items-center mb-4">
+          <span class="text-2xl font-bold text-green-500">JobSim</span>
+          <span class="text-2xl font-bold text-white ml-1">Senegal</span>
+        </div>
+        <p class="text-sm text-gray-400">Bridging education and employment in Senegal through practical job simulations.</p>
+      </div>
+
+      <div>
+        <h3 class="font-bold text-white mb-4">Platform</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#" class="hover:text-green-500 transition">Simulations</a></li>
+          <li><a href="#" class="hover:text-green-500 transition">For Students</a></li>
+          <li><a href="#" class="hover:text-green-500 transition">For Employers</a></li>
+          <li><a href="#" class="hover:text-green-500 transition">Pricing</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="font-bold text-white mb-4">Company</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#" class="hover:text-green-500 transition">About Us</a></li>
+          <li><a href="#" class="hover:text-green-500 transition">Careers</a></li>
+          <li><a href="#" class="hover:text-green-500 transition">Blog</a></li>
+          <li><a href="#" class="hover:text-green-500 transition">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="font-bold text-white mb-4">Legal</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#" class="hover:text-green-500 transition">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-green-500 transition">Terms of Service</a></li>
+          <li><a href="#" class="hover:text-green-500 transition">Cookie Policy</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-800 mt-12 pt-8 text-center text-sm text-gray-500">
+      <p>&copy; 2025 JobSim Senegal. All rights reserved. Built with 💚 in Senegal.</p>
+    </div>
+  </div>
+</footer>
