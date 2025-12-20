@@ -1,0 +1,117 @@
+<div class="flex h-screen bg-gray-100">
+  <!-- Sidebar -->
+  <aside [class]="isSidebarCollapsed ? 'w-20' : 'w-64'" class="bg-gradient-to-b from-blue-600 to-cyan-700 text-white transition-all duration-300 flex flex-col shadow-xl">
+    <!-- Header -->
+    <div class="p-4 border-b border-blue-500">
+      <div class="flex items-center" [class.justify-center]="isSidebarCollapsed">
+        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-lg">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <div *ngIf="!isSidebarCollapsed" class="ml-3">
+          <h1 class="text-lg font-bold">Support Center</h1>
+          <p class="text-xs text-blue-200">Customer Service</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 overflow-y-auto py-4">
+      <div class="space-y-1 px-2">
+        <a
+          *ngFor="let item of navItems"
+          [routerLink]="item.route"
+          routerLinkActive="bg-blue-700 shadow-lg"
+          [class]="isSidebarCollapsed ? 'justify-center' : ''"
+          class="flex items-center px-3 py-2.5 rounded-lg text-blue-50 hover:bg-blue-700 transition-colors group relative"
+          [title]="isSidebarCollapsed ? item.label : ''"
+        >
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getIconPath(item.icon)" />
+          </svg>
+          <span *ngIf="!isSidebarCollapsed" class="ml-3 text-sm font-medium">{{ item.label }}</span>
+
+          <!-- Tooltip for collapsed state -->
+          <div *ngIf="isSidebarCollapsed" class="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50">
+            {{ item.label }}
+          </div>
+        </a>
+      </div>
+    </nav>
+
+    <!-- System Status -->
+    <div *ngIf="!isSidebarCollapsed" class="px-4 py-3 border-t border-blue-500">
+      <div class="flex items-center text-xs">
+        <span class="flex h-2 w-2 relative mr-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+        </span>
+        <span class="text-blue-100">Online & Ready</span>
+      </div>
+    </div>
+
+    <!-- Collapse Button -->
+    <div class="p-4 border-t border-blue-500">
+      <button
+        (click)="toggleSidebar()"
+        class="w-full flex items-center justify-center px-3 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors"
+      >
+        <svg *ngIf="!isSidebarCollapsed" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+        </svg>
+        <svg *ngIf="isSidebarCollapsed" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Top Bar -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+      <div class="px-6 py-4 flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-800">Support Portal</h2>
+          <p class="text-sm text-gray-500">Assist users and maintain platform quality</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <!-- Quick Stats -->
+          <div class="hidden md:flex items-center space-x-4 px-4 py-2 bg-gray-50 rounded-lg">
+            <div class="flex items-center space-x-1">
+              <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="8"/>
+              </svg>
+              <span class="text-sm font-semibold text-gray-700">12</span>
+              <span class="text-xs text-gray-500">Open</span>
+            </div>
+            <div class="h-4 w-px bg-gray-300"></div>
+            <div class="flex items-center space-x-1">
+              <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="8"/>
+              </svg>
+              <span class="text-sm font-semibold text-gray-700">7</span>
+              <span class="text-xs text-gray-500">In Progress</span>
+            </div>
+          </div>
+
+          <button
+            (click)="logout()"
+            class="flex items-center px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="flex-1 overflow-y-auto p-6">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

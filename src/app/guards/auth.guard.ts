@@ -1,7 +1,8 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { map, filter, take } from 'rxjs/operators';
+import { map, filter, take, timeout, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 /**
  * Auth Guard - Protects routes that require authentication
@@ -12,10 +13,11 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Wait for auth to finish loading before checking
+  // Wait for auth to finish loading before checking (with 5 second timeout)
   return authService.loading$.pipe(
     filter(loading => !loading), // Wait until loading is false
     take(1),
+    timeout(5000), // Timeout after 5 seconds
     map(() => {
       const isAuthenticated = authService.isAuthenticated();
 
@@ -28,6 +30,14 @@ export const authGuard: CanActivateFn = (route, state) => {
         queryParams: { returnUrl: state.url }
       });
       return false;
+    }),
+    catchError(() => {
+      // Timeout or error - redirect to login
+      console.error('Auth guard timeout - redirecting to login');
+      router.navigate(['/auth/login'], {
+        queryParams: { returnUrl: state.url }
+      });
+      return of(false);
     })
   );
 };
@@ -41,10 +51,11 @@ export const guestGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Wait for auth to finish loading before checking
+  // Wait for auth to finish loading before checking (with 5 second timeout)
   return authService.loading$.pipe(
     filter(loading => !loading), // Wait until loading is false
     take(1),
+    timeout(5000), // Timeout after 5 seconds
     map(() => {
       const isAuthenticated = authService.isAuthenticated();
 
@@ -52,9 +63,23 @@ export const guestGuard: CanActivateFn = (route, state) => {
         return true;
       }
 
-      // User is already authenticated, redirect to dashboard
-      router.navigate(['/app/dashboard']);
+      // User is already authenticated, redirect to appropriate dashboard based on role
+      const user = authService.getCurrentUser();
+      const userType = user?.user_type || 'student';
+
+      if (userType === 'admin') {
+        router.navigate(['/admin/dashboard']);
+      } else if (userType === 'support') {
+        router.navigate(['/support/dashboard']);
+      } else {
+        router.navigate(['/app/dashboard']);
+      }
       return false;
+    }),
+    catchError(() => {
+      // Timeout or error - allow access to guest pages
+      console.error('Guest guard timeout - allowing access');
+      return of(true);
     })
   );
 };
@@ -95,5 +120,41 @@ export function roleGuard(allowedRoles: string[]): CanActivateFn {
 
 // Pre-configured role guards for convenience
 export const studentGuard: CanActivateFn = roleGuard(['student']);
-export const mentorGuard: CanActivateFn = roleGuard(['mentor']);
+export const enterpriseGuard: CanActivateFn = roleGuard(['enterprise']);
 export const adminGuard: CanActivateFn = roleGuard(['admin']);
+
+/**
+ * Student/Enterprise Guard - Allows only students and enterprises to access /app/* routes
+ * Redirects admins to /admin/dashboard and support to /support/dashboard
+ */
+export const studentOrEnterpriseGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  return authService.currentUser$.pipe(
+    take(1),
+    map(user => {
+      if (!user) {
+        router.navigate(['/auth/login']);
+        return false;
+      }
+
+      const userType = user.user_type || 'student';
+
+      // Redirect admins to admin panel
+      if (userType === 'admin') {
+        router.navigate(['/admin/dashboard']);
+        return false;
+      }
+
+      // Redirect support to support center
+      if (userType === 'support') {
+        router.navigate(['/support/dashboard']);
+        return false;
+      }
+
+      // Allow students and enterprises
+      return true;
+    })
+  );
+};

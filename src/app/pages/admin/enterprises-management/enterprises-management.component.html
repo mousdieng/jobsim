@@ -1,0 +1,232 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Enterprise Management</h1>
+      <p class="mt-2 text-gray-600">Approve and manage enterprise accounts</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
+      <div class="flex items-end space-x-4">
+        <div class="flex-1">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+          <select
+            [(ngModel)]="statusFilter"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option value="">All</option>
+            <option value="pending">Pending Approval</option>
+            <option value="active">Active</option>
+            <option value="suspended">Suspended</option>
+            <option value="banned">Banned</option>
+          </select>
+        </div>
+        <button
+          (click)="applyFilters()"
+          class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+        >
+          Apply
+        </button>
+        <button
+          (click)="clearFilters()"
+          class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          Clear
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <p class="mt-4 text-gray-600">Loading enterprises...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <p class="text-red-800">{{ error }}</p>
+    </div>
+
+    <!-- Enterprises Grid -->
+    <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let enterprise of enterprises" class="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
+        <div class="p-6">
+          <!-- Logo and Name -->
+          <div class="flex items-start space-x-4 mb-4">
+            <div class="flex-shrink-0">
+              <div
+                *ngIf="!enterprise.logo_url"
+                class="h-16 w-16 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white text-2xl font-bold"
+              >
+                {{ enterprise.name.charAt(0).toUpperCase() }}
+              </div>
+              <img
+                *ngIf="enterprise.logo_url"
+                [src]="enterprise.logo_url"
+                [alt]="enterprise.name"
+                class="h-16 w-16 rounded-lg object-cover"
+              />
+            </div>
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-900">{{ enterprise.name }}</h3>
+              <p class="text-sm text-gray-600">{{ enterprise.sector }}</p>
+              <div class="mt-2">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" [ngClass]="getStatusBadge(enterprise.status)">
+                  {{ enterprise.status }}
+                </span>
+                <span *ngIf="enterprise.is_verified" class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                  Verified
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <p *ngIf="enterprise.description" class="text-sm text-gray-600 mb-4 line-clamp-2">
+            {{ enterprise.description }}
+          </p>
+
+          <!-- Details -->
+          <div class="space-y-2 mb-4">
+            <div *ngIf="enterprise.website" class="flex items-center text-sm text-gray-600">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+              </svg>
+              <a [href]="enterprise.website" target="_blank" class="hover:text-indigo-600 truncate">
+                {{ enterprise.website }}
+              </a>
+            </div>
+            <div *ngIf="enterprise.location" class="flex items-center text-sm text-gray-600">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {{ enterprise.location }}
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              {{ enterprise.contact_email }}
+            </div>
+          </div>
+
+          <!-- Suspension Info -->
+          <div *ngIf="enterprise.suspended_at && enterprise.suspension_reason" class="mb-4 p-3 bg-yellow-50 rounded-lg">
+            <p class="text-xs font-medium text-yellow-800">Suspension Reason:</p>
+            <p class="text-xs text-yellow-700 mt-1">{{ enterprise.suspension_reason }}</p>
+            <p class="text-xs text-yellow-600 mt-1">{{ formatDate(enterprise.suspended_at) }}</p>
+          </div>
+
+          <!-- Metadata -->
+          <div class="text-xs text-gray-500 mb-4 flex justify-between">
+            <span>Created: {{ formatDate(enterprise.created_at) }}</span>
+            <span *ngIf="enterprise.size">Size: {{ enterprise.size }}</span>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex space-x-2">
+            <button
+              *ngIf="enterprise.status === 'pending'"
+              (click)="openActionModal(enterprise, 'approve')"
+              class="flex-1 px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Approve
+            </button>
+            <button
+              *ngIf="enterprise.status === 'pending'"
+              (click)="openActionModal(enterprise, 'reject')"
+              class="flex-1 px-3 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Reject
+            </button>
+            <button
+              *ngIf="enterprise.status === 'active'"
+              (click)="openActionModal(enterprise, 'suspend')"
+              class="flex-1 px-3 py-2 bg-yellow-600 text-white text-sm font-medium rounded-lg hover:bg-yellow-700 transition-colors"
+            >
+              Suspend
+            </button>
+            <button
+              *ngIf="enterprise.status === 'suspended'"
+              (click)="openActionModal(enterprise, 'unsuspend')"
+              class="flex-1 px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Unsuspend
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="enterprises.length === 0" class="col-span-full text-center py-12">
+        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+        <p class="text-gray-600">No enterprises found</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Action Modal -->
+<div
+  *ngIf="showActionModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  (click)="closeActionModal()"
+>
+  <div
+    class="bg-white rounded-lg p-6 max-w-md w-full mx-4"
+    (click)="$event.stopPropagation()"
+  >
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+      {{ actionType === 'approve' ? 'Approve Enterprise' :
+         actionType === 'reject' ? 'Reject Enterprise' :
+         actionType === 'suspend' ? 'Suspend Enterprise' : 'Unsuspend Enterprise' }}
+    </h3>
+
+    <div *ngIf="selectedEnterprise" class="mb-4">
+      <p class="text-sm text-gray-600">
+        You are about to {{ actionType }} <strong>{{ selectedEnterprise.name }}</strong>
+      </p>
+    </div>
+
+    <div *ngIf="actionType === 'reject' || actionType === 'suspend'" class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        Reason <span class="text-red-500">*</span>
+      </label>
+      <textarea
+        [(ngModel)]="actionReason"
+        rows="3"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+        placeholder="Provide a detailed reason for this action..."
+      ></textarea>
+      <p class="text-xs text-gray-500 mt-1">This will be visible to the enterprise</p>
+    </div>
+
+    <div class="flex space-x-3">
+      <button
+        (click)="closeActionModal()"
+        [disabled]="actionLoading"
+        class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="performAction()"
+        [disabled]="actionLoading"
+        class="flex-1 px-4 py-2 rounded-lg text-white transition-colors disabled:opacity-50"
+        [ngClass]="{
+          'bg-green-600 hover:bg-green-700': actionType === 'approve' || actionType === 'unsuspend',
+          'bg-red-600 hover:bg-red-700': actionType === 'reject',
+          'bg-yellow-600 hover:bg-yellow-700': actionType === 'suspend'
+        }"
+      >
+        <span *ngIf="!actionLoading">Confirm</span>
+        <span *ngIf="actionLoading">Processing...</span>
+      </button>
+    </div>
+  </div>
+</div>

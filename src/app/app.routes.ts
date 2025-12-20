@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard } from './guards/auth.guard';
+import { authGuard, guestGuard, adminGuard, studentOrEnterpriseGuard } from './guards/auth.guard';
+import { supportGuard } from './guards/support.guard';
 
 export const routes: Routes = [
   // ============================================
@@ -78,12 +79,12 @@ export const routes: Routes = [
   },
 
   // ============================================
-  // PROTECTED ROUTES (Require authentication)
+  // PROTECTED ROUTES (Require authentication - Students & Enterprises only)
   // ============================================
   {
     path: 'app',
     loadComponent: () => import('./layouts/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
-    canActivate: [authGuard],
+    canActivate: [authGuard, studentOrEnterpriseGuard],
     children: [
       // Dashboard (default protected route)
       {
@@ -151,6 +152,118 @@ export const routes: Routes = [
         path: 'settings',
         loadComponent: () => import('./pages/settings/settings.component').then(m => m.SettingsComponent),
         title: 'Settings - JobSim Senegal'
+      }
+    ]
+  },
+
+  // ============================================
+  // ADMIN ROUTES (Require admin role)
+  // ============================================
+  {
+    path: 'admin',
+    loadComponent: () => import('./layouts/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
+    canActivate: [authGuard, adminGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./pages/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+        title: 'Admin Dashboard - JobSim Senegal'
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./pages/admin/users-management/users-management.component').then(m => m.UsersManagementComponent),
+        title: 'User Management - JobSim Senegal'
+      },
+      {
+        path: 'enterprises',
+        loadComponent: () => import('./pages/admin/enterprises-management/enterprises-management.component').then(m => m.EnterprisesManagementComponent),
+        title: 'Enterprise Management - JobSim Senegal'
+      },
+      {
+        path: 'tasks',
+        loadComponent: () => import('./pages/admin/tasks-management/tasks-management.component').then(m => m.TasksManagementComponent),
+        title: 'Task Management - JobSim Senegal'
+      },
+      {
+        path: 'submissions',
+        loadComponent: () => import('./pages/admin/submissions-management/submissions-management.component').then(m => m.SubmissionsManagementComponent),
+        title: 'Submission Management - JobSim Senegal'
+      },
+      {
+        path: 'domains',
+        loadComponent: () => import('./pages/admin/domains-management/domains-management.component').then(m => m.DomainsManagementComponent),
+        title: 'Domain Management - JobSim Senegal'
+      },
+      {
+        path: 'analytics',
+        loadComponent: () => import('./pages/admin/analytics/analytics.component').then(m => m.AnalyticsComponent),
+        title: 'Analytics - JobSim Senegal'
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./pages/admin/settings/settings.component').then(m => m.AdminSettingsComponent),
+        title: 'System Settings - JobSim Senegal'
+      },
+      {
+        path: 'audit-logs',
+        loadComponent: () => import('./pages/admin/audit-logs/audit-logs.component').then(m => m.AuditLogsComponent),
+        title: 'Audit Logs - JobSim Senegal'
+      }
+    ]
+  },
+
+  // ============================================
+  // SUPPORT ROUTES (Require support role)
+  // ============================================
+  {
+    path: 'support',
+    loadComponent: () => import('./layouts/support-layout/support-layout.component').then(m => m.SupportLayoutComponent),
+    canActivate: [authGuard, supportGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./pages/support/dashboard/dashboard.component').then(m => m.SupportDashboardComponent),
+        title: 'Support Dashboard - JobSim Senegal'
+      },
+      {
+        path: 'tickets',
+        loadComponent: () => import('./pages/support/tickets/tickets.component').then(m => m.TicketsComponent),
+        title: 'Tickets - JobSim Senegal'
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./pages/support/user-assistance/user-assistance.component').then(m => m.UserAssistanceComponent),
+        title: 'User Assistance - JobSim Senegal'
+      },
+      {
+        path: 'tasks',
+        loadComponent: () => import('./pages/support/task-moderation/task-moderation.component').then(m => m.TaskModerationComponent),
+        title: 'Task Moderation - JobSim Senegal'
+      },
+      {
+        path: 'escalations',
+        loadComponent: () => import('./pages/support/escalations/escalations.component').then(m => m.EscalationsComponent),
+        title: 'Escalations - JobSim Senegal'
+      },
+      {
+        path: 'knowledge',
+        loadComponent: () => import('./pages/support/knowledge-base/knowledge-base.component').then(m => m.KnowledgeBaseComponent),
+        title: 'Knowledge Base - JobSim Senegal'
+      },
+      {
+        path: 'logs',
+        loadComponent: () => import('./pages/support/activity-logs/activity-logs.component').then(m => m.ActivityLogsComponent),
+        title: 'Activity Logs - JobSim Senegal'
       }
     ]
   },

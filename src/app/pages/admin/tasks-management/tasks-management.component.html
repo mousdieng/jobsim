@@ -1,0 +1,273 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Task Management</h1>
+      <p class="mt-2 text-gray-600">Validate and manage platform tasks</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Lifecycle Status Filter -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Lifecycle Status</label>
+          <select
+            [(ngModel)]="lifecycleStatusFilter"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option value="">All</option>
+            <option value="draft">Draft</option>
+            <option value="validation_pending">Pending Validation</option>
+            <option value="active">Active</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+
+        <!-- Flagged Filter -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Flagged</label>
+          <select
+            [(ngModel)]="flaggedFilter"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option [ngValue]="null">All</option>
+            <option [ngValue]="true">Flagged Only</option>
+            <option [ngValue]="false">Not Flagged</option>
+          </select>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-end space-x-2">
+          <button
+            (click)="applyFilters()"
+            class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            Apply
+          </button>
+          <button
+            (click)="clearFilters()"
+            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <p class="mt-4 text-gray-600">Loading tasks...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <p class="text-red-800">{{ error }}</p>
+    </div>
+
+    <!-- Tasks Grid -->
+    <div *ngIf="!loading" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div *ngFor="let task of tasks" class="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
+        <div class="p-6">
+          <!-- Header with badges -->
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ task.title }}</h3>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                  [ngClass]="getLifecycleStatusBadge(task.lifecycle_status)"
+                >
+                  {{ getLifecycleStatusLabel(task.lifecycle_status) }}
+                </span>
+                <span
+                  *ngIf="task.flagged"
+                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"
+                >
+                  Flagged
+                </span>
+                <span
+                  *ngIf="task.is_featured"
+                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800"
+                >
+                  Featured
+                </span>
+                <span
+                  *ngIf="task.is_approved"
+                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800"
+                >
+                  Approved
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <p class="text-sm text-gray-600 mb-4">
+            {{ truncateText(task.description || 'No description', 150) }}
+          </p>
+
+          <!-- Details Grid -->
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-gray-500">Field</p>
+              <p class="text-sm font-medium text-gray-900">{{ task.job_field || 'N/A' }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Difficulty</p>
+              <p class="text-sm font-medium text-gray-900">{{ task.difficulty_level || 'N/A' }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Duration</p>
+              <p class="text-sm font-medium text-gray-900">{{ task.estimated_duration || 0 }} min</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Created</p>
+              <p class="text-sm font-medium text-gray-900">{{ formatDate(task.created_at) }}</p>
+            </div>
+          </div>
+
+          <!-- Enterprise Info (if available) -->
+          <div *ngIf="task.enterprise" class="mb-4 p-3 bg-gray-50 rounded-lg">
+            <p class="text-xs font-medium text-gray-700">Enterprise</p>
+            <p class="text-sm text-gray-900">{{ task.enterprise.name }}</p>
+          </div>
+
+          <!-- Flag Reason -->
+          <div *ngIf="task.flagged && task.flag_reason" class="mb-4 p-3 bg-red-50 rounded-lg">
+            <p class="text-xs font-medium text-red-800">Flag Reason</p>
+            <p class="text-sm text-red-700">{{ task.flag_reason }}</p>
+          </div>
+
+          <!-- Validation Notes -->
+          <div *ngIf="task.validation_notes" class="mb-4 p-3 bg-yellow-50 rounded-lg">
+            <p class="text-xs font-medium text-yellow-800">Validation Notes</p>
+            <p class="text-sm text-yellow-700">{{ task.validation_notes }}</p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-wrap gap-2">
+            <button
+              *ngIf="task.lifecycle_status === 'validation_pending'"
+              (click)="openActionModal(task, 'validate')"
+              class="px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition-colors"
+            >
+              Validate & Activate
+            </button>
+            <button
+              *ngIf="task.lifecycle_status === 'validation_pending'"
+              (click)="openActionModal(task, 'reject')"
+              class="px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 transition-colors"
+            >
+              Reject Validation
+            </button>
+            <button
+              *ngIf="!task.flagged"
+              (click)="openActionModal(task, 'flag')"
+              class="px-3 py-1.5 bg-yellow-600 text-white text-sm font-medium rounded hover:bg-yellow-700 transition-colors"
+            >
+              Flag Task
+            </button>
+            <button
+              *ngIf="task.lifecycle_status === 'active'"
+              (click)="openActionModal(task, 'archive')"
+              class="px-3 py-1.5 bg-gray-600 text-white text-sm font-medium rounded hover:bg-gray-700 transition-colors"
+            >
+              Archive
+            </button>
+            <button
+              (click)="openActionModal(task, 'feature')"
+              class="px-3 py-1.5 text-sm font-medium rounded transition-colors"
+              [ngClass]="task.is_featured ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+            >
+              {{ task.is_featured ? 'Unfeature' : 'Feature' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="tasks.length === 0" class="col-span-full text-center py-12">
+        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <p class="text-gray-600">No tasks found</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Action Modal -->
+<div
+  *ngIf="showActionModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  (click)="closeActionModal()"
+>
+  <div
+    class="bg-white rounded-lg p-6 max-w-md w-full mx-4"
+    (click)="$event.stopPropagation()"
+  >
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+      {{ actionType === 'validate' ? 'Validate & Activate Task' :
+         actionType === 'reject' ? 'Reject Task Validation' :
+         actionType === 'flag' ? 'Flag Task' :
+         actionType === 'archive' ? 'Archive Task' :
+         (featureValue ? 'Feature Task' : 'Unfeature Task') }}
+    </h3>
+
+    <div *ngIf="selectedTask" class="mb-4">
+      <p class="text-sm text-gray-600">
+        Task: <strong>{{ selectedTask.title }}</strong>
+      </p>
+      <p *ngIf="actionType === 'validate'" class="text-xs text-green-600 mt-2">
+        This will approve and activate the task, making it available to all users.
+      </p>
+      <p *ngIf="actionType === 'reject'" class="text-xs text-red-600 mt-2">
+        This will send the task back to draft status for the creator to revise.
+      </p>
+    </div>
+
+    <div *ngIf="actionType !== 'feature'" class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        {{ actionType === 'reject' || actionType === 'flag' ? 'Reason' : 'Notes (Optional)' }}
+        <span *ngIf="actionType === 'reject' || actionType === 'flag'" class="text-red-500">*</span>
+      </label>
+      <textarea
+        [(ngModel)]="actionNotes"
+        rows="3"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+        [placeholder]="actionType === 'validate' ? 'Optional validation notes...' : 'Provide a detailed reason...'"
+      ></textarea>
+      <p class="text-xs text-gray-500 mt-1">
+        {{ actionType === 'validate' ? 'These notes will be visible to the task creator' : 'This will be visible to the task creator' }}
+      </p>
+    </div>
+
+    <div class="flex space-x-3">
+      <button
+        (click)="closeActionModal()"
+        [disabled]="actionLoading"
+        class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="performAction()"
+        [disabled]="actionLoading"
+        class="flex-1 px-4 py-2 rounded-lg text-white transition-colors disabled:opacity-50"
+        [ngClass]="{
+          'bg-green-600 hover:bg-green-700': actionType === 'validate',
+          'bg-red-600 hover:bg-red-700': actionType === 'reject',
+          'bg-yellow-600 hover:bg-yellow-700': actionType === 'flag',
+          'bg-gray-600 hover:bg-gray-700': actionType === 'archive',
+          'bg-purple-600 hover:bg-purple-700': actionType === 'feature'
+        }"
+      >
+        <span *ngIf="!actionLoading">Confirm</span>
+        <span *ngIf="actionLoading">Processing...</span>
+      </button>
+    </div>
+  </div>
+</div>

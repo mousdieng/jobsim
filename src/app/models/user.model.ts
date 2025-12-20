@@ -1,7 +1,7 @@
 import { JobField, ExperienceLevel, UserProfile } from './platform.model';
 
 // Legacy user type - keep for backwards compatibility
-export type UserType = 'student' | 'mentor' | 'admin';
+export type UserType = 'student' | 'mentor' | 'support' | 'admin' | 'enterprise';
 
 // Main User interface - now uses UserProfile from platform model
 export type User = UserProfile;

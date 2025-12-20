@@ -43,6 +43,52 @@ export type MeetingType = 'kickoff' | 'standup' | 'review' | 'client_call' | 'ge
 
 export type TaskPriority = 'low' | 'normal' | 'high' | 'urgent';
 
+export type UserRole = 'student' | 'support' | 'admin' | 'enterprise' | 'mentor';
+
+export type UserStatus = 'active' | 'suspended' | 'banned';
+
+export type EnterpriseStatus = 'pending' | 'active' | 'suspended' | 'banned';
+
+export type TaskLifecycleStatus = 'draft' | 'validation_pending' | 'active' | 'archived';
+
+export type PermissionKey = string;
+
+// Role display name mapping for 4-role model
+export const ROLE_DISPLAY_NAMES: Record<UserRole, string> = {
+  admin: 'Admin',
+  support: 'Platform Support',
+  enterprise: 'Enterprise Recruiter',
+  student: 'Candidate',
+  mentor: 'Platform Support' // Legacy, mapped to Platform Support
+};
+
+export const ROLE_DESCRIPTIONS: Record<UserRole, string> = {
+  admin: 'Platform governance and full authority',
+  support: 'Platform operations and support',
+  enterprise: 'Hiring-focused task creation',
+  student: 'Task solving and profile building',
+  mentor: 'Platform operations and support' // Legacy
+};
+
+export type AdminActionType =
+  | 'approve_enterprise'
+  | 'reject_enterprise'
+  | 'suspend_enterprise'
+  | 'unsuspend_enterprise'
+  | 'suspend_user'
+  | 'unsuspend_user'
+  | 'ban_user'
+  | 'delete_user'
+  | 'approve_task'
+  | 'reject_task'
+  | 'flag_task'
+  | 'feature_task'
+  | 'override_score'
+  | 'flag_submission'
+  | 'resolve_dispute'
+  | 'update_settings'
+  | 'create_admin';
+
 // ============================================
 // USER INTERFACES
 // ============================================
@@ -67,10 +113,20 @@ export interface UserProfile {
   created_at: string;
   updated_at: string;
 
+  // Role and status
+  user_type?: UserRole;
+  status?: UserStatus;
+  suspended_at?: string;
+  suspension_reason?: string;
+
+  // Admin-specific fields
+  two_factor_enabled?: boolean;
+  last_policy_training?: string;
+  approved_by?: string;
+
   // Legacy fields for backwards compatibility
   full_name?: string; // Alias for name
   role?: string;
-  user_type?: string;
   score_total?: number;
   completed_count?: number;
   badge_level?: string;
@@ -93,6 +149,66 @@ export interface UserProfileUpdate {
 }
 
 // ============================================
+// ADMIN INTERFACES
+// ============================================
+
+export interface AdminAuditLog {
+  id: string;
+  admin_id: string;
+  admin_email: string;
+  action_type: AdminActionType;
+  target_type: 'user' | 'enterprise' | 'task' | 'submission' | 'setting';
+  target_id: string;
+  reason?: string;
+  before_state?: Record<string, any>;
+  after_state?: Record<string, any>;
+  ip_address: string;
+  user_agent?: string;
+  session_id?: string;
+  reversible: boolean;
+  reversible_until?: string;
+  reversed: boolean;
+  reversed_by?: string;
+  reversed_at?: string;
+  created_at: string;
+}
+
+export interface AdminStats {
+  total_users: number;
+  total_enterprises: number;
+  total_tasks: number;
+  total_submissions: number;
+  pending_enterprises: number;
+  pending_task_approvals: number;
+  flagged_tasks: number;
+  flagged_submissions: number;
+  active_disputes: number;
+  suspended_users: number;
+  recent_actions: AdminAuditLog[];
+}
+
+export interface RolePermission {
+  id: string;
+  role_type: UserRole;
+  permission_key: string;
+  permission_name: string;
+  description?: string;
+  created_at: string;
+}
+
+export interface UserRoleMetadata {
+  id: string;
+  user_id: string;
+  role_display_name: string;
+  role_description?: string;
+  permissions: string[];
+  scope: 'platform' | 'enterprise' | 'global';
+  enterprise_id?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================
 // ENTERPRISE INTERFACES
 // ============================================
 
@@ -105,10 +221,24 @@ export interface Enterprise {
   website?: string;
   location?: string;
   size?: string;
+
+  // Verification
   is_verified: boolean;
+  verified_at?: string;
+  verified_by?: string;
+
+  // Status
+  status: EnterpriseStatus;
+  suspended_at?: string;
+  suspension_reason?: string;
+
+  // Contact
   contact_email: string;
   contact_phone?: string;
+
+  // Admin
   admin_user_id?: string;
+
   created_at: string;
   updated_at: string;
 }
@@ -166,6 +296,19 @@ export interface Task {
   tags: string[];
   created_at: string;
   updated_at: string;
+
+  // Lifecycle workflow
+  lifecycle_status?: TaskLifecycleStatus;
+  validated_by?: string;
+  validated_at?: string;
+  validation_notes?: string;
+
+  // Admin fields
+  is_approved?: boolean;
+  approved_by?: string;
+  approved_at?: string;
+  flagged?: boolean;
+  flag_reason?: string;
 
   // Joined data (optional)
   enterprise?: Enterprise;
@@ -234,6 +377,14 @@ export interface TaskSubmission {
   submitted_at?: string;
   created_at: string;
   updated_at: string;
+
+  // Admin fields
+  flagged?: boolean;
+  flag_reason?: string;
+  score_overridden?: boolean;
+  score_override_reason?: string;
+  score_overridden_by?: string;
+  score_overridden_at?: string;
 
   // Joined data (optional)
   task?: Task;

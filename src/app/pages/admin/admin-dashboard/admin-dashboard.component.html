@@ -1,0 +1,271 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+      <p class="mt-2 text-gray-600">Platform governance and management</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <p class="mt-4 text-gray-600">Loading statistics...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <p class="text-red-800">{{ error }}</p>
+      <button
+        (click)="loadStats()"
+        class="mt-2 text-red-600 hover:text-red-800 font-medium"
+      >
+        Try Again
+      </button>
+    </div>
+
+    <!-- Stats Grid -->
+    <div *ngIf="stats && !loading" class="space-y-6">
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Total Users -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Total Users</p>
+              <p class="text-3xl font-bold text-gray-900 mt-2">{{ stats.total_users }}</p>
+            </div>
+            <div class="bg-indigo-100 rounded-full p-3">
+              <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Enterprises -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Enterprises</p>
+              <p class="text-3xl font-bold text-gray-900 mt-2">{{ stats.total_enterprises }}</p>
+              <p *ngIf="stats.pending_enterprises > 0" class="text-xs text-orange-600 mt-1">
+                {{ stats.pending_enterprises }} pending approval
+              </p>
+            </div>
+            <div class="bg-purple-100 rounded-full p-3">
+              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Tasks -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Tasks</p>
+              <p class="text-3xl font-bold text-gray-900 mt-2">{{ stats.total_tasks }}</p>
+              <p *ngIf="stats.flagged_tasks > 0" class="text-xs text-red-600 mt-1">
+                {{ stats.flagged_tasks }} flagged
+              </p>
+            </div>
+            <div class="bg-green-100 rounded-full p-3">
+              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Submissions -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Submissions</p>
+              <p class="text-3xl font-bold text-gray-900 mt-2">{{ stats.total_submissions }}</p>
+            </div>
+            <div class="bg-blue-100 rounded-full p-3">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Items -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Pending Actions -->
+        <div class="bg-white rounded-lg shadow">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Action Required</h2>
+          </div>
+          <div class="p-6">
+            <div class="space-y-4">
+              <!-- Pending Enterprises -->
+              <a
+                *ngIf="stats.pending_enterprises > 0"
+                routerLink="/admin/enterprises"
+                [queryParams]="{ status: 'pending' }"
+                class="flex items-center justify-between p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors group"
+              >
+                <div class="flex items-center space-x-3">
+                  <div class="bg-orange-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-semibold">
+                    {{ stats.pending_enterprises }}
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900">Enterprise Approvals</p>
+                    <p class="text-sm text-gray-600">Review pending registrations</p>
+                  </div>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+
+              <!-- Pending Task Validations -->
+              <a
+                *ngIf="stats.pending_task_approvals > 0"
+                routerLink="/admin/tasks"
+                [queryParams]="{ lifecycle_status: 'validation_pending' }"
+                class="flex items-center justify-between p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors group"
+              >
+                <div class="flex items-center space-x-3">
+                  <div class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-semibold">
+                    {{ stats.pending_task_approvals }}
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900">Task Validations</p>
+                    <p class="text-sm text-gray-600">Review and approve tasks</p>
+                  </div>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+
+              <!-- Flagged Tasks -->
+              <a
+                *ngIf="stats.flagged_tasks > 0"
+                routerLink="/admin/tasks"
+                [queryParams]="{ flagged: 'true' }"
+                class="flex items-center justify-between p-4 bg-red-50 hover:bg-red-100 rounded-lg transition-colors group"
+              >
+                <div class="flex items-center space-x-3">
+                  <div class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-semibold">
+                    {{ stats.flagged_tasks }}
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900">Flagged Tasks</p>
+                    <p class="text-sm text-gray-600">Review reported tasks</p>
+                  </div>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+
+              <!-- No pending actions -->
+              <div *ngIf="stats.pending_enterprises === 0 && stats.pending_task_approvals === 0 && stats.flagged_tasks === 0" class="text-center py-8">
+                <svg class="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-gray-600">All caught up! No pending actions.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-lg shadow">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Recent Admin Actions</h2>
+          </div>
+          <div class="p-6">
+            <div class="space-y-4">
+              <div
+                *ngFor="let action of stats.recent_actions.slice(0, 5)"
+                class="flex items-start space-x-3 pb-4 border-b border-gray-100 last:border-0"
+              >
+                <div class="flex-shrink-0">
+                  <div class="w-2 h-2 rounded-full mt-2" [ngClass]="{
+                    'bg-green-500': action.action_type.includes('approve'),
+                    'bg-red-500': action.action_type.includes('suspend') || action.action_type.includes('ban'),
+                    'bg-yellow-500': action.action_type.includes('flag'),
+                    'bg-blue-500': !action.action_type.includes('approve') && !action.action_type.includes('suspend') && !action.action_type.includes('ban') && !action.action_type.includes('flag')
+                  }"></div>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900" [ngClass]="getActionTypeColor(action.action_type)">
+                    {{ getActionTypeLabel(action.action_type) }}
+                  </p>
+                  <p class="text-sm text-gray-600">{{ action.admin_email }}</p>
+                  <p *ngIf="action.reason" class="text-xs text-gray-500 mt-1 truncate">{{ action.reason }}</p>
+                  <p class="text-xs text-gray-400 mt-1">{{ formatDate(action.created_at) }}</p>
+                </div>
+              </div>
+
+              <div *ngIf="!stats.recent_actions || stats.recent_actions.length === 0" class="text-center py-8 text-gray-500">
+                No recent admin actions
+              </div>
+
+              <a
+                routerLink="/admin/audit-logs"
+                class="block text-center text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+              >
+                View All Audit Logs →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <a
+            routerLink="/admin/users"
+            class="flex flex-col items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <svg class="w-8 h-8 text-indigo-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <span class="text-sm font-medium text-gray-900">Manage Users</span>
+          </a>
+
+          <a
+            routerLink="/admin/enterprises"
+            class="flex flex-col items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <svg class="w-8 h-8 text-purple-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <span class="text-sm font-medium text-gray-900">Enterprises</span>
+          </a>
+
+          <a
+            routerLink="/admin/tasks"
+            class="flex flex-col items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <svg class="w-8 h-8 text-green-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <span class="text-sm font-medium text-gray-900">Manage Tasks</span>
+          </a>
+
+          <a
+            routerLink="/admin/audit-logs"
+            class="flex flex-col items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <svg class="w-8 h-8 text-gray-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span class="text-sm font-medium text-gray-900">Audit Logs</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

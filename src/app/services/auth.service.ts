@@ -24,7 +24,37 @@ export class AuthService {
     private supabase: SupabaseService,
     private router: Router
   ) {
-    this.initializeAuth();
+    // Check for corrupted auth data on startup
+    this.validateAndCleanAuth().then(() => {
+      this.initializeAuth();
+    });
+  }
+
+  /**
+   * Validate auth data and clean if corrupted
+   */
+  private async validateAndCleanAuth(): Promise<void> {
+    try {
+      const session = await this.supabase.getSession();
+
+      if (session?.user) {
+        // Check if token is expired
+        const expiresAt = session.expires_at;
+        if (expiresAt && expiresAt * 1000 < Date.now()) {
+          console.warn('Expired token detected, clearing session');
+          await this.supabase.signOut();
+        }
+      }
+    } catch (error) {
+      console.error('Error validating auth, clearing session:', error);
+      // Clear corrupted data
+      try {
+        await this.supabase.signOut();
+      } catch (signOutError) {
+        // Force clear even if signOut fails
+        console.error('Force clearing localStorage due to error');
+      }
+    }
   }
 
   /**
@@ -41,6 +71,7 @@ export class AuthService {
         } else if (event === 'SIGNED_OUT') {
           this.currentUserSubject.next(null);
           this.isAuthenticatedSubject.next(false);
+          this.loadingSubject.next(false);
         } else if (event === 'TOKEN_REFRESHED' && session?.user) {
           await this.loadUserProfile(session.user.id);
         } else if (event === 'INITIAL_SESSION' && session?.user) {
@@ -53,13 +84,43 @@ export class AuthService {
       const session = await this.supabase.getSession();
 
       if (session?.user) {
-        // Add a small delay to ensure auth context is ready
-        await new Promise(resolve => setTimeout(resolve, 100));
-        await this.loadUserProfile(session.user.id);
+        try {
+          // Add a small delay to ensure auth context is ready
+          await new Promise(resolve => setTimeout(resolve, 100));
+          await this.loadUserProfile(session.user.id);
+        } catch (error) {
+          // Profile loading failed - clear stale session
+          console.error('Failed to load profile, clearing stale session:', error);
+          await this.clearStaleSession();
+        }
       }
     } catch (error) {
       console.error('Error initializing auth:', error);
+      // Clear potentially corrupted auth data
+      await this.clearStaleSession();
     } finally {
+      this.loadingSubject.next(false);
+    }
+  }
+
+  /**
+   * Clear stale/corrupted session data
+   */
+  private async clearStaleSession(): Promise<void> {
+    try {
+      // Sign out from Supabase (clears localStorage)
+      await this.supabase.signOut();
+
+      // Reset state
+      this.currentUserSubject.next(null);
+      this.isAuthenticatedSubject.next(false);
+      this.loadingSubject.next(false);
+    } catch (error) {
+      console.error('Error clearing stale session:', error);
+
+      // Force clear local state even if signOut fails
+      this.currentUserSubject.next(null);
+      this.isAuthenticatedSubject.next(false);
       this.loadingSubject.next(false);
     }
   }
@@ -68,56 +129,63 @@ export class AuthService {
    * Load user profile from database
    */
   private async loadUserProfile(userId: string, retries = 3): Promise<void> {
-    for (let attempt = 0; attempt < retries; attempt++) {
-      try {
-        // Add delay for retry attempts to allow auth context to fully initialize
-        if (attempt > 0) {
-          await new Promise(resolve => setTimeout(resolve, 300 * attempt));
-        }
+    try {
+      for (let attempt = 0; attempt < retries; attempt++) {
+        try {
+          // Add delay for retry attempts to allow auth context to fully initialize
+          if (attempt > 0) {
+            await new Promise(resolve => setTimeout(resolve, 300 * attempt));
+          }
 
-        const { data, error } = await this.supabase.client
-          .from('users')
-          .select('*')
-          .eq('id', userId)
-          .maybeSingle(); // Use maybeSingle() instead of single() to handle 0 rows gracefully
+          const { data, error } = await this.supabase.client
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .maybeSingle(); // Use maybeSingle() instead of single() to handle 0 rows gracefully
 
-        if (error) {
+          if (error) {
+            console.error(`Error loading user profile (attempt ${attempt + 1}/${retries}):`, error);
+
+            // If this is the last attempt, clear stale session
+            if (attempt === retries - 1) {
+              await this.clearStaleSession();
+              throw error;
+            }
+            // Otherwise, continue to next retry
+            continue;
+          }
+
+          if (data) {
+            this.currentUserSubject.next(data as User);
+            this.isAuthenticatedSubject.next(true);
+            this.loadingSubject.next(false);
+            return; // Success!
+          } else {
+            // Profile doesn't exist yet (trigger hasn't completed)
+            console.log(`Profile not found (attempt ${attempt + 1}/${retries})`);
+
+            if (attempt === retries - 1) {
+              // Clear stale session - user doesn't have a profile
+              await this.clearStaleSession();
+              throw new Error('Profile not found');
+            }
+            // Otherwise, continue to next retry
+            continue;
+          }
+        } catch (error) {
           console.error(`Error loading user profile (attempt ${attempt + 1}/${retries}):`, error);
 
-          // If this is the last attempt, set auth to false
+          // If this is the last attempt, clear stale session
           if (attempt === retries - 1) {
-            this.isAuthenticatedSubject.next(false);
+            await this.clearStaleSession();
             throw error;
           }
           // Otherwise, continue to next retry
-          continue;
         }
-
-        if (data) {
-          this.currentUserSubject.next(data as User);
-          this.isAuthenticatedSubject.next(true);
-          return; // Success!
-        } else {
-          // Profile doesn't exist yet (trigger hasn't completed)
-          console.log(`Profile not found (attempt ${attempt + 1}/${retries})`);
-
-          if (attempt === retries - 1) {
-            this.isAuthenticatedSubject.next(false);
-            throw new Error('Profile not found');
-          }
-          // Otherwise, continue to next retry
-          continue;
-        }
-      } catch (error) {
-        console.error(`Error loading user profile (attempt ${attempt + 1}/${retries}):`, error);
-
-        // If this is the last attempt, set auth to false
-        if (attempt === retries - 1) {
-          this.isAuthenticatedSubject.next(false);
-          throw error;
-        }
-        // Otherwise, continue to next retry
       }
+    } finally {
+      // Always ensure loading is set to false
+      this.loadingSubject.next(false);
     }
   }
 

@@ -132,6 +132,7 @@ export class PlatformService {
       let query = this.supabase.client
         .from('tasks')
         .select('*, enterprise:enterprises(*)')
+        .eq('lifecycle_status', 'active')
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
@@ -256,7 +257,10 @@ export class PlatformService {
     try {
       const { data, error } = await this.supabase.client
         .from('tasks')
-        .insert(task)
+        .insert({
+          ...task,
+          lifecycle_status: 'draft' // New tasks start in draft state
+        })
         .select('*, enterprise:enterprises(*)')
         .single();
 

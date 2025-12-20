@@ -15,6 +15,7 @@ export class MainLayoutComponent {
   user: User | null = null;
   isMobileMenuOpen = false;
   isProfileMenuOpen = false;
+  private lastToggleTime = 0;
 
   constructor(
     private authService: AuthService,
@@ -26,7 +27,17 @@ export class MainLayoutComponent {
   }
 
   toggleMobileMenu(): void {
+    // Prevent double-triggering from both touch and click events
+    const now = Date.now();
+    if (now - this.lastToggleTime < 300) {
+      console.log('toggleMobileMenu: Ignoring duplicate event');
+      return;
+    }
+    this.lastToggleTime = now;
+
+    console.log('toggleMobileMenu called, current state:', this.isMobileMenuOpen);
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    console.log('toggleMobileMenu new state:', this.isMobileMenuOpen);
   }
 
   toggleProfileMenu(): void {
@@ -55,5 +66,21 @@ export class MainLayoutComponent {
     return field.split('_').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
+  }
+
+  isAdmin(): boolean {
+    return this.user?.user_type === 'admin';
+  }
+
+  isStudent(): boolean {
+    return this.user?.user_type === 'student' || !this.user?.user_type;
+  }
+
+  isEnterprise(): boolean {
+    return this.user?.user_type === 'enterprise';
+  }
+
+  isSupport(): boolean {
+    return this.user?.user_type === 'support';
   }
 }
