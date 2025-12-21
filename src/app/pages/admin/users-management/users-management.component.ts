@@ -25,14 +25,42 @@ export class UsersManagementComponent implements OnInit {
   // Action modal
   selectedUser: UserProfile | null = null;
   showActionModal = false;
-  actionType: 'suspend' | 'ban' | 'unsuspend' | null = null;
+  actionType: 'suspend' | 'ban' | 'unsuspend' | 'delete' | 'changeRole' | null = null;
   actionReason = '';
   actionLoading = false;
+
+  // Create user modal
+  showCreateUserModal = false;
+  createUserForm = {
+    email: '',
+    password: '',
+    name: '',
+    user_type: 'support' as 'admin' | 'support' | 'enterprise',
+    enterprise_id: ''
+  };
+
+  // Role change
+  newRole: 'admin' | 'support' | 'enterprise' | 'student' = 'student';
+
+  // Available enterprises for linking
+  availableEnterprises: any[] = [];
 
   constructor(private adminService: AdminService) {}
 
   ngOnInit(): void {
     this.loadUsers();
+    this.loadEnterprises();
+  }
+
+  loadEnterprises(): void {
+    this.adminService.getAllEnterprises().subscribe({
+      next: (data) => {
+        this.availableEnterprises = data;
+      },
+      error: (err) => {
+        console.error('Error loading enterprises:', err);
+      }
+    });
   }
 
   loadUsers(): void {
@@ -69,10 +97,55 @@ export class UsersManagementComponent implements OnInit {
     this.loadUsers();
   }
 
-  openActionModal(user: UserProfile, action: 'suspend' | 'ban' | 'unsuspend'): void {
+  openCreateUserModal(): void {
+    this.showCreateUserModal = true;
+    this.createUserForm = {
+      email: '',
+      password: '',
+      name: '',
+      user_type: 'support',
+      enterprise_id: ''
+    };
+  }
+
+  closeCreateUserModal(): void {
+    this.showCreateUserModal = false;
+  }
+
+  createUser(): void {
+    // Validate form
+    if (!this.createUserForm.email || !this.createUserForm.password || !this.createUserForm.name) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    if (this.createUserForm.user_type === 'enterprise' && !this.createUserForm.enterprise_id) {
+      alert('Please select an enterprise for enterprise users');
+      return;
+    }
+
+    this.actionLoading = true;
+
+    this.adminService.createUser(this.createUserForm).subscribe({
+      next: () => {
+        this.actionLoading = false;
+        this.closeCreateUserModal();
+        this.loadUsers();
+        alert(`User created successfully`);
+      },
+      error: (err) => {
+        this.actionLoading = false;
+        alert('Failed to create user: ' + err.message);
+        console.error('Create user error:', err);
+      }
+    });
+  }
+
+  openActionModal(user: UserProfile, action: 'suspend' | 'ban' | 'unsuspend' | 'delete' | 'changeRole'): void {
     this.selectedUser = user;
     this.actionType = action;
     this.actionReason = '';
+    this.newRole = user.user_type as any;
     this.showActionModal = true;
   }
 
@@ -86,20 +159,50 @@ export class UsersManagementComponent implements OnInit {
   performAction(): void {
     if (!this.selectedUser || !this.actionType) return;
 
-    if ((this.actionType === 'suspend' || this.actionType === 'ban') && !this.actionReason) {
+    // Validate that actions requiring reason have one
+    const reasonRequired = ['suspend', 'ban', 'delete', 'changeRole'];
+    if (reasonRequired.includes(this.actionType) && !this.actionReason) {
       alert('Please provide a reason for this action');
       return;
+    }
+
+    // Confirm destructive actions
+    if (this.actionType === 'delete') {
+      const confirmed = confirm(
+        `Are you sure you want to PERMANENTLY DELETE this user?\n\n` +
+        `User: ${this.selectedUser.name} (${this.selectedUser.email})\n` +
+        `This action CANNOT be undone!`
+      );
+      if (!confirmed) return;
     }
 
     this.actionLoading = true;
 
     let action$;
-    if (this.actionType === 'suspend') {
-      action$ = this.adminService.suspendUser(this.selectedUser.id, this.actionReason);
-    } else if (this.actionType === 'ban') {
-      action$ = this.adminService.banUser(this.selectedUser.id, this.actionReason);
-    } else {
-      action$ = this.adminService.unsuspendUser(this.selectedUser.id);
+    switch (this.actionType) {
+      case 'suspend':
+        action$ = this.adminService.suspendUser(this.selectedUser.id, this.actionReason);
+        break;
+      case 'ban':
+        action$ = this.adminService.banUser(this.selectedUser.id, this.actionReason);
+        break;
+      case 'unsuspend':
+        action$ = this.adminService.unsuspendUser(this.selectedUser.id);
+        break;
+      case 'delete':
+        action$ = this.adminService.deleteUser(this.selectedUser.id, this.actionReason);
+        break;
+      case 'changeRole':
+        if (this.newRole === this.selectedUser.user_type) {
+          alert('Please select a different role');
+          this.actionLoading = false;
+          return;
+        }
+        action$ = this.adminService.changeUserRole(this.selectedUser.id, this.newRole, this.actionReason);
+        break;
+      default:
+        this.actionLoading = false;
+        return;
     }
 
     action$.subscribe({
@@ -107,6 +210,7 @@ export class UsersManagementComponent implements OnInit {
         this.actionLoading = false;
         this.closeActionModal();
         this.loadUsers(); // Reload users
+        alert(`Action completed successfully`);
       },
       error: (err) => {
         this.actionLoading = false;

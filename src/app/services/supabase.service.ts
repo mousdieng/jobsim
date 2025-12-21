@@ -19,7 +19,12 @@ export class SupabaseService {
           detectSessionInUrl: true,
           storage: typeof window !== 'undefined' ? window.localStorage : undefined,
           storageKey: 'jobsim-auth-token',
-          flowType: 'pkce'
+          flowType: 'pkce',
+          // Bypass the lock mechanism that's causing errors
+          lock: async (name: string, acquireTimeout: number, fn: () => Promise<any>) => {
+            // Just execute the function without acquiring a lock
+            return await fn();
+          }
         }
       }
     );

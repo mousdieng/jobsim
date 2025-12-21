@@ -333,6 +333,96 @@ export interface TaskCreate {
   tags?: string[];
 }
 
+// Enterprise Task Specification Interfaces
+export interface TaskIdentity {
+  title: string;
+  domain: string;
+  sub_domain: string;
+  difficulty_level: DifficultyLevel;
+  estimated_completion_time: string;
+  task_type: 'case_study' | 'hands_on' | 'analysis' | 'simulation' | 'assessment';
+  created_by: string;
+}
+
+export interface BusinessContext {
+  company: string;
+  business_problem: string;
+  business_impact: string;
+  stakeholders: string[];
+}
+
+export interface TaskObjective {
+  goal: string;
+  business_outcome: string;
+  skills_evaluated: string[];
+}
+
+export interface ScopeConstraints {
+  must_do: string[];
+  must_not_do: string[];
+  assumptions: {
+    tools_available: string;
+    data_access: string;
+    environment: string;
+  };
+  constraints: {
+    time_limit: string;
+    resource_limit: string;
+  };
+}
+
+export interface TaskDeliverable {
+  name: string;
+  format: string;
+  naming: string;
+  requirements: string[];
+}
+
+export interface EvaluationCriterion {
+  weight: string;
+  indicators: string[];
+}
+
+export interface EvaluationCriteria {
+  [key: string]: EvaluationCriterion;
+}
+
+export interface ValidationRules {
+  minimum_requirements: string[];
+  automatic_rejection: string[];
+  compliance_checks: string[];
+}
+
+export interface VisibilityAccess {
+  eligible_domains: string[];
+  student_level: string;
+  enterprise_visibility: {
+    submissions: string;
+    candidate_identity: string;
+  };
+  support_visibility: string;
+}
+
+export interface OptionalEnhancements {
+  reference_documents?: string[];
+  sample_data?: string;
+  clarification_faq?: Record<string, string>;
+  bonus_challenges?: string[];
+}
+
+export interface EnterpriseTaskSpecification {
+  task_identity: TaskIdentity;
+  business_context: BusinessContext;
+  task_objective: TaskObjective;
+  scope_and_constraints: ScopeConstraints;
+  deliverables: TaskDeliverable[];
+  evaluation_criteria: EvaluationCriteria;
+  validation_rules: ValidationRules;
+  visibility_and_access: VisibilityAccess;
+  lifecycle_status: TaskLifecycleStatus;
+  optional_enhancements?: OptionalEnhancements;
+}
+
 export interface TaskFilters {
   job_field?: JobField;
   difficulty_level?: DifficultyLevel;

@@ -190,6 +190,11 @@ export const routes: Routes = [
         title: 'Task Management - JobSim Senegal'
       },
       {
+        path: 'tasks/create',
+        loadComponent: () => import('./pages/admin/task-create/task-create.component').then(m => m.TaskCreateComponent),
+        title: 'Create Task - JobSim Senegal'
+      },
+      {
         path: 'submissions',
         loadComponent: () => import('./pages/admin/submissions-management/submissions-management.component').then(m => m.SubmissionsManagementComponent),
         title: 'Submission Management - JobSim Senegal'

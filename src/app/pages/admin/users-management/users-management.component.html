@@ -1,9 +1,20 @@
 <div class="min-h-screen bg-gray-50 py-8">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">User Management</h1>
-      <p class="mt-2 text-gray-600">Manage user accounts and permissions</p>
+    <div class="mb-8 flex justify-between items-start">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">User Management</h1>
+        <p class="mt-2 text-gray-600">Manage user accounts and permissions</p>
+      </div>
+      <button
+        (click)="openCreateUserModal()"
+        class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors flex items-center space-x-2"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        <span>Create User</span>
+      </button>
     </div>
 
     <!-- Filters -->
@@ -142,9 +153,17 @@
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <div class="flex justify-end space-x-2">
                 <button
+                  (click)="openActionModal(user, 'changeRole')"
+                  class="text-indigo-600 hover:text-indigo-900"
+                  title="Change Role"
+                >
+                  Change Role
+                </button>
+                <button
                   *ngIf="user.status === 'active'"
                   (click)="openActionModal(user, 'suspend')"
                   class="text-yellow-600 hover:text-yellow-900"
+                  title="Suspend"
                 >
                   Suspend
                 </button>
@@ -152,15 +171,24 @@
                   *ngIf="user.status === 'suspended'"
                   (click)="openActionModal(user, 'unsuspend')"
                   class="text-green-600 hover:text-green-900"
+                  title="Unsuspend"
                 >
                   Unsuspend
                 </button>
                 <button
                   *ngIf="user.status !== 'banned'"
                   (click)="openActionModal(user, 'ban')"
-                  class="text-red-600 hover:text-red-900"
+                  class="text-orange-600 hover:text-orange-900"
+                  title="Ban"
                 >
                   Ban
+                </button>
+                <button
+                  (click)="openActionModal(user, 'delete')"
+                  class="text-red-600 hover:text-red-900"
+                  title="Delete Permanently"
+                >
+                  Delete
                 </button>
               </div>
             </td>
@@ -188,15 +216,41 @@
     (click)="$event.stopPropagation()"
   >
     <h3 class="text-lg font-semibold text-gray-900 mb-4">
-      {{ actionType === 'suspend' ? 'Suspend User' : actionType === 'ban' ? 'Ban User' : 'Unsuspend User' }}
+      {{
+        actionType === 'suspend' ? 'Suspend User' :
+        actionType === 'ban' ? 'Ban User' :
+        actionType === 'unsuspend' ? 'Unsuspend User' :
+        actionType === 'delete' ? 'Delete User' :
+        actionType === 'changeRole' ? 'Change User Role' : 'User Action'
+      }}
     </h3>
 
     <div *ngIf="selectedUser" class="mb-4">
       <p class="text-sm text-gray-600">
-        You are about to {{ actionType }} <strong>{{ selectedUser.name }}</strong> ({{ selectedUser.email }})
+        <strong>{{ selectedUser.name }}</strong> ({{ selectedUser.email }})
+      </p>
+      <p class="text-xs text-gray-500 mt-1">
+        Current Role: {{ (selectedUser.user_type || 'student') | roleDisplayName }}
       </p>
     </div>
 
+    <!-- Role Selection for Change Role -->
+    <div *ngIf="actionType === 'changeRole'" class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        New Role <span class="text-red-500">*</span>
+      </label>
+      <select
+        [(ngModel)]="newRole"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+      >
+        <option value="student">Student (Candidate)</option>
+        <option value="support">Support (Platform Support)</option>
+        <option value="enterprise">Enterprise (Enterprise Recruiter)</option>
+        <option value="admin">Admin (Superuser)</option>
+      </select>
+    </div>
+
+    <!-- Reason Field -->
     <div *ngIf="actionType !== 'unsuspend'" class="mb-4">
       <label class="block text-sm font-medium text-gray-700 mb-2">
         Reason <span class="text-red-500">*</span>
@@ -207,7 +261,9 @@
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
         placeholder="Provide a detailed reason for this action..."
       ></textarea>
-      <p class="text-xs text-gray-500 mt-1">This will be visible to the user</p>
+      <p class="text-xs text-gray-500 mt-1">
+        {{ actionType === 'delete' ? 'This action is permanent and cannot be undone!' : 'This will be logged in the audit trail' }}
+      </p>
     </div>
 
     <div class="flex space-x-3">
@@ -224,12 +280,123 @@
         class="flex-1 px-4 py-2 rounded-lg text-white transition-colors disabled:opacity-50"
         [ngClass]="{
           'bg-yellow-600 hover:bg-yellow-700': actionType === 'suspend',
-          'bg-red-600 hover:bg-red-700': actionType === 'ban',
-          'bg-green-600 hover:bg-green-700': actionType === 'unsuspend'
+          'bg-orange-600 hover:bg-orange-700': actionType === 'ban',
+          'bg-green-600 hover:bg-green-700': actionType === 'unsuspend',
+          'bg-red-600 hover:bg-red-700': actionType === 'delete',
+          'bg-indigo-600 hover:bg-indigo-700': actionType === 'changeRole'
         }"
       >
         <span *ngIf="!actionLoading">Confirm</span>
         <span *ngIf="actionLoading">Processing...</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Create User Modal -->
+<div
+  *ngIf="showCreateUserModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  (click)="closeCreateUserModal()"
+>
+  <div
+    class="bg-white rounded-lg p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto"
+    (click)="$event.stopPropagation()"
+  >
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Create New User</h3>
+
+    <p class="text-sm text-gray-600 mb-4">
+      Create Admin, Support, or Enterprise users. Students must self-register through the public signup.
+    </p>
+
+    <div class="space-y-4">
+      <!-- Email -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Email <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="email"
+          [(ngModel)]="createUserForm.email"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="user@example.com"
+        />
+      </div>
+
+      <!-- Name -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Full Name <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          [(ngModel)]="createUserForm.name"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="John Doe"
+        />
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Temporary Password <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="password"
+          [(ngModel)]="createUserForm.password"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="Minimum 8 characters"
+        />
+        <p class="text-xs text-gray-500 mt-1">User should change this on first login</p>
+      </div>
+
+      <!-- Role -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Role <span class="text-red-500">*</span>
+        </label>
+        <select
+          [(ngModel)]="createUserForm.user_type"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+        >
+          <option value="support">Support (Platform Support)</option>
+          <option value="enterprise">Enterprise (Enterprise Recruiter)</option>
+          <option value="admin">Admin (Superuser)</option>
+        </select>
+      </div>
+
+      <!-- Enterprise Selection (if role is enterprise) -->
+      <div *ngIf="createUserForm.user_type === 'enterprise'">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Link to Enterprise <span class="text-red-500">*</span>
+        </label>
+        <select
+          [(ngModel)]="createUserForm.enterprise_id"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+        >
+          <option value="">Select Enterprise...</option>
+          <option *ngFor="let enterprise of availableEnterprises" [value]="enterprise.id">
+            {{ enterprise.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="flex space-x-3 mt-6">
+      <button
+        (click)="closeCreateUserModal()"
+        [disabled]="actionLoading"
+        class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="createUser()"
+        [disabled]="actionLoading"
+        class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors disabled:opacity-50"
+      >
+        <span *ngIf="!actionLoading">Create User</span>
+        <span *ngIf="actionLoading">Creating...</span>
       </button>
     </div>
   </div>
