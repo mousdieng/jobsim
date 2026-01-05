@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard, adminGuard, studentOrEnterpriseGuard } from './guards/auth.guard';
+import { authGuard, guestGuard, adminGuard, studentOrEnterpriseGuard, enterpriseGuard, taskCreationGuard } from './guards/auth.guard';
 import { supportGuard } from './guards/support.guard';
 
 export const routes: Routes = [
@@ -152,6 +152,73 @@ export const routes: Routes = [
         path: 'settings',
         loadComponent: () => import('./pages/settings/settings.component').then(m => m.SettingsComponent),
         title: 'Settings - JobSim Senegal'
+      }
+    ]
+  },
+
+  // ============================================
+  // ENTERPRISE ROUTES (Require enterprise role)
+  // ============================================
+  {
+    path: 'enterprise',
+    loadComponent: () => import('./layouts/enterprise-layout/enterprise-layout.component').then(m => m.EnterpriseLayoutComponent),
+    canActivate: [authGuard, enterpriseGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./pages/enterprise/dashboard/dashboard.component').then(m => m.EnterpriseDashboardComponent),
+        title: 'Dashboard - JobSim Senegal'
+      },
+      {
+        path: 'profile',
+        loadComponent: () => import('./pages/enterprise/profile/profile.component').then(m => m.EnterpriseProfileComponent),
+        title: 'Company Profile - JobSim Senegal'
+      },
+      {
+        path: 'tasks',
+        loadComponent: () => import('./pages/enterprise/tasks/task-list.component').then(m => m.EnterpriseTaskListComponent),
+        title: 'Tasks - JobSim Senegal'
+      },
+      {
+        path: 'tasks/create',
+        loadComponent: () => import('./pages/enterprise/tasks/task-create.component').then(m => m.EnterpriseTaskCreateComponent),
+        canActivate: [taskCreationGuard],
+        title: 'Create Task - JobSim Senegal'
+      },
+      {
+        path: 'tasks/:id',
+        loadComponent: () => import('./pages/enterprise/tasks/task-detail.component').then(m => m.EnterpriseTaskDetailComponent),
+        title: 'Task Details - JobSim Senegal'
+      },
+      {
+        path: 'candidates',
+        loadComponent: () => import('./pages/enterprise/candidates/candidate-list.component').then(m => m.EnterpriseCandidateListComponent),
+        title: 'Candidates - JobSim Senegal'
+      },
+      {
+        path: 'candidates/:id',
+        loadComponent: () => import('./pages/enterprise/candidates/candidate-detail.component').then(m => m.EnterpriseCandidateDetailComponent),
+        title: 'Candidate Details - JobSim Senegal'
+      },
+      {
+        path: 'analytics',
+        loadComponent: () => import('./pages/enterprise/analytics/analytics.component').then(m => m.EnterpriseAnalyticsComponent),
+        title: 'Analytics - JobSim Senegal'
+      },
+      {
+        path: 'support',
+        loadComponent: () => import('./pages/enterprise/support/support.component').then(m => m.EnterpriseSupportComponent),
+        title: 'Support - JobSim Senegal'
+      },
+      {
+        path: 'notifications',
+        loadComponent: () => import('./pages/enterprise/notifications/notifications.component').then(m => m.EnterpriseNotificationsComponent),
+        title: 'Notifications - JobSim Senegal'
       }
     ]
   },

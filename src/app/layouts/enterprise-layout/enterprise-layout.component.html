@@ -1,0 +1,144 @@
+<div class="flex h-screen bg-gray-100">
+  <!-- Sidebar -->
+  <aside
+    class="bg-gradient-to-b from-emerald-600 to-teal-700 text-white transition-all duration-300 flex-shrink-0 shadow-xl"
+    [ngClass]="sidebarCollapsed ? 'w-20' : 'w-64'"
+  >
+    <div class="flex flex-col h-full">
+      <!-- Logo & Toggle -->
+      <div class="p-4 flex items-center justify-between border-b border-white/10">
+        <div *ngIf="!sidebarCollapsed" class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center font-bold text-lg backdrop-blur-sm">
+            {{ getInitials() }}
+          </div>
+          <div>
+            <div class="font-semibold text-sm">{{ enterprise?.name || 'Enterprise' }}</div>
+            <div class="text-xs text-emerald-100">Partner Dashboard</div>
+          </div>
+        </div>
+        <div *ngIf="sidebarCollapsed" class="flex justify-center w-full">
+          <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center font-bold text-lg backdrop-blur-sm">
+            {{ getInitials() }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 px-2 py-4 overflow-y-auto space-y-1">
+        <ng-container *ngFor="let item of navItems">
+          <a
+            *ngIf="item.visible"
+            [routerLink]="item.route"
+            routerLinkActive="bg-emerald-700 shadow-lg"
+            [routerLinkActiveOptions]="{ exact: item.route === '/enterprise/dashboard' }"
+            class="flex items-center px-4 py-3 text-emerald-50 hover:bg-emerald-700 rounded-lg transition-colors group relative"
+            [ngClass]="sidebarCollapsed ? 'justify-center' : ''"
+          >
+            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon"></path>
+            </svg>
+            <span *ngIf="!sidebarCollapsed" class="ml-3 font-medium">{{ item.label }}</span>
+
+            <!-- Tooltip for collapsed state -->
+            <div
+              *ngIf="sidebarCollapsed"
+              class="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50"
+            >
+              {{ item.label }}
+            </div>
+          </a>
+        </ng-container>
+      </nav>
+
+      <!-- Task Creation Status -->
+      <div class="px-4 py-3 border-t border-white/10">
+        <div *ngIf="!sidebarCollapsed" class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+          <div class="flex items-center space-x-2 mb-2">
+            <div class="w-2 h-2 rounded-full" [ngClass]="canCreateTasks ? 'bg-green-400 animate-pulse' : 'bg-yellow-400'"></div>
+            <span class="text-xs font-medium text-emerald-100">Task Creation</span>
+          </div>
+          <p class="text-xs text-emerald-200">
+            {{ canCreateTasks ? 'Enabled' : 'Contact Admin to Enable' }}
+          </p>
+        </div>
+        <div *ngIf="sidebarCollapsed" class="flex justify-center">
+          <div class="w-2 h-2 rounded-full" [ngClass]="canCreateTasks ? 'bg-green-400 animate-pulse' : 'bg-yellow-400'"></div>
+        </div>
+      </div>
+
+      <!-- User Section -->
+      <div class="p-4 border-t border-white/10">
+        <button
+          (click)="logout()"
+          class="w-full flex items-center px-4 py-3 text-emerald-50 hover:bg-emerald-700 rounded-lg transition-colors group"
+          [ngClass]="sidebarCollapsed ? 'justify-center' : ''"
+        >
+          <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+          </svg>
+          <span *ngIf="!sidebarCollapsed" class="ml-3 font-medium">Logout</span>
+        </button>
+      </div>
+
+      <!-- Collapse Toggle (Bottom) -->
+      <div class="px-4 pb-4">
+        <button
+          (click)="toggleSidebar()"
+          class="w-full flex items-center justify-center px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+        >
+          <svg
+            class="w-5 h-5 transition-transform duration-300"
+            [ngClass]="sidebarCollapsed ? 'rotate-180' : ''"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+    <!-- Header -->
+    <header class="bg-white shadow-sm h-16 flex items-center justify-between px-6 flex-shrink-0">
+      <div>
+        <h1 class="text-xl font-semibold text-gray-900">Enterprise Portal</h1>
+        <p class="text-xs text-gray-600">Manage tasks and evaluate talent</p>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <!-- Verification Status -->
+        <div *ngIf="enterprise" class="flex items-center space-x-2">
+          <div
+            class="px-3 py-1 rounded-full text-xs font-medium"
+            [ngClass]="enterprise.is_verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'"
+          >
+            <span class="flex items-center space-x-1">
+              <svg *ngIf="enterprise.is_verified" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <span>{{ enterprise.is_verified ? 'Verified Partner' : 'Pending Verification' }}</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="flex items-center space-x-2 text-sm text-gray-600">
+          <div class="relative">
+            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div class="absolute top-0 left-0 w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+          </div>
+          <span class="hidden sm:inline">All Systems Operational</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="flex-1 overflow-y-auto bg-gray-50">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

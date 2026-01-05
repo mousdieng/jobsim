@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { SupabaseService } from '../services/supabase.service';
 import { map, filter, take, timeout, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
@@ -71,6 +72,8 @@ export const guestGuard: CanActivateFn = (route, state) => {
         router.navigate(['/admin/dashboard']);
       } else if (userType === 'support') {
         router.navigate(['/support/dashboard']);
+      } else if (userType === 'enterprise') {
+        router.navigate(['/enterprise/dashboard']);
       } else {
         router.navigate(['/app/dashboard']);
       }
@@ -126,6 +129,7 @@ export const adminGuard: CanActivateFn = roleGuard(['admin']);
 /**
  * Student/Enterprise Guard - Allows only students and enterprises to access /app/* routes
  * Redirects admins to /admin/dashboard and support to /support/dashboard
+ * NOTE: Enterprises now have separate /enterprise/* routes, redirect them there
  */
 export const studentOrEnterpriseGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -153,8 +157,53 @@ export const studentOrEnterpriseGuard: CanActivateFn = (route, state) => {
         return false;
       }
 
-      // Allow students and enterprises
+      // Redirect enterprises to enterprise portal
+      if (userType === 'enterprise') {
+        router.navigate(['/enterprise/dashboard']);
+        return false;
+      }
+
+      // Allow only students
       return true;
     })
   );
+};
+
+/**
+ * Task Creation Guard - Checks if enterprise can create tasks
+ * Used to protect /enterprise/tasks/create route
+ */
+export const taskCreationGuard: CanActivateFn = async (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  const supabaseService = inject(SupabaseService);
+
+  const user = authService.getCurrentUser();
+
+  if (!user || user.user_type !== 'enterprise') {
+    router.navigate(['/unauthorized']);
+    return false;
+  }
+
+  try {
+    // Check if enterprise can create tasks
+    const { data: enterprise, error } = await supabaseService.client
+      .from('enterprises')
+      .select('can_create_tasks')
+      .eq('admin_user_id', user.id)
+      .single();
+
+    if (error || !enterprise?.can_create_tasks) {
+      router.navigate(['/enterprise/dashboard'], {
+        queryParams: { error: 'task_creation_disabled' }
+      });
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error checking task creation permission:', error);
+    router.navigate(['/enterprise/dashboard']);
+    return false;
+  }
 };

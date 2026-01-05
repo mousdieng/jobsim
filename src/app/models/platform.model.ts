@@ -662,3 +662,85 @@ export interface PlatformStatistics {
   tasks_by_field: Record<JobField, number>;
   popular_skills: string[];
 }
+
+// ============================================
+// ENTERPRISE-SPECIFIC MODELS
+// ============================================
+
+export interface EnterpriseStats {
+  total_tasks: number;
+  active_tasks: number;
+  pending_tasks: number;
+  total_submissions: number;
+  total_candidates: number;
+  average_score: number;
+  task_approval_rate: number;
+}
+
+export interface CandidateProfile {
+  id: string;
+  display_name: string; // Initials (A.B.) before evaluation, full name after
+  full_name?: string; // Only populated if evaluation_complete
+  email?: string; // Only populated if evaluation_complete
+  job_field: JobField;
+  experience_level: ExperienceLevel;
+  task_id: string;
+  task_title: string;
+  submission_id: string;
+  score: number;
+  submitted_at: string;
+  evaluation_complete: boolean; // True when enterprise has rated submission
+  enterprise_rating?: number;
+  enterprise_feedback?: string;
+  recommended_for_followup: boolean;
+  identity_revealed: boolean; // UI flag for anonymization status
+}
+
+export interface TaskAnalytics {
+  task_id: string;
+  task_title: string;
+  total_submissions: number;
+  completion_rate: number;
+  average_score: number;
+  score_distribution: { range: string; count: number }[];
+  submission_timeline: { date: string; count: number }[];
+  top_performers: CandidateProfile[];
+}
+
+export interface EnterpriseNotification {
+  id: string;
+  enterprise_id: string;
+  type: 'task_approved' | 'task_rejected' | 'new_submission' | 'permission_changed' | 'policy_update' | 'system';
+  title: string;
+  message: string;
+  action_url?: string;
+  read: boolean;
+  created_at: string;
+}
+
+export interface SupportTicketCreate {
+  subject: string;
+  category: 'technical' | 'task_help' | 'billing' | 'feature_request' | 'report' | 'general';
+  priority: 'low' | 'medium' | 'high';
+  description: string;
+  attachments?: string[];
+}
+
+export interface SupportTicket extends SupportTicketCreate {
+  id: string;
+  enterprise_id: string;
+  status: 'open' | 'in_progress' | 'resolved' | 'closed';
+  assigned_to?: string;
+  created_at: string;
+  updated_at: string;
+  responses: SupportTicketResponse[];
+}
+
+export interface SupportTicketResponse {
+  id: string;
+  ticket_id: string;
+  author_id: string;
+  author_role: 'enterprise' | 'support' | 'admin';
+  message: string;
+  created_at: string;
+}
