@@ -1,39 +1,50 @@
 <div class="min-h-screen bg-gray-50 py-8">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Enterprise Management</h1>
-      <p class="mt-2 text-gray-600">Approve and manage enterprise accounts</p>
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Gestion des Entreprises</h1>
+        <p class="mt-2 text-gray-600">Approuver et gérer les comptes d'entreprise</p>
+      </div>
+      <button
+        (click)="openCreateModal()"
+        class="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+      >
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Créer une Entreprise
+      </button>
     </div>
 
     <!-- Filters -->
     <div class="bg-white rounded-lg shadow p-6 mb-6">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Filtres</h2>
       <div class="flex items-end space-x-4">
         <div class="flex-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
           <select
             [(ngModel)]="statusFilter"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
           >
-            <option value="">All</option>
-            <option value="pending">Pending Approval</option>
-            <option value="active">Active</option>
-            <option value="suspended">Suspended</option>
-            <option value="banned">Banned</option>
+            <option value="">Tous</option>
+            <option value="pending">En attente d'approbation</option>
+            <option value="active">Actif</option>
+            <option value="suspended">Suspendu</option>
+            <option value="banned">Banni</option>
           </select>
         </div>
         <button
           (click)="applyFilters()"
           class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
         >
-          Apply
+          Appliquer
         </button>
         <button
           (click)="clearFilters()"
           class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
         >
-          Clear
+          Effacer
         </button>
       </div>
     </div>
@@ -41,7 +52,7 @@
     <!-- Loading State -->
     <div *ngIf="loading" class="text-center py-12">
       <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      <p class="mt-4 text-gray-600">Loading enterprises...</p>
+      <p class="mt-4 text-gray-600">Chargement des entreprises...</p>
     </div>
 
     <!-- Error State -->
@@ -133,28 +144,28 @@
               (click)="openActionModal(enterprise, 'approve')"
               class="flex-1 px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
             >
-              Approve
+              Approuver
             </button>
             <button
               *ngIf="enterprise.status === 'pending'"
               (click)="openActionModal(enterprise, 'reject')"
               class="flex-1 px-3 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
             >
-              Reject
+              Rejeter
             </button>
             <button
               *ngIf="enterprise.status === 'active'"
               (click)="openActionModal(enterprise, 'suspend')"
               class="flex-1 px-3 py-2 bg-yellow-600 text-white text-sm font-medium rounded-lg hover:bg-yellow-700 transition-colors"
             >
-              Suspend
+              Suspendre
             </button>
             <button
               *ngIf="enterprise.status === 'suspended'"
               (click)="openActionModal(enterprise, 'unsuspend')"
               class="flex-1 px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
             >
-              Unsuspend
+              Réactiver
             </button>
           </div>
         </div>
@@ -165,7 +176,7 @@
         <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
-        <p class="text-gray-600">No enterprises found</p>
+        <p class="text-gray-600">Aucune entreprise trouvée</p>
       </div>
     </div>
   </div>
@@ -182,28 +193,28 @@
     (click)="$event.stopPropagation()"
   >
     <h3 class="text-lg font-semibold text-gray-900 mb-4">
-      {{ actionType === 'approve' ? 'Approve Enterprise' :
-         actionType === 'reject' ? 'Reject Enterprise' :
-         actionType === 'suspend' ? 'Suspend Enterprise' : 'Unsuspend Enterprise' }}
+      {{ actionType === 'approve' ? 'Approuver l\'Entreprise' :
+         actionType === 'reject' ? 'Rejeter l\'Entreprise' :
+         actionType === 'suspend' ? 'Suspendre l\'Entreprise' : 'Réactiver l\'Entreprise' }}
     </h3>
 
     <div *ngIf="selectedEnterprise" class="mb-4">
       <p class="text-sm text-gray-600">
-        You are about to {{ actionType }} <strong>{{ selectedEnterprise.name }}</strong>
+        Vous êtes sur le point de {{ actionType === 'approve' ? 'approuver' : actionType === 'reject' ? 'rejeter' : actionType === 'suspend' ? 'suspendre' : 'réactiver' }} <strong>{{ selectedEnterprise.name }}</strong>
       </p>
     </div>
 
     <div *ngIf="actionType === 'reject' || actionType === 'suspend'" class="mb-4">
       <label class="block text-sm font-medium text-gray-700 mb-2">
-        Reason <span class="text-red-500">*</span>
+        Raison <span class="text-red-500">*</span>
       </label>
       <textarea
         [(ngModel)]="actionReason"
         rows="3"
         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-        placeholder="Provide a detailed reason for this action..."
+        placeholder="Fournir une raison détaillée pour cette action..."
       ></textarea>
-      <p class="text-xs text-gray-500 mt-1">This will be visible to the enterprise</p>
+      <p class="text-xs text-gray-500 mt-1">Cela sera visible pour l'entreprise</p>
     </div>
 
     <div class="flex space-x-3">
@@ -212,7 +223,7 @@
         [disabled]="actionLoading"
         class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
       >
-        Cancel
+        Annuler
       </button>
       <button
         (click)="performAction()"
@@ -224,9 +235,265 @@
           'bg-yellow-600 hover:bg-yellow-700': actionType === 'suspend'
         }"
       >
-        <span *ngIf="!actionLoading">Confirm</span>
-        <span *ngIf="actionLoading">Processing...</span>
+        <span *ngIf="!actionLoading">Confirmer</span>
+        <span *ngIf="actionLoading">Traitement en cours...</span>
       </button>
     </div>
+  </div>
+</div>
+
+<!-- Create Enterprise Modal -->
+<div
+  *ngIf="showCreateModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto"
+  (click)="closeCreateModal()"
+>
+  <div
+    class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 my-8"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-2xl font-bold text-gray-900">Créer une Nouvelle Entreprise</h3>
+      <button
+        (click)="closeCreateModal()"
+        class="text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <form (ngSubmit)="createEnterprise()" class="space-y-4">
+      <!-- Basic Information -->
+      <div class="bg-gray-50 rounded-lg p-4">
+        <h4 class="font-semibold text-gray-900 mb-3">Informations de Base</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Enterprise Name -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Nom de l'Entreprise <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="createForm.name"
+              name="name"
+              class="w-full px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+              [class.border-red-500]="validationErrors['name']"
+              placeholder="ex., Tech Solutions Inc"
+            />
+            <p *ngIf="validationErrors['name']" class="text-xs text-red-600 mt-1">
+              {{ validationErrors['name'] }}
+            </p>
+          </div>
+
+          <!-- Sector/Industry -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Secteur d'Activité <span class="text-red-500">*</span>
+            </label>
+            <select
+              [(ngModel)]="createForm.sector"
+              name="sector"
+              class="w-full px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+              [class.border-red-500]="validationErrors['sector']"
+            >
+              <option value="">Sélectionner un secteur</option>
+              <option value="Technology">Technologie</option>
+              <option value="Healthcare">Santé</option>
+              <option value="Finance">Finance</option>
+              <option value="Education">Éducation</option>
+              <option value="Retail">Commerce de Détail</option>
+              <option value="Manufacturing">Fabrication</option>
+              <option value="Consulting">Conseil</option>
+              <option value="Telecommunications">Télécommunications</option>
+              <option value="Energy">Énergie</option>
+              <option value="Other">Autre</option>
+            </select>
+            <p *ngIf="validationErrors['sector']" class="text-xs text-red-600 mt-1">
+              {{ validationErrors['sector'] }}
+            </p>
+          </div>
+
+          <!-- Company Size -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Taille de l'Entreprise
+            </label>
+            <select
+              [(ngModel)]="createForm.size"
+              name="size"
+              class="w-full px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+            >
+              <option value="">Sélectionner une taille</option>
+              <option value="1-10">1-10 employés</option>
+              <option value="11-50">11-50 employés</option>
+              <option value="51-200">51-200 employés</option>
+              <option value="201-500">201-500 employés</option>
+              <option value="501-1000">501-1000 employés</option>
+              <option value="1000+">1000+ employés</option>
+            </select>
+          </div>
+
+          <!-- Location -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Localisation
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="createForm.location"
+              name="location"
+              class="w-full px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="ex., Dakar, Sénégal"
+            />
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Description
+          </label>
+          <textarea
+            [(ngModel)]="createForm.description"
+            name="description"
+            rows="3"
+            class="w-full px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Brève description de l'entreprise..."
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="bg-gray-50 rounded-lg p-4">
+        <h4 class="font-semibold text-gray-900 mb-3">Informations de Contact</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Contact Email -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Email de Contact <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              [(ngModel)]="createForm.contact_email"
+              name="contact_email"
+              class="w-full px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+              [class.border-red-500]="validationErrors['contact_email']"
+              placeholder="contact@entreprise.com"
+            />
+            <p *ngIf="validationErrors['contact_email']" class="text-xs text-red-600 mt-1">
+              {{ validationErrors['contact_email'] }}
+            </p>
+          </div>
+
+          <!-- Contact Phone -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Téléphone de Contact
+            </label>
+            <input
+              type="tel"
+              [(ngModel)]="createForm.contact_phone"
+              name="contact_phone"
+              class="w-full px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="+221 XX XXX XX XX"
+            />
+          </div>
+
+          <!-- Website -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Site Web
+            </label>
+            <input
+              type="url"
+              [(ngModel)]="createForm.website"
+              name="website"
+              class="w-full px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+              [class.border-red-500]="validationErrors['website']"
+              placeholder="https://www.entreprise.com"
+            />
+            <p *ngIf="validationErrors['website']" class="text-xs text-red-600 mt-1">
+              {{ validationErrors['website'] }}
+            </p>
+          </div>
+
+          <!-- Logo URL -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              URL du Logo
+            </label>
+            <input
+              type="url"
+              [(ngModel)]="createForm.logo_url"
+              name="logo_url"
+              class="w-full px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="https://exemple.com/logo.png"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Permissions -->
+      <div class="bg-gray-50 rounded-lg p-4">
+        <h4 class="font-semibold text-gray-900 mb-3">Permissions et Liaison</h4>
+
+        <!-- Can Create Tasks -->
+        <div class="flex items-center mb-4">
+          <input
+            type="checkbox"
+            [(ngModel)]="createForm.can_create_tasks"
+            name="can_create_tasks"
+            id="can_create_tasks"
+            class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+          />
+          <label for="can_create_tasks" class="ml-2 text-sm text-gray-700">
+            Autoriser cette entreprise à créer des tâches
+          </label>
+        </div>
+
+        <!-- Link to Enterprise User -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Lier à un Utilisateur Entreprise (Optionnel)
+          </label>
+          <select
+            [(ngModel)]="createForm.admin_user_id"
+            name="admin_user_id"
+            class="w-full px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+            [disabled]="loadingUsers"
+          >
+            <option value="">-- Sélectionner un utilisateur --</option>
+            <option *ngFor="let user of availableUsers" [value]="user.id">
+              {{ user.name }} ({{ user.email }})
+            </option>
+          </select>
+          <p class="text-xs text-gray-500 mt-1">
+            Lier cette entreprise à un compte utilisateur entreprise existant
+          </p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex space-x-3 pt-4">
+        <button
+          type="button"
+          (click)="closeCreateModal()"
+          [disabled]="actionLoading"
+          class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          [disabled]="actionLoading"
+          class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 font-medium"
+        >
+          <span *ngIf="!actionLoading">Créer l'Entreprise</span>
+          <span *ngIf="actionLoading">Création en cours...</span>
+        </button>
+      </div>
+    </form>
   </div>
 </div>

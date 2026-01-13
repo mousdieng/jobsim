@@ -3,7 +3,7 @@
   <div *ngIf="isLoading$ | async" class="min-h-screen flex items-center justify-center bg-gray-50">
     <div class="text-center p-8 bg-white rounded-xl shadow-lg">
       <div class="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-      <p class="text-lg font-medium text-gray-700">Authenticating...</p>
+      <p class="text-lg font-medium text-gray-700">{{ 'common.messages.authenticating' | translate }}</p>
     </div>
   </div>
 

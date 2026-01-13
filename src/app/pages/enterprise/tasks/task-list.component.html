@@ -1,0 +1,167 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">{{ 'enterprise.tasks.title' | translate }}</h1>
+        <p class="mt-2 text-sm text-gray-600">{{ 'enterprise.tasks.subtitle' | translate }}</p>
+      </div>
+      <div *ngIf="canCreateTasks">
+        <a
+          routerLink="/enterprise/tasks/create"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+        >
+          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+          </svg>
+          {{ 'enterprise.tasks.create_task' | translate }}
+        </a>
+      </div>
+      <div *ngIf="!canCreateTasks" class="text-sm text-gray-500">
+        {{ 'enterprise.dashboard.task_creation_disabled' | translate }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="mb-6 bg-white shadow rounded-lg p-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Search -->
+      <div class="col-span-2">
+        <label for="search" class="block text-sm font-medium text-gray-700 mb-1">
+          {{ 'enterprise.tasks.search' | translate }}
+        </label>
+        <input
+          type="text"
+          id="search"
+          [(ngModel)]="searchQuery"
+          [placeholder]="'enterprise.tasks.search_placeholder' | translate"
+          class="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+        >
+      </div>
+
+      <!-- Status Filter -->
+      <div>
+        <label for="status" class="block text-sm font-medium text-gray-700 mb-1">
+          {{ 'enterprise.tasks.filter_status' | translate }}
+        </label>
+        <select
+          id="status"
+          [(ngModel)]="filterStatus"
+          class="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+        >
+          <option value="all">{{ 'enterprise.tasks.status.all' | translate }}</option>
+          <option value="draft">{{ 'task.status.draft' | translate }}</option>
+          <option value="pending_validation">{{ 'enterprise.tasks.status.pending_validation' | translate }}</option>
+          <option value="published">{{ 'task.status.published' | translate }}</option>
+          <option value="rejected">{{ 'task.status.rejected' | translate }}</option>
+          <option value="archived">{{ 'enterprise.tasks.status.archived' | translate }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+    <p class="mt-2 text-sm text-gray-500">{{ 'common.messages.loading' | translate }}</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="rounded-md bg-red-50 p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-red-800">{{ error }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tasks List -->
+  <div *ngIf="!isLoading && !error">
+    <!-- Empty State -->
+    <div *ngIf="getFilteredTasks().length === 0" class="text-center py-12 bg-white rounded-lg shadow">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">{{ 'enterprise.tasks.no_tasks' | translate }}</h3>
+      <p class="mt-1 text-sm text-gray-500">{{ 'enterprise.tasks.no_tasks_desc' | translate }}</p>
+      <div class="mt-6" *ngIf="canCreateTasks">
+        <a
+          routerLink="/enterprise/tasks/create"
+          class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+        >
+          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+          </svg>
+          {{ 'enterprise.tasks.create_first_task' | translate }}
+        </a>
+      </div>
+    </div>
+
+    <!-- Tasks Grid -->
+    <div *ngIf="getFilteredTasks().length > 0" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        *ngFor="let task of getFilteredTasks()"
+        class="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-200"
+      >
+        <div class="px-4 py-5 sm:p-6">
+          <!-- Status Badge -->
+          <div class="flex items-center justify-between mb-3">
+            <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getStatusBadgeClass(task.status)">
+              {{ 'task.status.' + task.status | translate }}
+            </span>
+            <span *ngIf="task.difficulty_level" [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getDifficultyBadgeClass(task.difficulty_level)">
+              {{ 'task.difficulty.' + task.difficulty_level | translate }}
+            </span>
+          </div>
+
+          <!-- Task Title -->
+          <h3 class="text-lg font-medium text-gray-900 mb-2 line-clamp-2">
+            {{ task.title }}
+          </h3>
+
+          <!-- Job Field -->
+          <p class="text-sm text-gray-500 mb-3">
+            {{ 'job_field.' + task.job_field | translate }}
+          </p>
+
+          <!-- Description -->
+          <p class="text-sm text-gray-600 mb-4 line-clamp-3">
+            {{ task.description }}
+          </p>
+
+          <!-- Stats -->
+          <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+            <div class="flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              {{ task.submission_count || 0 }} {{ 'enterprise.tasks.submissions' | translate }}
+            </div>
+            <div *ngIf="task.points" class="flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+              {{ task.points }}
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex space-x-2">
+            <a
+              [routerLink]="['/enterprise/tasks', task.id]"
+              class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+            >
+              {{ 'common.buttons.view_details' | translate }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

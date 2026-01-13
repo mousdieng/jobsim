@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from './services/auth.service';
+import { LanguageService } from './services/language.service';
 import { User } from './models';
 import { Observable } from 'rxjs';
 
@@ -10,7 +12,8 @@ import { Observable } from 'rxjs';
   imports: [
     NgIf,
     AsyncPipe,
-    RouterOutlet
+    RouterOutlet,
+    TranslateModule
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -23,7 +26,8 @@ export class App implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private languageService: LanguageService
   ) {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
     this.isLoading$ = this.authService.loading$;

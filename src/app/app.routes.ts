@@ -4,22 +4,17 @@ import { supportGuard } from './guards/support.guard';
 
 export const routes: Routes = [
   // ============================================
-  // PUBLIC PAGES (No authentication required)
+  // PUBLIC/AUTHENTICATED HOME PAGE
   // ============================================
   {
     path: '',
-    loadComponent: () => import('./pages/public/landing/landing.component').then(m => m.LandingComponent),
-    title: 'JobSim Senegal - Master Real-World Job Skills'
+    loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent),
+    title: 'JobSim Sénégal - Développez vos Compétences Professionnelles'
   },
   {
     path: 'browse-tasks',
     loadComponent: () => import('./pages/public/browse-tasks/browse-tasks.component').then(m => m.BrowseTasksComponent),
     title: 'Browse Tasks - JobSim Senegal'
-  },
-  {
-    path: 'about',
-    loadComponent: () => import('./pages/public/about/about.component').then(m => m.AboutComponent),
-    title: 'About Us - JobSim Senegal'
   },
 
   // ============================================
@@ -86,21 +81,21 @@ export const routes: Routes = [
     loadComponent: () => import('./layouts/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
     canActivate: [authGuard, studentOrEnterpriseGuard],
     children: [
-      // Dashboard (default protected route)
+      // Dashboard redirect to home
       {
         path: '',
-        redirectTo: 'dashboard',
+        redirectTo: '/',
         pathMatch: 'full'
       },
       {
         path: 'dashboard',
-        loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent),
-        title: 'Dashboard - JobSim Senegal'
+        redirectTo: '/',
+        pathMatch: 'full'
       },
       // Legacy redirect
       {
         path: 'home',
-        redirectTo: 'dashboard',
+        redirectTo: '/',
         pathMatch: 'full'
       },
 
@@ -196,6 +191,19 @@ export const routes: Routes = [
         title: 'Task Details - JobSim Senegal'
       },
       {
+        path: 'analytics',
+        loadComponent: () => import('./pages/enterprise/analytics/analytics.component').then(m => m.EnterpriseAnalyticsComponent),
+        title: 'Analytics - JobSim Senegal'
+      }
+      // TODO: Uncomment routes below as components are created
+      /*
+      {
+        path: 'tasks/create',
+        loadComponent: () => import('./pages/enterprise/tasks/task-create.component').then(m => m.EnterpriseTaskCreateComponent),
+        canActivate: [taskCreationGuard],
+        title: 'Create Task - JobSim Senegal'
+      },
+      {
         path: 'candidates',
         loadComponent: () => import('./pages/enterprise/candidates/candidate-list.component').then(m => m.EnterpriseCandidateListComponent),
         title: 'Candidates - JobSim Senegal'
@@ -204,11 +212,6 @@ export const routes: Routes = [
         path: 'candidates/:id',
         loadComponent: () => import('./pages/enterprise/candidates/candidate-detail.component').then(m => m.EnterpriseCandidateDetailComponent),
         title: 'Candidate Details - JobSim Senegal'
-      },
-      {
-        path: 'analytics',
-        loadComponent: () => import('./pages/enterprise/analytics/analytics.component').then(m => m.EnterpriseAnalyticsComponent),
-        title: 'Analytics - JobSim Senegal'
       },
       {
         path: 'support',
@@ -220,6 +223,7 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/enterprise/notifications/notifications.component').then(m => m.EnterpriseNotificationsComponent),
         title: 'Notifications - JobSim Senegal'
       }
+      */
     ]
   },
 

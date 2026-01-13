@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
 import { JobField, ExperienceLevel } from '../../models/platform.model';
@@ -8,7 +9,7 @@ import { JobField, ExperienceLevel } from '../../models/platform.model';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
@@ -33,30 +34,26 @@ export class ProfileComponent implements OnInit {
     is_available_for_hire: true
   };
 
-  jobFields: { value: JobField; label: string }[] = [
-    { value: 'software_engineering', label: 'Software Engineering' },
-    { value: 'accounting', label: 'Accounting' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'sales', label: 'Sales' },
-    { value: 'human_resources', label: 'Human Resources' },
-    { value: 'project_management', label: 'Project Management' },
-    { value: 'data_science', label: 'Data Science' },
-    { value: 'graphic_design', label: 'Graphic Design' },
-    { value: 'customer_service', label: 'Customer Service' },
-    { value: 'finance', label: 'Finance' },
-    { value: 'legal', label: 'Legal' },
-    { value: 'healthcare', label: 'Healthcare' },
-    { value: 'education', label: 'Education' },
-    { value: 'operations', label: 'Operations' },
-    { value: 'consulting', label: 'Consulting' },
-    { value: 'other', label: 'Other' }
+  jobFields: JobField[] = [
+    'software_engineering',
+    'accounting',
+    'marketing',
+    'sales',
+    'human_resources',
+    'project_management',
+    'data_science',
+    'graphic_design',
+    'customer_service',
+    'finance',
+    'legal',
+    'healthcare',
+    'education',
+    'operations',
+    'consulting',
+    'other'
   ];
 
-  experienceLevels: { value: ExperienceLevel; label: string }[] = [
-    { value: 'junior', label: 'Junior (0-2 years)' },
-    { value: 'mid', label: 'Mid-Level (2-5 years)' },
-    { value: 'senior', label: 'Senior (5+ years)' }
-  ];
+  experienceLevels: ExperienceLevel[] = ['junior', 'mid', 'senior'];
 
   constructor(private authService: AuthService) {}
 
@@ -138,9 +135,4 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  formatJobField(field: string): string {
-    return field.split('_').map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  }
 }

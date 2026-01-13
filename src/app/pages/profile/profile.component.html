@@ -8,7 +8,7 @@
         </svg>
       </div>
       <div class="ml-3">
-        <p class="text-sm font-medium text-green-800">Profile updated successfully!</p>
+        <p class="text-sm font-medium text-green-800">{{ 'profile.save_success' | translate }}</p>
       </div>
     </div>
   </div>
@@ -17,8 +17,8 @@
     <!-- Header -->
     <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
       <div>
-        <h3 class="text-lg leading-6 font-medium text-gray-900">User Profile</h3>
-        <p class="mt-1 max-w-2xl text-sm text-gray-500">Personal information and settings</p>
+        <h3 class="text-lg leading-6 font-medium text-gray-900">{{ 'profile.title' | translate }}</h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ 'profile.subtitle' | translate }}</p>
       </div>
       <button
         *ngIf="!isEditing"
@@ -28,7 +28,7 @@
         <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
         </svg>
-        Edit Profile
+        {{ 'profile.edit_button' | translate }}
       </button>
     </div>
 
@@ -36,54 +36,54 @@
     <div *ngIf="!isEditing" class="border-t border-gray-200">
       <dl>
         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">Full name</dt>
+          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.name' | translate }}</dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user?.name }}</dd>
         </div>
         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">Email address</dt>
+          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.email' | translate }}</dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user?.email }}</dd>
         </div>
         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">Job field</dt>
+          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.job_field' | translate }}</dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-              {{ formatJobField(user?.job_field || 'other') }}
+              {{ 'job_field.' + (user?.job_field || 'other') | translate }}
             </span>
           </dd>
         </div>
         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">Experience level</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user?.experience_level | titlecase }}</dd>
+          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.experience_level' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ 'experience.' + user?.experience_level | translate }}</dd>
         </div>
         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">Location</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user?.location || 'Not specified' }}</dd>
+          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.location' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user?.location || ('profile.not_specified' | translate) }}</dd>
         </div>
         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">Bio</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user?.bio || 'No bio added yet' }}</dd>
+          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.bio' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user?.bio || ('profile.no_bio' | translate) }}</dd>
         </div>
         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">Skills</dt>
+          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.skills' | translate }}</dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
             <div *ngIf="user?.skills && (user?.skills || []).length > 0" class="flex flex-wrap gap-2">
               <span *ngFor="let skill of (user?.skills || [])" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                 {{ skill }}
               </span>
             </div>
-            <span *ngIf="!user?.skills || (user?.skills || []).length === 0" class="text-gray-500">No skills added yet</span>
+            <span *ngIf="!user?.skills || (user?.skills || []).length === 0" class="text-gray-500">{{ 'profile.no_skills' | translate }}</span>
           </dd>
         </div>
         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">Available for hire</dt>
+          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.available_for_hire' | translate }}</dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
             <span [class]="user?.is_available_for_hire ? 'text-green-600' : 'text-gray-500'">
-              {{ user?.is_available_for_hire ? 'Yes' : 'No' }}
+              {{ (user?.is_available_for_hire ? 'common.yes' : 'common.no') | translate }}
             </span>
           </dd>
         </div>
         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">Social links</dt>
+          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.social_links' | translate }}</dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
             <div class="space-y-1">
               <a *ngIf="user?.linkedin_url" [href]="user?.linkedin_url || ''" target="_blank" class="text-indigo-600 hover:text-indigo-500 block">
@@ -96,26 +96,26 @@
                 Portfolio
               </a>
               <span *ngIf="!user?.linkedin_url && !user?.github_url && !user?.portfolio_url" class="text-gray-500">
-                No links added yet
+                {{ 'profile.no_links' | translate }}
               </span>
             </div>
           </dd>
         </div>
         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">Stats</dt>
+          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.stats' | translate }}</dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
             <div class="grid grid-cols-3 gap-4">
               <div>
                 <p class="text-2xl font-semibold text-indigo-600">{{ user?.completed_tasks_count || 0 }}</p>
-                <p class="text-xs text-gray-500">Tasks Completed</p>
+                <p class="text-xs text-gray-500">{{ 'profile.stats.tasks_completed' | translate }}</p>
               </div>
               <div>
                 <p class="text-2xl font-semibold text-indigo-600">{{ user?.average_score || 0 }}%</p>
-                <p class="text-xs text-gray-500">Average Score</p>
+                <p class="text-xs text-gray-500">{{ 'profile.stats.average_score' | translate }}</p>
               </div>
               <div>
                 <p class="text-2xl font-semibold text-indigo-600">{{ user?.total_score || 0 }}</p>
-                <p class="text-xs text-gray-500">Total Points</p>
+                <p class="text-xs text-gray-500">{{ 'profile.stats.total_points' | translate }}</p>
               </div>
             </div>
           </dd>
@@ -132,7 +132,7 @@
 
       <div class="space-y-6">
         <div>
-          <label for="name" class="block text-sm font-medium text-gray-700">Full name</label>
+          <label for="name" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.name_label' | translate }}</label>
           <input
             type="text"
             id="name"
@@ -142,97 +142,97 @@
         </div>
 
         <div>
-          <label for="bio" class="block text-sm font-medium text-gray-700">Bio</label>
+          <label for="bio" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.bio_label' | translate }}</label>
           <textarea
             id="bio"
             [(ngModel)]="editForm.bio"
             rows="3"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            placeholder="Tell us about yourself..."
+            [placeholder]="'profile.edit.bio_placeholder' | translate"
           ></textarea>
         </div>
 
         <div>
-          <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+          <label for="location" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.location_label' | translate }}</label>
           <input
             type="text"
             id="location"
             [(ngModel)]="editForm.location"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            placeholder="City, Country"
+            [placeholder]="'profile.edit.location_placeholder' | translate"
           />
         </div>
 
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>
-            <label for="job_field" class="block text-sm font-medium text-gray-700">Job field</label>
+            <label for="job_field" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.job_field_label' | translate }}</label>
             <select
               id="job_field"
               [(ngModel)]="editForm.job_field"
               class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
-              <option *ngFor="let field of jobFields" [value]="field.value">
-                {{ field.label }}
+              <option *ngFor="let field of jobFields" [value]="field">
+                {{ 'job_field.' + field | translate }}
               </option>
             </select>
           </div>
 
           <div>
-            <label for="experience_level" class="block text-sm font-medium text-gray-700">Experience level</label>
+            <label for="experience_level" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.experience_label' | translate }}</label>
             <select
               id="experience_level"
               [(ngModel)]="editForm.experience_level"
               class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
-              <option *ngFor="let level of experienceLevels" [value]="level.value">
-                {{ level.label }}
+              <option *ngFor="let level of experienceLevels" [value]="level">
+                {{ 'experience.' + level | translate }}
               </option>
             </select>
           </div>
         </div>
 
         <div>
-          <label for="skills" class="block text-sm font-medium text-gray-700">Skills</label>
+          <label for="skills" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.skills_label' | translate }}</label>
           <input
             type="text"
             id="skills"
             [(ngModel)]="editForm.skills"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            placeholder="JavaScript, Python, Project Management (comma separated)"
+            [placeholder]="'profile.edit.skills_placeholder' | translate"
           />
-          <p class="mt-1 text-xs text-gray-500">Separate skills with commas</p>
+          <p class="mt-1 text-xs text-gray-500">{{ 'profile.edit.skills_help' | translate }}</p>
         </div>
 
         <div>
-          <label for="linkedin_url" class="block text-sm font-medium text-gray-700">LinkedIn URL</label>
+          <label for="linkedin_url" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.linkedin_label' | translate }}</label>
           <input
             type="url"
             id="linkedin_url"
             [(ngModel)]="editForm.linkedin_url"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            placeholder="https://linkedin.com/in/yourprofile"
+            [placeholder]="'profile.edit.linkedin_placeholder' | translate"
           />
         </div>
 
         <div>
-          <label for="github_url" class="block text-sm font-medium text-gray-700">GitHub URL</label>
+          <label for="github_url" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.github_label' | translate }}</label>
           <input
             type="url"
             id="github_url"
             [(ngModel)]="editForm.github_url"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            placeholder="https://github.com/yourusername"
+            [placeholder]="'profile.edit.github_placeholder' | translate"
           />
         </div>
 
         <div>
-          <label for="portfolio_url" class="block text-sm font-medium text-gray-700">Portfolio URL</label>
+          <label for="portfolio_url" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.portfolio_label' | translate }}</label>
           <input
             type="url"
             id="portfolio_url"
             [(ngModel)]="editForm.portfolio_url"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            placeholder="https://yourportfolio.com"
+            [placeholder]="'profile.edit.portfolio_placeholder' | translate"
           />
         </div>
 
@@ -244,7 +244,7 @@
             class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
           />
           <label for="is_available_for_hire" class="ml-2 block text-sm text-gray-900">
-            Available for hire (visible to recruiters)
+            {{ 'profile.edit.available_for_hire_label' | translate }}
           </label>
         </div>
 
@@ -254,7 +254,7 @@
             (click)="cancelEditing()"
             class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Cancel
+            {{ 'common.buttons.cancel' | translate }}
           </button>
           <button
             type="button"
@@ -262,13 +262,13 @@
             [disabled]="isSaving"
             class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
           >
-            <span *ngIf="!isSaving">Save</span>
+            <span *ngIf="!isSaving">{{ 'common.buttons.save' | translate }}</span>
             <span *ngIf="isSaving" class="flex items-center">
               <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Saving...
+              {{ 'common.buttons.saving' | translate }}
             </span>
           </button>
         </div>

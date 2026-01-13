@@ -1,143 +1,435 @@
-<div class="px-4 py-6 sm:px-0">
-  <!-- Welcome Section -->
-  <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 overflow-hidden shadow-xl rounded-lg mb-6 relative">
+<div class="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+  <!-- Navigation Bar -->
+  <nav class="bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <!-- Logo -->
+        <div class="flex items-center">
+          <a [routerLink]="user ? '/app/dashboard' : '/'" class="flex items-center space-x-2 group">
+            <div class="bg-white rounded-lg p-1.5 shadow-md group-hover:shadow-xl transition-shadow duration-200">
+              <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div class="hidden md:block">
+              <span class="text-xl font-bold text-white tracking-tight">JobSim</span>
+              <span class="text-xs text-indigo-200 ml-1">Sénégal</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex md:items-center md:space-x-4">
+          <a *ngIf="!user" routerLink="/browse-tasks" class="text-indigo-100 hover:bg-white/10 hover:text-white inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+            Parcourir les Missions
+          </a>
+          <a *ngIf="user" routerLink="/app/tasks" class="text-indigo-100 hover:bg-white/10 hover:text-white inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+            Missions
+          </a>
+          <a *ngIf="user" routerLink="/app/profile" class="text-indigo-100 hover:bg-white/10 hover:text-white inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+            Profil
+          </a>
+          <a *ngIf="!user" routerLink="/auth/login" class="text-white hover:bg-white/10 inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+            Se Connecter
+          </a>
+          <a *ngIf="!user" routerLink="/auth/register" class="inline-flex items-center px-4 py-2 border-2 border-white text-sm font-medium rounded-lg text-white bg-white/10 hover:bg-white hover:text-indigo-700 transition-all duration-200 shadow-lg">
+            Commencer
+          </a>
+          <button *ngIf="user" (click)="logout()" class="inline-flex items-center px-4 py-2 border-2 border-white/30 text-sm font-medium rounded-lg text-white bg-white/10 hover:bg-white/20 transition-all duration-200">
+            Déconnexion
+          </button>
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="flex items-center md:hidden">
+          <button type="button" class="bg-white/10 border border-white/20 inline-flex items-center justify-center p-2 rounded-lg text-white hover:bg-white/20 transition-colors duration-200">
+            <span class="sr-only">Ouvrir le menu</span>
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="px-4 py-6 sm:px-0">
+  <!-- Hero Section -->
+  <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 overflow-hidden shadow-xl rounded-lg mb-12 relative">
     <!-- Decorative Pattern -->
     <div class="absolute inset-0 opacity-10">
       <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23FFF&quot; fill-opacity=&quot;1&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
     </div>
 
-    <div class="px-4 py-6 sm:p-8 relative z-10">
-      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between">
-        <div class="mb-4 lg:mb-0">
-          <h1 class="text-3xl font-bold text-white mb-2">
-            Welcome back, {{ (user?.full_name || 'User').split(' ')[0] }}! 👋
-          </h1>
-          <p class="text-indigo-100 text-lg">
-            Ready to level up your skills today?
-          </p>
-          <div class="mt-3 flex items-center gap-3">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/20 text-white border border-white/30">
-              <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
-              </svg>
-              {{ formatJobField(user?.job_field || 'other') }}
-            </span>
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/20 text-white border border-white/30">
-              {{ user?.experience_level | titlecase }} Level
-            </span>
-          </div>
+    <div class="px-4 py-12 sm:px-8 sm:py-16 relative z-10">
+      <div class="max-w-4xl mx-auto text-center">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight">
+          Transformez Votre Avenir Professionnel Avec Des Missions Réelles
+        </h1>
+        <p class="text-xl sm:text-2xl text-indigo-100 mb-8 leading-relaxed">
+          Développez vos compétences à travers des projets authentiques d'entreprises.
+          Obtenez une expérience valorisable, des évaluations IA personnalisées et accélérez votre carrière.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <a
+            *ngIf="user"
+            routerLink="/app/tasks"
+            class="inline-flex items-center px-8 py-4 border-2 border-white text-lg font-bold rounded-lg text-indigo-700 bg-white hover:bg-indigo-50 transition-all duration-200 shadow-2xl hover:shadow-xl"
+          >
+            Découvrir les Missions
+            <svg class="ml-2 w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
+          <a
+            *ngIf="!user"
+            routerLink="/auth/register"
+            class="inline-flex items-center px-8 py-4 border-2 border-white text-lg font-bold rounded-lg text-indigo-700 bg-white hover:bg-indigo-50 transition-all duration-200 shadow-2xl hover:shadow-xl"
+          >
+            Commencer Gratuitement
+            <svg class="ml-2 w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
+          <a
+            *ngIf="user"
+            routerLink="/app/profile"
+            class="inline-flex items-center px-8 py-4 border-2 border-white text-lg font-bold rounded-lg text-white bg-white/10 hover:bg-white/20 transition-all duration-200"
+          >
+            Mon Profil
+          </a>
         </div>
-        <a
-          routerLink="/app/tasks"
-          class="inline-flex items-center px-6 py-3 border-2 border-white text-base font-semibold rounded-lg text-white bg-white/10 hover:bg-white hover:text-indigo-700 transition-all duration-200 shadow-lg"
-        >
-          Explore Tasks
-          <svg class="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-          </svg>
-        </a>
+        <div *ngIf="user" class="mt-6 flex items-center justify-center gap-4">
+          <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/20 text-white border border-white/30">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+            </svg>
+            {{ 'job_field.' + (user?.job_field || 'other') | translate }}
+          </span>
+          <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/20 text-white border border-white/30">
+            Niveau {{ user?.experience_level | titlecase }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Stats Grid -->
-  <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-6">
-    <!-- Completed Tasks -->
-    <div class="bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-200">
-      <div class="p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-green-100 truncate">Completed Tasks</p>
-            <p class="mt-1 text-3xl font-bold text-white">{{ stats.completedTasks }}</p>
+  <!-- About Section (Marketing - only for non-logged-in users) -->
+  <div *ngIf="!user" class="bg-white shadow-xl rounded-lg mb-12 overflow-hidden">
+    <div class="px-6 py-12 sm:px-12">
+      <div class="max-w-4xl mx-auto text-center mb-12">
+        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          Notre Mission
+        </h2>
+        <p class="text-lg text-gray-600 leading-relaxed">
+          JobSim révolutionne la formation professionnelle en connectant les étudiants et jeunes talents
+          avec des missions réelles proposées par des entreprises partenaires. Notre plateforme offre une
+          expérience d'apprentissage immersive où chaque projet développe des compétences concrètes,
+          évaluées par notre système d'intelligence artificielle avancé.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
           </div>
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-              <svg class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Innovation Pédagogique</h3>
+          <p class="text-gray-600">
+            Des projets réels, des défis authentiques et des retours IA pour un apprentissage optimal
+          </p>
         </div>
-        <div class="mt-4 flex items-center text-sm text-green-100">
-          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
-          </svg>
-          Great progress!
+
+        <div class="text-center">
+          <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Réseau Professionnel</h3>
+          <p class="text-gray-600">
+            Collaborez avec des entreprises leaders et créez des opportunités pour votre carrière
+          </p>
+        </div>
+
+        <div class="text-center">
+          <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Certification Valorisée</h3>
+          <p class="text-gray-600">
+            Obtenez des attestations reconnues qui valorisent votre profil auprès des recruteurs
+          </p>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Pending Tasks -->
-    <div class="bg-gradient-to-br from-yellow-500 to-orange-500 overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-200">
-      <div class="p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-yellow-100 truncate">Pending Review</p>
-            <p class="mt-1 text-3xl font-bold text-white">{{ stats.pendingTasks }}</p>
-          </div>
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-              <svg class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+  <!-- Features Section (Marketing - only for non-logged-in users) -->
+  <div *ngIf="!user" class="bg-gradient-to-br from-gray-50 to-indigo-50 rounded-lg shadow-xl mb-12 overflow-hidden">
+    <div class="px-6 py-12 sm:px-12">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          Pourquoi Choisir JobSim?
+        </h2>
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+          Une plateforme complète qui combine technologie avancée et pédagogie innovante
+          pour propulser votre développement professionnel
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-xl font-bold text-gray-900 mb-2">Missions Professionnelles Réelles</h3>
+              <p class="text-gray-600">
+                Travaillez sur des projets authentiques proposés par des entreprises partenaires.
+                Chaque mission est conçue pour développer des compétences recherchées sur le marché.
+              </p>
             </div>
           </div>
         </div>
-        <div class="mt-4 flex items-center text-sm text-yellow-100">
-          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-          </svg>
-          Awaiting feedback
+
+        <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-xl font-bold text-gray-900 mb-2">Évaluation IA Avancée</h3>
+              <p class="text-gray-600">
+                Notre système d'intelligence artificielle analyse vos soumissions et fournit des retours
+                détaillés, personnalisés et constructifs pour accélérer votre progression.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-xl font-bold text-gray-900 mb-2">Simulations de Réunions</h3>
+              <p class="text-gray-600">
+                Participez à des simulations de réunions professionnelles générées par IA pour développer
+                vos compétences en communication et travail d'équipe.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-xl font-bold text-gray-900 mb-2">Parcours Personnalisé</h3>
+              <p class="text-gray-600">
+                Des recommandations adaptées à votre profil, votre niveau et vos objectifs professionnels.
+                Progressez à votre rythme sur des projets qui vous passionnent.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Average Score -->
-    <div class="bg-gradient-to-br from-indigo-500 to-purple-600 overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-200">
-      <div class="p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-indigo-100 truncate">Average Score</p>
-            <p class="mt-1 text-3xl font-bold text-white">{{ stats.averageScore | number:'1.1-1' }}%</p>
+  <!-- How It Works Section (Marketing - only for non-logged-in users) -->
+  <div *ngIf="!user" class="bg-white shadow-xl rounded-lg mb-12 overflow-hidden">
+    <div class="px-6 py-12 sm:px-12">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          Comment Ça Marche?
+        </h2>
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+          Un processus simple et efficace pour développer vos compétences professionnelles
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+        <div class="text-center relative">
+          <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg text-white text-2xl font-bold">
+            1
           </div>
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-              <svg class="h-7 w-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            </div>
-          </div>
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Inscrivez-vous</h3>
+          <p class="text-gray-600 text-sm">
+            Créez votre profil et indiquez vos domaines d'intérêt et objectifs professionnels
+          </p>
+          <div class="hidden md:block absolute top-8 left-full w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500 -ml-8"></div>
         </div>
-        <div class="mt-4 flex items-center text-sm text-indigo-100">
-          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-          </svg>
-          Performance rating
+
+        <div class="text-center relative">
+          <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg text-white text-2xl font-bold">
+            2
+          </div>
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Choisissez une Mission</h3>
+          <p class="text-gray-600 text-sm">
+            Explorez notre catalogue et sélectionnez des projets adaptés à votre niveau et vos aspirations
+          </p>
+          <div class="hidden md:block absolute top-8 left-full w-full h-1 bg-gradient-to-r from-purple-500 to-pink-500 -ml-8"></div>
+        </div>
+
+        <div class="text-center relative">
+          <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg text-white text-2xl font-bold">
+            3
+          </div>
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Réalisez le Projet</h3>
+          <p class="text-gray-600 text-sm">
+            Travaillez sur la mission, accédez aux ressources et participez aux simulations de réunions
+          </p>
+          <div class="hidden md:block absolute top-8 left-full w-full h-1 bg-gradient-to-r from-pink-500 to-green-500 -ml-8"></div>
+        </div>
+
+        <div class="text-center">
+          <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg text-white text-2xl font-bold">
+            4
+          </div>
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Obtenez Votre Évaluation</h3>
+          <p class="text-gray-600 text-sm">
+            Recevez un retour détaillé de l'IA et validez vos compétences avec une attestation
+          </p>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Total Points -->
-    <div class="bg-gradient-to-br from-pink-500 to-rose-600 overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-200">
-      <div class="p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-pink-100 truncate">Total Points</p>
-            <p class="mt-1 text-3xl font-bold text-white">{{ stats.totalScore }}</p>
-          </div>
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-              <svg class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
+  <!-- User Stats Section (Only for logged-in users) -->
+  <div *ngIf="user && !isLoading" class="mb-12">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+        Votre Progression
+      </h2>
+      <p class="text-lg text-gray-600">
+        Suivez vos performances et vos accomplissements
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Completed Tasks -->
+      <div class="bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-200">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-green-100 truncate">Missions Complétées</p>
+              <p class="mt-1 text-3xl font-bold text-white">{{ stats.completedTasks }}</p>
+            </div>
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <svg class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
             </div>
           </div>
+          <div class="mt-4 flex items-center text-sm text-green-100">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+            </svg>
+            Excellent progrès!
+          </div>
         </div>
-        <div class="mt-4 flex items-center text-sm text-pink-100">
-          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
-          </svg>
-          Keep it up!
+      </div>
+
+      <!-- Pending Tasks -->
+      <div class="bg-gradient-to-br from-yellow-500 to-orange-500 overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-200">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-yellow-100 truncate">En Attente d'Évaluation</p>
+              <p class="mt-1 text-3xl font-bold text-white">{{ stats.pendingTasks }}</p>
+            </div>
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <svg class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 flex items-center text-sm text-yellow-100">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+            </svg>
+            Bientôt évalué
+          </div>
+        </div>
+      </div>
+
+      <!-- Average Score -->
+      <div class="bg-gradient-to-br from-indigo-500 to-purple-600 overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-200">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-indigo-100 truncate">Score Moyen</p>
+              <p class="mt-1 text-3xl font-bold text-white">{{ stats.averageScore | number:'1.1-1' }}%</p>
+            </div>
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <svg class="h-7 w-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 flex items-center text-sm text-indigo-100">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+            Performance solide
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Points -->
+      <div class="bg-gradient-to-br from-pink-500 to-rose-600 overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-200">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-pink-100 truncate">Points Totaux</p>
+              <p class="mt-1 text-3xl font-bold text-white">{{ stats.totalScore }}</p>
+            </div>
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <svg class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 flex items-center text-sm text-pink-100">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+            </svg>
+            Continuez ainsi!
+          </div>
         </div>
       </div>
     </div>
@@ -146,7 +438,7 @@
   <!-- Loading State -->
   <div *ngIf="isLoading" class="text-center py-12">
     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-    <p class="mt-4 text-gray-500">Loading your dashboard...</p>
+    <p class="mt-4 text-gray-500">Chargement de votre tableau de bord...</p>
   </div>
 
   <!-- Error State -->
@@ -163,29 +455,29 @@
     </div>
   </div>
 
-  <!-- Recommended Tasks -->
-  <div *ngIf="!isLoading" class="bg-white shadow-xl rounded-lg mb-6 overflow-hidden border border-gray-100">
+  <!-- Recommended Tasks (For logged-in users) -->
+  <div *ngIf="user && !isLoading" class="bg-white shadow-xl rounded-lg mb-12 overflow-hidden border border-gray-100">
     <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-6 border-b border-gray-200">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="text-xl font-bold text-gray-900 flex items-center">
+          <h3 class="text-2xl font-bold text-gray-900 flex items-center">
             <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
             </svg>
-            Recommended Tasks for You
+            Missions Recommandées pour Vous
           </h3>
           <p class="mt-1 text-sm text-gray-600 flex items-center">
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 mr-2">
-              {{ formatJobField(user?.job_field || 'other') }}
+              {{ 'job_field.' + (user?.job_field || 'other') | translate }}
             </span>
-            Curated based on your profile
+            Sélectionnées selon votre profil et objectifs
           </p>
         </div>
         <a
           routerLink="/app/tasks"
           class="inline-flex items-center px-4 py-2 border border-indigo-300 text-sm font-medium rounded-lg text-indigo-700 bg-white hover:bg-indigo-50 transition-colors"
         >
-          View All
+          Voir Toutes les Missions
           <svg class="ml-1 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
@@ -199,8 +491,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900">No tasks available</h3>
-        <p class="mt-1 text-sm text-gray-500">Check back later for new tasks in your field.</p>
+        <h3 class="text-lg font-medium text-gray-900">Aucune mission disponible pour le moment</h3>
+        <p class="mt-1 text-sm text-gray-500">De nouvelles missions correspondant à votre profil seront bientôt disponibles.</p>
       </div>
 
       <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -210,7 +502,7 @@
               <h4 class="text-base font-semibold text-gray-900 line-clamp-2 group-hover:text-indigo-600 transition-colors">{{ task.title }}</h4>
             </div>
             <span [ngClass]="getDifficultyColor(task.difficulty_level)" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ml-2 flex-shrink-0">
-              {{ formatDifficulty(task.difficulty_level) }}
+              {{ 'task.difficulty.' + task.difficulty_level | translate }}
             </span>
           </div>
           <p class="text-sm text-gray-600 mb-4 line-clamp-2 leading-relaxed">{{ task.description }}</p>
@@ -227,7 +519,7 @@
               [routerLink]="['/app/tasks', task.id]"
               class="inline-flex items-center text-sm font-semibold text-indigo-600 hover:text-indigo-700 group-hover:translate-x-1 transition-transform"
             >
-              View
+              Découvrir
               <svg class="ml-1 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
@@ -238,27 +530,85 @@
     </div>
   </div>
 
-  <!-- Recent Activity -->
-  <div *ngIf="!isLoading && recentSubmissions.length > 0" class="bg-white shadow rounded-lg">
-    <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-      <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Activity</h3>
+  <!-- Recent Activity (For logged-in users) -->
+  <div *ngIf="user && !isLoading && recentSubmissions.length > 0" class="bg-white shadow-xl rounded-lg mb-12">
+    <div class="px-6 py-6 border-b border-gray-200">
+      <h3 class="text-2xl font-bold text-gray-900">Votre Activité Récente</h3>
+      <p class="mt-1 text-sm text-gray-600">Suivez l'état de vos dernières soumissions</p>
     </div>
     <ul class="divide-y divide-gray-200">
-      <li *ngFor="let submission of recentSubmissions" class="px-4 py-4 sm:px-6">
+      <li *ngFor="let submission of recentSubmissions" class="px-6 py-4 hover:bg-gray-50 transition-colors">
         <div class="flex items-center justify-between">
           <div class="flex-1 min-w-0">
             <p class="text-sm font-medium text-gray-900 truncate">
-              {{ submission.task?.title || 'Task' }}
+              {{ submission.task?.title || 'Mission' }}
             </p>
-            <p class="text-xs text-gray-500">
-              Submitted {{ submission.submitted_at | date:'short' }}
+            <p class="text-xs text-gray-500 mt-1">
+              Soumis le {{ submission.submitted_at | date:'short' }}
             </p>
           </div>
-          <span [ngClass]="getStatusColor(submission.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-            {{ formatStatus(submission.status) }}
+          <span [ngClass]="getStatusColor(submission.status)" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium">
+            {{ 'task.status.' + submission.status | translate }}
           </span>
         </div>
       </li>
     </ul>
+  </div>
+
+  <!-- Final CTA Section (Marketing - only for non-logged-in users) -->
+  <div *ngIf="!user" class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg shadow-2xl overflow-hidden mb-12">
+    <div class="px-6 py-12 sm:px-12 text-center">
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">
+        Prêt à Booster Votre Carrière?
+      </h2>
+      <p class="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
+        Rejoignez des milliers d'étudiants qui développent leurs compétences et construisent leur avenir professionnel avec JobSim.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          *ngIf="user"
+          routerLink="/app/tasks"
+          class="inline-flex items-center px-8 py-4 border-2 border-white text-lg font-bold rounded-lg text-indigo-700 bg-white hover:bg-gray-50 transition-all duration-200 shadow-lg"
+        >
+          Commencer une Mission
+          <svg class="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </a>
+        <a
+          *ngIf="!user"
+          routerLink="/auth/register"
+          class="inline-flex items-center px-8 py-4 border-2 border-white text-lg font-bold rounded-lg text-indigo-700 bg-white hover:bg-gray-50 transition-all duration-200 shadow-lg"
+        >
+          Créer Mon Compte Gratuit
+          <svg class="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </a>
+        <a
+          *ngIf="!user"
+          routerLink="/auth/login"
+          class="inline-flex items-center px-8 py-4 border-2 border-white text-lg font-bold rounded-lg text-white bg-white/10 hover:bg-white/20 transition-all duration-200"
+        >
+          Se Connecter
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-50 mt-12">
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
+      <div class="flex justify-center space-x-6 md:order-2">
+        <a href="#" class="text-gray-400 hover:text-gray-500">Contact</a>
+        <a href="#" class="text-gray-400 hover:text-gray-500">Confidentialité</a>
+      </div>
+      <div class="mt-8 md:mt-0 md:order-1">
+        <p class="text-center text-base text-gray-400">
+          &copy; 2025 JobSim Sénégal. Tous droits réservés.
+        </p>
+      </div>
+    </div>
+  </footer>
   </div>
 </div>

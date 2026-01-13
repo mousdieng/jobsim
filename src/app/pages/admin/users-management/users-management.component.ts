@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
+import { NotificationService } from '../../../services/notification.service';
 import { UserProfile } from '../../../models/platform.model';
 import { RoleDisplayNamePipe } from '../../../pipes/role-display-name.pipe';
 
@@ -45,7 +46,22 @@ export class UsersManagementComponent implements OnInit {
   // Available enterprises for linking
   availableEnterprises: any[] = [];
 
-  constructor(private adminService: AdminService) {}
+  // Confirmation modal
+  showConfirmModal = false;
+  confirmModalData: {
+    title: string;
+    message: string;
+    confirmText: string;
+    confirmAction: () => void;
+  } | null = null;
+
+  // Form validation errors
+  validationErrors: { [key: string]: string } = {};
+
+  constructor(
+    private adminService: AdminService,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -114,13 +130,22 @@ export class UsersManagementComponent implements OnInit {
 
   createUser(): void {
     // Validate form
-    if (!this.createUserForm.email || !this.createUserForm.password || !this.createUserForm.name) {
-      alert('Please fill in all required fields');
-      return;
+    this.validationErrors = {};
+
+    if (!this.createUserForm.email) {
+      this.validationErrors['email'] = 'L\'email est requis';
+    }
+    if (!this.createUserForm.password) {
+      this.validationErrors['password'] = 'Le mot de passe est requis';
+    } else if (this.createUserForm.password.length < 8) {
+      this.validationErrors['password'] = 'Le mot de passe doit contenir au moins 8 caractères';
+    }
+    if (!this.createUserForm.name) {
+      this.validationErrors['name'] = 'Le nom est requis';
     }
 
-    if (this.createUserForm.user_type === 'enterprise' && !this.createUserForm.enterprise_id) {
-      alert('Please select an enterprise for enterprise users');
+    if (Object.keys(this.validationErrors).length > 0) {
+      this.notificationService.error('Veuillez remplir tous les champs requis correctement');
       return;
     }
 
@@ -131,11 +156,11 @@ export class UsersManagementComponent implements OnInit {
         this.actionLoading = false;
         this.closeCreateUserModal();
         this.loadUsers();
-        alert(`User created successfully`);
+        this.notificationService.success(`Utilisateur créé avec succès!`);
       },
       error: (err) => {
         this.actionLoading = false;
-        alert('Failed to create user: ' + err.message);
+        this.notificationService.error('Échec de la création de l\'utilisateur: ' + err.message);
         console.error('Create user error:', err);
       }
     });
@@ -162,19 +187,27 @@ export class UsersManagementComponent implements OnInit {
     // Validate that actions requiring reason have one
     const reasonRequired = ['suspend', 'ban', 'delete', 'changeRole'];
     if (reasonRequired.includes(this.actionType) && !this.actionReason) {
-      alert('Please provide a reason for this action');
+      this.notificationService.warning('Veuillez fournir une raison pour cette action');
       return;
     }
 
     // Confirm destructive actions
     if (this.actionType === 'delete') {
-      const confirmed = confirm(
-        `Are you sure you want to PERMANENTLY DELETE this user?\n\n` +
-        `User: ${this.selectedUser.name} (${this.selectedUser.email})\n` +
-        `This action CANNOT be undone!`
-      );
-      if (!confirmed) return;
+      this.confirmModalData = {
+        title: 'Supprimer l\'Utilisateur',
+        message: `Êtes-vous sûr de vouloir SUPPRIMER DÉFINITIVEMENT cet utilisateur?\n\nUtilisateur: ${this.selectedUser.name} (${this.selectedUser.email})\n\nCette action NE PEUT PAS être annulée!`,
+        confirmText: 'Supprimer Définitivement',
+        confirmAction: () => this.executeAction()
+      };
+      this.showConfirmModal = true;
+      return;
     }
+
+    this.executeAction();
+  }
+
+  executeAction(): void {
+    if (!this.selectedUser || !this.actionType) return;
 
     this.actionLoading = true;
 
@@ -194,7 +227,7 @@ export class UsersManagementComponent implements OnInit {
         break;
       case 'changeRole':
         if (this.newRole === this.selectedUser.user_type) {
-          alert('Please select a different role');
+          this.notificationService.warning('Veuillez sélectionner un rôle différent');
           this.actionLoading = false;
           return;
         }
@@ -209,15 +242,22 @@ export class UsersManagementComponent implements OnInit {
       next: () => {
         this.actionLoading = false;
         this.closeActionModal();
-        this.loadUsers(); // Reload users
-        alert(`Action completed successfully`);
+        this.closeConfirmModal();
+        this.loadUsers();
+        this.notificationService.success(`Action effectuée avec succès!`);
       },
       error: (err) => {
         this.actionLoading = false;
-        alert('Failed to perform action: ' + err.message);
+        this.closeConfirmModal();
+        this.notificationService.error('Échec de l\'action: ' + err.message);
         console.error('Action error:', err);
       }
     });
+  }
+
+  closeConfirmModal(): void {
+    this.showConfirmModal = false;
+    this.confirmModalData = null;
   }
 
   getUserStatusBadge(status?: string): string {

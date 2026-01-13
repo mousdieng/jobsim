@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 import { PlatformService } from '../../services/platform.service';
 import { User } from '../../models/user.model';
@@ -9,7 +10,7 @@ import { Task, TaskSubmission } from '../../models/platform.model';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -29,7 +30,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private platformService: PlatformService
+    private platformService: PlatformService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -84,16 +86,6 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  formatJobField(field: string): string {
-    return field.split('_').map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  }
-
-  formatDifficulty(level: string): string {
-    return level.charAt(0).toUpperCase() + level.slice(1);
-  }
-
   getDifficultyColor(level: string): string {
     switch (level) {
       case 'beginner': return 'bg-green-100 text-green-800';
@@ -116,9 +108,8 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  formatStatus(status: string): string {
-    return status.split('_').map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+  async logout(): Promise<void> {
+    await this.authService.signOut();
+    this.router.navigate(['/']);
   }
 }

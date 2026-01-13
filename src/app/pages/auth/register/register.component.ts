@@ -2,13 +2,14 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../services/auth.service';
 import { JobField, ExperienceLevel } from '../../../models/platform.model';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslateModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
@@ -20,35 +21,32 @@ export class RegisterComponent {
   showPassword = false;
   showConfirmPassword = false;
 
-  jobFields: { value: JobField; label: string }[] = [
-    { value: 'software_engineering', label: 'Software Engineering' },
-    { value: 'accounting', label: 'Accounting' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'sales', label: 'Sales' },
-    { value: 'human_resources', label: 'Human Resources' },
-    { value: 'project_management', label: 'Project Management' },
-    { value: 'data_science', label: 'Data Science' },
-    { value: 'graphic_design', label: 'Graphic Design' },
-    { value: 'customer_service', label: 'Customer Service' },
-    { value: 'finance', label: 'Finance' },
-    { value: 'legal', label: 'Legal' },
-    { value: 'healthcare', label: 'Healthcare' },
-    { value: 'education', label: 'Education' },
-    { value: 'operations', label: 'Operations' },
-    { value: 'consulting', label: 'Consulting' },
-    { value: 'other', label: 'Other' }
+  jobFields: JobField[] = [
+    'software_engineering',
+    'accounting',
+    'marketing',
+    'sales',
+    'human_resources',
+    'project_management',
+    'data_science',
+    'graphic_design',
+    'customer_service',
+    'finance',
+    'legal',
+    'healthcare',
+    'education',
+    'operations',
+    'consulting',
+    'other'
   ];
 
-  experienceLevels: { value: ExperienceLevel; label: string }[] = [
-    { value: 'junior', label: 'Junior (0-2 years)' },
-    { value: 'mid', label: 'Mid-Level (2-5 years)' },
-    { value: 'senior', label: 'Senior (5+ years)' }
-  ];
+  experienceLevels: ExperienceLevel[] = ['junior', 'mid', 'senior'];
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {
     this.registerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -197,9 +195,9 @@ export class RegisterComponent {
     if (password.length === 0) return '';
 
     switch (strength) {
-      case 0: return 'Weak';
-      case 1: return 'Medium';
-      case 2: return 'Strong';
+      case 0: return 'Faible';
+      case 1: return 'Moyen';
+      case 2: return 'Fort';
       default: return '';
     }
   }

@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslateModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -22,7 +23,8 @@ export class LoginComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translate: TranslateService
   ) {
     // Get return URL from route parameters or default to dashboard
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/app/dashboard';
@@ -67,15 +69,18 @@ export class LoginComponent {
     }
 
     if (control.errors['required']) {
-      return `${this.capitalize(field)} is required`;
+      return this.translate.instant('validation.required', { field: this.capitalize(field) });
     }
 
     if (control.errors['email']) {
-      return 'Please enter a valid email address';
+      return this.translate.instant('validation.email');
     }
 
     if (control.errors['minlength']) {
-      return `${this.capitalize(field)} must be at least ${control.errors['minlength'].requiredLength} characters`;
+      return this.translate.instant('validation.min_length', {
+        field: this.capitalize(field),
+        length: control.errors['minlength'].requiredLength
+      });
     }
 
     return null;

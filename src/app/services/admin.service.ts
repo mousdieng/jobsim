@@ -133,73 +133,41 @@ export class AdminService {
   }
 
   private async performCreateUser(userData: any): Promise<UserProfile> {
+    // Get current auth token
     const { data: session } = await this.supabase.auth.getSession();
-    const adminId = session.session?.user.id;
+    const accessToken = session.session?.access_token;
 
-    if (!adminId) {
+    if (!accessToken) {
       throw new Error('Admin authentication required');
     }
 
-    // Students cannot be created via admin interface
-    if (userData.user_type === 'student') {
-      throw new Error('Students must self-register. Use the public signup flow.');
-    }
-
-    // Validate enterprise user has enterprise_id
-    if (userData.user_type === 'enterprise' && !userData.enterprise_id) {
-      throw new Error('Enterprise ID required for enterprise users');
-    }
-
-    // Create auth user first
-    const { data: authUser, error: authError } = await this.supabase.auth.admin.createUser({
-      email: userData.email,
-      password: userData.password,
-      email_confirm: true,
-      user_metadata: {
-        name: userData.name,
-        user_type: userData.user_type,
-        created_by_admin: true
+    // Call the Supabase Edge Function
+    const response = await fetch(
+      `${environment.supabase.url}/functions/v1/admin-create-user`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+          'apikey': environment.supabase.anonKey
+        },
+        body: JSON.stringify({
+          email: userData.email,
+          password: userData.password,
+          name: userData.name,
+          user_type: userData.user_type,
+          enterprise_id: userData.enterprise_id || undefined
+        })
       }
-    });
-
-    if (authError) throw authError;
-
-    // Create profile in users table
-    const { data: user, error: profileError } = await this.supabase
-      .from('users')
-      .insert({
-        id: authUser.user?.id,
-        email: userData.email,
-        name: userData.name,
-        full_name: userData.name,
-        user_type: userData.user_type,
-        status: 'active',
-        created_by_admin_id: adminId,
-        role_assigned_by: adminId,
-        role_assigned_at: new Date().toISOString()
-      })
-      .select()
-      .single();
-
-    if (profileError) throw profileError;
-
-    // If enterprise user, link to enterprise
-    if (userData.user_type === 'enterprise' && userData.enterprise_id) {
-      await this.supabase
-        .from('enterprises')
-        .update({ admin_user_id: authUser.user?.id })
-        .eq('id', userData.enterprise_id);
-    }
-
-    // Log the action
-    await this.logAction(
-      'create_user',
-      'user',
-      authUser.user!.id,
-      `Created ${userData.user_type} user: ${userData.email}`
     );
 
-    return user;
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to create user');
+    }
+
+    return result.data;
   }
 
   /**
@@ -535,6 +503,10 @@ export class AdminService {
     website?: string;
     industry?: string;
     size?: string;
+    location?: string;
+    contact_email: string;
+    contact_phone?: string;
+    logo_url?: string;
     can_create_tasks?: boolean;
   }): Observable<Enterprise> {
     return from(this.performCreateEnterprise(enterpriseData));
@@ -554,8 +526,12 @@ export class AdminService {
         name: enterpriseData.name,
         description: enterpriseData.description,
         website: enterpriseData.website,
-        industry: enterpriseData.industry,
+        sector: enterpriseData.industry,
         size: enterpriseData.size,
+        location: enterpriseData.location,
+        contact_email: enterpriseData.contact_email,
+        contact_phone: enterpriseData.contact_phone,
+        logo_url: enterpriseData.logo_url,
         status: 'active',
         is_verified: true,
         verified_by: adminId,

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { PlatformService } from '../../../services/platform.service';
 import { TaskWorkflowService } from '../../../services/task-workflow.service';
 import { AuthService } from '../../../services/auth.service';
@@ -10,7 +11,7 @@ import { Task, Meeting, TaskSubmission } from '../../../models/platform.model';
 @Component({
   selector: 'app-task-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
   templateUrl: './task-detail.component.html',
   styleUrls: ['./task-detail.component.css']
 })
@@ -134,16 +135,6 @@ export class TaskDetailComponent implements OnInit {
     }
   }
 
-  formatJobField(field: string): string {
-    return field.split('_').map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  }
-
-  formatDifficulty(level: string): string {
-    return level.charAt(0).toUpperCase() + level.slice(1);
-  }
-
   getDifficultyColor(level: string): string {
     switch (level) {
       case 'beginner': return 'bg-green-100 text-green-800';
@@ -173,12 +164,6 @@ export class TaskDetailComponent implements OnInit {
       case 'rejected': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
-  }
-
-  formatStatus(status: string): string {
-    return status.split('_').map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
   }
 
   async startTask(): Promise<void> {

@@ -1,0 +1,293 @@
+<div class="max-w-4xl mx-auto">
+  <!-- Success Message -->
+  <div *ngIf="saveSuccess" class="rounded-md bg-green-50 p-4 mb-6">
+    <div class="flex">
+      <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+      <div class="ml-3">
+        <p class="text-sm font-medium text-green-800">{{ 'enterprise.profile.save_success' | translate }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="rounded-md bg-red-50 p-4 mb-6">
+    <div class="flex">
+      <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+      <div class="ml-3">
+        <p class="text-sm font-medium text-red-800">{{ error }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Content -->
+  <div *ngIf="!isLoading && !error" class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <!-- Header -->
+    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+      <div>
+        <h3 class="text-lg leading-6 font-medium text-gray-900">
+          {{ 'enterprise.profile.title' | translate }}
+        </h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">
+          {{ 'enterprise.profile.subtitle' | translate }}
+        </p>
+      </div>
+      <div class="flex items-center space-x-3">
+        <span [ngClass]="getVerificationStatusColor()" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium">
+          <svg class="w-4 h-4 mr-1.5" *ngIf="enterprise?.is_verified" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          {{ getVerificationStatusText() }}
+        </span>
+        <button
+          *ngIf="!isEditing"
+          (click)="startEditing()"
+          class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+        >
+          <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          {{ 'enterprise.profile.edit_button' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <!-- View Mode -->
+    <div *ngIf="!isEditing" class="border-t border-gray-200">
+      <dl>
+        <!-- Company Name (Read-only) -->
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">{{ 'enterprise.profile.fields.company_name' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            {{ enterprise?.name }}
+            <span class="ml-2 text-xs text-gray-500">({{ 'enterprise.profile.read_only' | translate }})</span>
+          </dd>
+        </div>
+
+        <!-- Sector (Read-only) -->
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">{{ 'enterprise.profile.fields.sector' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            {{ enterprise?.sector }}
+            <span class="ml-2 text-xs text-gray-500">({{ 'enterprise.profile.read_only' | translate }})</span>
+          </dd>
+        </div>
+
+        <!-- Description -->
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">{{ 'enterprise.profile.fields.description' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            {{ enterprise?.description || ('enterprise.profile.not_specified' | translate) }}
+          </dd>
+        </div>
+
+        <!-- Logo URL -->
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">{{ 'enterprise.profile.fields.logo' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <div *ngIf="enterprise?.logo_url" class="flex items-center space-x-4">
+              <img [src]="enterprise?.logo_url" alt="Company logo" class="h-16 w-16 object-cover rounded">
+              <a [href]="enterprise?.logo_url" target="_blank" class="text-emerald-600 hover:text-emerald-500">
+                {{ 'enterprise.profile.view_logo' | translate }}
+              </a>
+            </div>
+            <span *ngIf="!enterprise?.logo_url" class="text-gray-500">
+              {{ 'enterprise.profile.not_specified' | translate }}
+            </span>
+          </dd>
+        </div>
+
+        <!-- Website -->
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">{{ 'enterprise.profile.fields.website' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <a *ngIf="enterprise?.website" [href]="enterprise?.website" target="_blank" class="text-emerald-600 hover:text-emerald-500">
+              {{ enterprise?.website }}
+            </a>
+            <span *ngIf="!enterprise?.website" class="text-gray-500">
+              {{ 'enterprise.profile.not_specified' | translate }}
+            </span>
+          </dd>
+        </div>
+
+        <!-- Location -->
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">{{ 'enterprise.profile.fields.location' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            {{ enterprise?.location || ('enterprise.profile.not_specified' | translate) }}
+          </dd>
+        </div>
+
+        <!-- Contact Email -->
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">{{ 'enterprise.profile.fields.contact_email' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            {{ enterprise?.contact_email || ('enterprise.profile.not_specified' | translate) }}
+          </dd>
+        </div>
+
+        <!-- Contact Phone -->
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">{{ 'enterprise.profile.fields.contact_phone' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            {{ enterprise?.contact_phone || ('enterprise.profile.not_specified' | translate) }}
+          </dd>
+        </div>
+
+        <!-- Company Size (Read-only) -->
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6" *ngIf="enterprise?.size">
+          <dt class="text-sm font-medium text-gray-500">{{ 'enterprise.profile.fields.size' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            {{ enterprise?.size }}
+            <span class="ml-2 text-xs text-gray-500">({{ 'enterprise.profile.read_only' | translate }})</span>
+          </dd>
+        </div>
+
+        <!-- Verification Info -->
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6" *ngIf="enterprise?.is_verified && enterprise?.verified_at">
+          <dt class="text-sm font-medium text-gray-500">{{ 'enterprise.profile.fields.verified_at' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            {{ formatDate(enterprise?.verified_at) }}
+          </dd>
+        </div>
+
+        <!-- Created At -->
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">{{ 'enterprise.profile.fields.created_at' | translate }}</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            {{ formatDate(enterprise?.created_at) }}
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Edit Mode -->
+    <div *ngIf="isEditing" class="border-t border-gray-200 px-4 py-5 sm:px-6">
+      <!-- Error Message -->
+      <div *ngIf="saveError" class="rounded-md bg-red-50 p-4 mb-6">
+        <p class="text-sm font-medium text-red-800">{{ saveError }}</p>
+      </div>
+
+      <div class="space-y-6">
+        <!-- Description -->
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700">
+            {{ 'enterprise.profile.edit.description_label' | translate }}
+          </label>
+          <textarea
+            id="description"
+            [(ngModel)]="editForm.description"
+            rows="4"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+            [placeholder]="'enterprise.profile.edit.description_placeholder' | translate"
+          ></textarea>
+        </div>
+
+        <!-- Logo URL -->
+        <div>
+          <label for="logo_url" class="block text-sm font-medium text-gray-700">
+            {{ 'enterprise.profile.edit.logo_url_label' | translate }}
+          </label>
+          <input
+            type="url"
+            id="logo_url"
+            [(ngModel)]="editForm.logo_url"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+            [placeholder]="'enterprise.profile.edit.logo_url_placeholder' | translate"
+          />
+          <p class="mt-1 text-xs text-gray-500">{{ 'enterprise.profile.edit.logo_url_help' | translate }}</p>
+        </div>
+
+        <!-- Website -->
+        <div>
+          <label for="website" class="block text-sm font-medium text-gray-700">
+            {{ 'enterprise.profile.edit.website_label' | translate }}
+          </label>
+          <input
+            type="url"
+            id="website"
+            [(ngModel)]="editForm.website"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+            [placeholder]="'enterprise.profile.edit.website_placeholder' | translate"
+          />
+        </div>
+
+        <!-- Location -->
+        <div>
+          <label for="location" class="block text-sm font-medium text-gray-700">
+            {{ 'enterprise.profile.edit.location_label' | translate }}
+          </label>
+          <input
+            type="text"
+            id="location"
+            [(ngModel)]="editForm.location"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+            [placeholder]="'enterprise.profile.edit.location_placeholder' | translate"
+          />
+        </div>
+
+        <!-- Contact Email -->
+        <div>
+          <label for="contact_email" class="block text-sm font-medium text-gray-700">
+            {{ 'enterprise.profile.edit.contact_email_label' | translate }}
+          </label>
+          <input
+            type="email"
+            id="contact_email"
+            [(ngModel)]="editForm.contact_email"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+            [placeholder]="'enterprise.profile.edit.contact_email_placeholder' | translate"
+          />
+        </div>
+
+        <!-- Contact Phone -->
+        <div>
+          <label for="contact_phone" class="block text-sm font-medium text-gray-700">
+            {{ 'enterprise.profile.edit.contact_phone_label' | translate }}
+          </label>
+          <input
+            type="tel"
+            id="contact_phone"
+            [(ngModel)]="editForm.contact_phone"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+            [placeholder]="'enterprise.profile.edit.contact_phone_placeholder' | translate"
+          />
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end space-x-3 pt-4">
+          <button
+            type="button"
+            (click)="cancelEditing()"
+            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+          >
+            {{ 'common.buttons.cancel' | translate }}
+          </button>
+          <button
+            type="button"
+            (click)="saveProfile()"
+            [disabled]="isSaving"
+            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50"
+          >
+            <span *ngIf="!isSaving">{{ 'common.buttons.save' | translate }}</span>
+            <span *ngIf="isSaving" class="flex items-center">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {{ 'common.buttons.saving' | translate }}
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

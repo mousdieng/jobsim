@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
+import { NotificationService } from '../../../services/notification.service';
 import { Enterprise } from '../../../models/platform.model';
 
 @Component({
@@ -27,9 +28,29 @@ export class EnterprisesManagementComponent implements OnInit {
   actionReason = '';
   actionLoading = false;
 
+  // Create enterprise modal
+  showCreateModal = false;
+  createForm = {
+    name: '',
+    sector: '',
+    description: '',
+    website: '',
+    location: '',
+    size: '',
+    contact_email: '',
+    contact_phone: '',
+    logo_url: '',
+    can_create_tasks: false,
+    admin_user_id: ''
+  };
+  validationErrors: { [key: string]: string } = {};
+  availableUsers: any[] = [];
+  loadingUsers = false;
+
   constructor(
     private adminService: AdminService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -86,7 +107,7 @@ export class EnterprisesManagementComponent implements OnInit {
     if (!this.selectedEnterprise || !this.actionType) return;
 
     if ((this.actionType === 'reject' || this.actionType === 'suspend') && !this.actionReason) {
-      alert('Please provide a reason for this action');
+      this.notificationService.warning('Veuillez fournir une raison pour cette action');
       return;
     }
 
@@ -115,13 +136,115 @@ export class EnterprisesManagementComponent implements OnInit {
         this.actionLoading = false;
         this.closeActionModal();
         this.loadEnterprises();
+        this.notificationService.success('Action effectuée avec succès!');
       },
       error: (err) => {
         this.actionLoading = false;
-        alert('Failed to perform action: ' + err.message);
+        this.notificationService.error('Échec de l\'action: ' + err.message);
         console.error('Action error:', err);
       }
     });
+  }
+
+  openCreateModal(): void {
+    this.showCreateModal = true;
+    this.createForm = {
+      name: '',
+      sector: '',
+      description: '',
+      website: '',
+      location: '',
+      size: '',
+      contact_email: '',
+      contact_phone: '',
+      logo_url: '',
+      can_create_tasks: false,
+      admin_user_id: ''
+    };
+    this.validationErrors = {};
+    this.loadEnterpriseUsers();
+  }
+
+  closeCreateModal(): void {
+    this.showCreateModal = false;
+  }
+
+  loadEnterpriseUsers(): void {
+    this.loadingUsers = true;
+    this.adminService.getAllUsers({ user_type: 'enterprise' }).subscribe({
+      next: (users) => {
+        this.availableUsers = users;
+        this.loadingUsers = false;
+      },
+      error: (err) => {
+        console.error('Error loading enterprise users:', err);
+        this.loadingUsers = false;
+      }
+    });
+  }
+
+  createEnterprise(): void {
+    // Validate form
+    this.validationErrors = {};
+
+    if (!this.createForm.name) {
+      this.validationErrors['name'] = 'Enterprise name is required';
+    }
+    if (!this.createForm.sector) {
+      this.validationErrors['sector'] = 'Industry/Sector is required';
+    }
+    if (!this.createForm.contact_email) {
+      this.validationErrors['contact_email'] = 'Contact email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.createForm.contact_email)) {
+      this.validationErrors['contact_email'] = 'Invalid email format';
+    }
+    if (this.createForm.website && !/^https?:\/\/.+/.test(this.createForm.website)) {
+      this.validationErrors['website'] = 'Website must start with http:// or https://';
+    }
+
+    if (Object.keys(this.validationErrors).length > 0) {
+      this.notificationService.error('Veuillez remplir tous les champs requis correctement');
+      return;
+    }
+
+    this.actionLoading = true;
+
+    this.adminService.createEnterprise({
+      name: this.createForm.name,
+      industry: this.createForm.sector,
+      description: this.createForm.description || undefined,
+      website: this.createForm.website || undefined,
+      size: this.createForm.size || undefined,
+      location: this.createForm.location || undefined,
+      contact_email: this.createForm.contact_email,
+      contact_phone: this.createForm.contact_phone || undefined,
+      logo_url: this.createForm.logo_url || undefined,
+      can_create_tasks: this.createForm.can_create_tasks
+    }).subscribe({
+      next: (enterprise) => {
+        this.actionLoading = false;
+        this.closeCreateModal();
+        this.loadEnterprises();
+        this.notificationService.success(`Enterprise "${this.createForm.name}" created successfully!`);
+
+        // If admin_user_id is selected, link the user to this enterprise
+        if (this.createForm.admin_user_id) {
+          this.linkEnterpriseUser(enterprise.id, this.createForm.admin_user_id);
+        }
+      },
+      error: (err) => {
+        this.actionLoading = false;
+        this.notificationService.error('Échec de la création de l\'entreprise: ' + err.message);
+        console.error('Create enterprise error:', err);
+      }
+    });
+  }
+
+  private linkEnterpriseUser(enterpriseId: string, userId: string): void {
+    // Update the enterprise to set admin_user_id
+    // We'll need to add this method to the admin service
+    // For now, show a success message and note that linking should be completed
+    this.notificationService.info('Pour compléter la liaison, veuillez mettre à jour l\'administrateur de l\'entreprise via la page de détails de l\'entreprise');
   }
 
   getStatusBadge(status: string): string {

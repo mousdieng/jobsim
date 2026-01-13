@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { PlatformService } from '../../../services/platform.service';
 import { Task, JobField, DifficultyLevel, TaskFilters } from '../../../models/platform.model';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.css']
 })
@@ -23,32 +24,32 @@ export class TaskListComponent implements OnInit {
   selectedDifficulty: DifficultyLevel | '' = '';
   searchQuery = '';
 
-  jobFields: { value: JobField | ''; label: string }[] = [
-    { value: '', label: 'All Fields' },
-    { value: 'software_engineering', label: 'Software Engineering' },
-    { value: 'accounting', label: 'Accounting' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'sales', label: 'Sales' },
-    { value: 'human_resources', label: 'Human Resources' },
-    { value: 'project_management', label: 'Project Management' },
-    { value: 'data_science', label: 'Data Science' },
-    { value: 'graphic_design', label: 'Graphic Design' },
-    { value: 'customer_service', label: 'Customer Service' },
-    { value: 'finance', label: 'Finance' },
-    { value: 'legal', label: 'Legal' },
-    { value: 'healthcare', label: 'Healthcare' },
-    { value: 'education', label: 'Education' },
-    { value: 'operations', label: 'Operations' },
-    { value: 'consulting', label: 'Consulting' },
-    { value: 'other', label: 'Other' }
+  jobFields: (JobField | '')[] = [
+    '',
+    'software_engineering',
+    'accounting',
+    'marketing',
+    'sales',
+    'human_resources',
+    'project_management',
+    'data_science',
+    'graphic_design',
+    'customer_service',
+    'finance',
+    'legal',
+    'healthcare',
+    'education',
+    'operations',
+    'consulting',
+    'other'
   ];
 
-  difficultyLevels: { value: DifficultyLevel | ''; label: string }[] = [
-    { value: '', label: 'All Levels' },
-    { value: 'beginner', label: 'Beginner' },
-    { value: 'intermediate', label: 'Intermediate' },
-    { value: 'advanced', label: 'Advanced' },
-    { value: 'expert', label: 'Expert' }
+  difficultyLevels: (DifficultyLevel | '')[] = [
+    '',
+    'beginner',
+    'intermediate',
+    'advanced',
+    'expert'
   ];
 
   constructor(private platformService: PlatformService) {}
@@ -106,16 +107,6 @@ export class TaskListComponent implements OnInit {
     this.selectedDifficulty = '';
     this.searchQuery = '';
     this.loadTasks();
-  }
-
-  formatJobField(field: string): string {
-    return field.split('_').map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  }
-
-  formatDifficulty(level: string): string {
-    return level.charAt(0).toUpperCase() + level.slice(1);
   }
 
   getDifficultyColor(level: string): string {

@@ -1,0 +1,592 @@
+{
+  "common": {
+    "buttons": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "delete": "Delete",
+      "edit": "Edit",
+      "view": "View",
+      "create": "Create",
+      "search": "Search",
+      "filter": "Filter",
+      "clear": "Clear",
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous",
+      "close": "Close",
+      "confirm": "Confirm",
+      "loading": "Loading...",
+      "view_all": "View All",
+      "view_details": "View Details"
+    },
+    "messages": {
+      "loading": "Loading...",
+      "error": "Error",
+      "success": "Success",
+      "no_data": "No data available",
+      "authenticating": "Authenticating...",
+      "saving": "Saving...",
+      "deleting": "Deleting...",
+      "updating": "Updating..."
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "completed": "Completed",
+      "failed": "Failed"
+    }
+  },
+  "nav": {
+    "brand": "JobSim Senegal",
+    "menu": {
+      "tasks": "Tasks",
+      "submissions": "Submissions",
+      "profile": "Profile",
+      "admin": "Admin",
+      "support": "Support",
+      "dashboard": "Dashboard",
+      "settings": "Settings",
+      "home": "Home"
+    },
+    "user_menu": {
+      "your_profile": "Your Profile",
+      "my_submissions": "My Submissions",
+      "settings": "Settings",
+      "sign_out": "Sign out"
+    },
+    "language_switcher": "Switch Language"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to your account",
+      "email_label": "Email address",
+      "email_placeholder": "you@example.com",
+      "password_label": "Password",
+      "password_placeholder": "••••••••",
+      "forgot_password": "Forgot your password?",
+      "submit": "Sign in",
+      "signing_in": "Signing in...",
+      "create_account": "create a new account",
+      "no_account": "Don't have an account?",
+      "success": "Successfully logged in!",
+      "error": "Login failed. Please check your credentials."
+    },
+    "register": {
+      "title": "Create your account",
+      "full_name": "Full Name",
+      "full_name_placeholder": "John Doe",
+      "email_label": "Email address",
+      "email_placeholder": "you@example.com",
+      "job_field": "Job Field",
+      "experience_level": "Experience Level",
+      "password": "Password",
+      "password_placeholder": "••••••••",
+      "confirm_password": "Confirm Password",
+      "confirm_password_placeholder": "••••••••",
+      "password_strength": "Password strength:",
+      "password_hint": "Use 8+ characters with a mix of letters, numbers & symbols",
+      "submit": "Create Account",
+      "creating_account": "Creating account...",
+      "have_account": "Already have an account?",
+      "sign_in": "Sign in",
+      "success": "Account created successfully!",
+      "error": "Failed to create account."
+    },
+    "forgot_password": {
+      "title": "Reset your password",
+      "description": "Enter your email address and we'll send you a link to reset your password.",
+      "email_label": "Email address",
+      "submit": "Send Reset Link",
+      "back_to_login": "Back to login",
+      "success": "Reset link sent! Check your email.",
+      "error": "Failed to send reset link."
+    },
+    "reset_password": {
+      "title": "Create new password",
+      "password_label": "New password",
+      "confirm_password_label": "Confirm new password",
+      "submit": "Reset Password",
+      "success": "Password reset successfully!",
+      "error": "Failed to reset password."
+    }
+  },
+  "home": {
+    "welcome": "Welcome back, {{name}}!",
+    "subtitle": "Ready to level up your skills today?",
+    "explore_tasks": "Explore Tasks",
+    "stats": {
+      "completed_tasks": "Completed Tasks",
+      "pending_review": "Pending Review",
+      "average_score": "Average Score",
+      "total_points": "Total Points",
+      "great_progress": "Great progress!",
+      "awaiting_feedback": "Awaiting feedback",
+      "performance_rating": "Performance rating",
+      "keep_it_up": "Keep it up!"
+    },
+    "recommended": {
+      "title": "Recommended Tasks for You",
+      "subtitle": "Curated based on your profile",
+      "view_all": "View All",
+      "no_tasks": "No tasks available",
+      "check_later": "Check back later for new tasks in your field."
+    },
+    "recent_activity": "Recent Activity",
+    "no_activity": "No recent activity"
+  },
+  "task": {
+    "list": {
+      "title": "Available Tasks",
+      "subtitle": "Browse and complete real-world enterprise tasks",
+      "search_placeholder": "Search tasks...",
+      "filters": {
+        "search": "Search",
+        "job_field": "Job Field",
+        "difficulty": "Difficulty",
+        "clear_all": "Clear all filters",
+        "all": "All"
+      },
+      "showing": "Showing",
+      "tasks": "task(s)",
+      "no_tasks": "No tasks found",
+      "no_tasks_description": "Try adjusting your filters or search query.",
+      "loading": "Loading tasks..."
+    },
+    "detail": {
+      "back_to_tasks": "Back to Tasks",
+      "loading": "Loading task details...",
+      "ready_to_begin": "Ready to begin?",
+      "start_description": "Start this task to get your deadline and AI-powered meeting simulations",
+      "start_task": "Start Task",
+      "starting": "Starting...",
+      "started_success": "Task started successfully!",
+      "deadline": "Deadline:",
+      "description": "Description",
+      "requirements": "Requirements",
+      "deliverables": "Deliverables",
+      "resources": "Resources",
+      "difficulty_level": "Difficulty Level",
+      "estimated_time": "Estimated Time",
+      "points": "Points"
+    },
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "expert": "Expert"
+    },
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "submitted": "Submitted",
+      "under_review": "Under Review",
+      "reviewed": "Reviewed",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "completed": "Completed",
+      "in_progress": "In Progress"
+    }
+  },
+  "job_field": {
+    "software_engineering": "Software Engineering",
+    "accounting": "Accounting",
+    "marketing": "Marketing",
+    "sales": "Sales",
+    "human_resources": "Human Resources",
+    "project_management": "Project Management",
+    "data_science": "Data Science",
+    "graphic_design": "Graphic Design",
+    "customer_service": "Customer Service",
+    "finance": "Finance",
+    "legal": "Legal",
+    "healthcare": "Healthcare",
+    "education": "Education",
+    "operations": "Operations",
+    "consulting": "Consulting",
+    "other": "Other"
+  },
+  "experience": {
+    "junior": "Junior (0-2 years)",
+    "mid": "Mid-Level (2-5 years)",
+    "senior": "Senior (5+ years)"
+  },
+  "profile": {
+    "title": "User Profile",
+    "subtitle": "Personal information and settings",
+    "edit": "Edit Profile",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "updated_success": "Profile updated successfully!",
+    "fields": {
+      "full_name": "Full name",
+      "email": "Email address",
+      "job_field": "Job field",
+      "experience_level": "Experience level",
+      "location": "Location",
+      "location_placeholder": "City, Country",
+      "bio": "Bio",
+      "bio_placeholder": "Tell us about yourself...",
+      "skills": "Skills",
+      "skills_placeholder": "JavaScript, Python, Project Management (comma separated)",
+      "available_for_hire": "Available for hire",
+      "linkedin": "LinkedIn",
+      "github": "GitHub",
+      "portfolio": "Portfolio"
+    },
+    "stats": {
+      "tasks_completed": "Tasks Completed",
+      "average_score": "Average Score",
+      "total_points": "Total Points",
+      "rank": "Rank"
+    }
+  },
+  "submissions": {
+    "title": "My Submissions",
+    "subtitle": "Track your submitted tasks and their status",
+    "no_submissions": "No submissions",
+    "no_submissions_description": "You haven't submitted any tasks yet.",
+    "task_name": "Task Name",
+    "submitted_date": "Submitted Date",
+    "status": "Status",
+    "score": "Score",
+    "feedback": "Feedback",
+    "view_details": "View Details"
+  },
+  "admin": {
+    "title": "Admin Control Panel",
+    "subtitle": "Platform governance and management",
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "subtitle": "Platform governance and management",
+      "stats": {
+        "total_users": "Total Users",
+        "total_enterprises": "Total Enterprises",
+        "total_tasks": "Total Tasks",
+        "total_submissions": "Total Submissions",
+        "pending_approval": "pending approval",
+        "active_users": "Active Users"
+      },
+      "action_required": "Action Required",
+      "enterprise_approvals": "Enterprise Approvals",
+      "task_validations": "Task Validations",
+      "flagged_tasks": "Flagged Tasks",
+      "all_caught_up": "All caught up! No pending actions.",
+      "recent_actions": "Recent Admin Actions",
+      "no_recent_actions": "No recent admin actions",
+      "quick_actions": "Quick Actions",
+      "manage_users": "Manage Users",
+      "manage_tasks": "Manage Tasks",
+      "manage_enterprises": "Manage Enterprises",
+      "audit_logs": "Audit Logs"
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Manage user accounts and roles",
+      "add_user": "Add User",
+      "search_placeholder": "Search users...",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "roles": {
+        "admin": "Admin",
+        "student": "Student",
+        "enterprise": "Enterprise",
+        "support": "Support"
+      }
+    },
+    "tasks": {
+      "title": "Task Management",
+      "subtitle": "Manage enterprise tasks",
+      "create_task": "Create Task",
+      "search_placeholder": "Search tasks...",
+      "approve": "Approve",
+      "reject": "Reject",
+      "publish": "Publish",
+      "unpublish": "Unpublish"
+    },
+    "enterprises": {
+      "title": "Enterprise Management",
+      "subtitle": "Manage enterprise accounts",
+      "add_enterprise": "Add Enterprise",
+      "search_placeholder": "Search enterprises...",
+      "approve": "Approve",
+      "reject": "Reject",
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "suspended": "Suspended"
+      }
+    },
+    "submissions": {
+      "title": "Submission Management",
+      "subtitle": "Review and grade student submissions",
+      "review": "Review",
+      "grade": "Grade"
+    },
+    "domains": {
+      "title": "Domain Management",
+      "subtitle": "Manage job fields and categories",
+      "add_domain": "Add Domain"
+    },
+    "audit_logs": {
+      "title": "Audit Logs",
+      "subtitle": "System activity history",
+      "search_placeholder": "Search logs...",
+      "user": "User",
+      "action": "Action",
+      "timestamp": "Timestamp",
+      "details": "Details"
+    },
+    "settings": {
+      "title": "System Settings",
+      "subtitle": "Configure platform settings",
+      "general": "General",
+      "notifications": "Notifications",
+      "security": "Security",
+      "integrations": "Integrations"
+    }
+  },
+  "support": {
+    "dashboard": {
+      "title": "Support Dashboard",
+      "subtitle": "User assistance and moderation"
+    },
+    "tickets": {
+      "title": "Tickets",
+      "subtitle": "Manage support requests",
+      "create_ticket": "Create Ticket",
+      "open": "Open",
+      "closed": "Closed",
+      "resolved": "Resolved"
+    },
+    "users": {
+      "title": "User Assistance",
+      "subtitle": "Help users with their issues"
+    },
+    "tasks": {
+      "title": "Task Moderation",
+      "subtitle": "Review and moderate task content"
+    },
+    "escalations": {
+      "title": "Escalations",
+      "subtitle": "Escalated issues requiring attention"
+    },
+    "knowledge": {
+      "title": "Knowledge Base",
+      "subtitle": "Help articles and documentation"
+    },
+    "logs": {
+      "title": "Activity Logs",
+      "subtitle": "User activity and system logs"
+    }
+  },
+  "validation": {
+    "required": "{{field}} is required",
+    "email": "Please enter a valid email address",
+    "min_length": "{{field}} must be at least {{length}} characters",
+    "max_length": "{{field}} cannot exceed {{length}} characters",
+    "password_mismatch": "Passwords do not match",
+    "invalid_format": "Invalid format"
+  },
+  "error": {
+    "unauthorized": {
+      "title": "Access Denied",
+      "message": "You don't have permission to access this page.",
+      "back_home": "Back to Home"
+    },
+    "not_found": {
+      "title": "Page Not Found",
+      "message": "The page you're looking for doesn't exist.",
+      "back_home": "Back to Home"
+    },
+    "server_error": {
+      "title": "Server Error",
+      "message": "An error occurred. Please try again later."
+    }
+  },
+  "landing": {
+    "hero": {
+      "title": "Master Real-World Job Skills",
+      "subtitle": "Gain practical experience with real enterprise tasks",
+      "cta_get_started": "Get Started",
+      "cta_browse_tasks": "Browse Tasks"
+    },
+    "features": {
+      "title": "Why JobSim?",
+      "real_world": "Real-World Tasks",
+      "real_world_desc": "Work on actual enterprise tasks",
+      "ai_powered": "AI-Powered",
+      "ai_powered_desc": "AI-assisted meeting simulations",
+      "skill_building": "Skill Building",
+      "skill_building_desc": "Build in-demand industry skills"
+    },
+    "how_it_works": {
+      "title": "How It Works",
+      "step1": "Create Profile",
+      "step2": "Choose Task",
+      "step3": "Submit Work",
+      "step4": "Get Feedback"
+    },
+    "cta": {
+      "title": "Ready to get started?",
+      "subtitle": "Join thousands of students gaining real-world experience",
+      "button": "Create Free Account"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account preferences",
+    "account": "Account",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "language": "Language",
+    "theme": "Theme"
+  },
+  "meetings": {
+    "title": "Meetings",
+    "subtitle": "Meeting simulations for task",
+    "schedule": "Schedule Meeting",
+    "upcoming": "Upcoming Meetings",
+    "past": "Past Meetings",
+    "no_meetings": "No meetings scheduled"
+  },
+  "enterprise": {
+    "dashboard": {
+      "welcome": "Welcome, {{name}}",
+      "task_creation_disabled": "Task creation is currently disabled. Contact support to enable this feature.",
+      "stats": {
+        "total_tasks": "Total Tasks",
+        "active_tasks": "Active Tasks",
+        "total_submissions": "Total Submissions",
+        "total_candidates": "Total Candidates",
+        "average_score": "Average Score",
+        "task_approval_rate": "Approval Rate",
+        "pending_validation": "Pending Validation"
+      },
+      "quick_actions": "Quick Actions",
+      "actions": {
+        "create_task": "Create Task",
+        "create_task_desc": "Create a new task for professionals",
+        "manage_tasks": "Manage Tasks",
+        "manage_tasks_desc": "View and manage all your tasks",
+        "view_candidates": "View Candidates",
+        "view_candidates_desc": "Browse candidate submissions",
+        "view_analytics": "View Analytics",
+        "view_analytics_desc": "View performance metrics"
+      }
+    },
+    "profile": {
+      "title": "Company Profile",
+      "subtitle": "Manage your company information",
+      "save_success": "Profile updated successfully!",
+      "edit_button": "Edit Profile",
+      "read_only": "(Read-only)",
+      "not_specified": "Not specified",
+      "view_logo": "View Logo",
+      "fields": {
+        "name": "Company Name",
+        "sector": "Sector",
+        "size": "Company Size",
+        "description": "Description",
+        "logo_url": "Logo URL",
+        "website": "Website",
+        "location": "Location",
+        "contact_email": "Contact Email",
+        "contact_phone": "Contact Phone",
+        "verification_status": "Verification Status",
+        "account_created": "Account Created"
+      },
+      "edit": {
+        "title": "Edit Company Profile",
+        "description_label": "Description",
+        "description_placeholder": "Describe your company, mission, and values...",
+        "description_help": "A brief description of your company (optional)",
+        "logo_url_label": "Logo URL",
+        "logo_url_placeholder": "https://example.com/logo.png",
+        "logo_url_help": "URL to your company logo image (optional)",
+        "website_label": "Website",
+        "website_placeholder": "https://www.your-company.com",
+        "website_help": "Your company website (optional)",
+        "location_label": "Location",
+        "location_placeholder": "City, Country",
+        "location_help": "Your company's primary location (optional)",
+        "contact_email_label": "Contact Email",
+        "contact_email_placeholder": "contact@your-company.com",
+        "contact_email_help": "Primary contact email address",
+        "contact_phone_label": "Contact Phone",
+        "contact_phone_placeholder": "+221 XX XXX XX XX",
+        "contact_phone_help": "Contact phone number (optional)",
+        "save_button": "Save Changes",
+        "cancel_button": "Cancel",
+        "saving": "Saving..."
+      }
+    },
+    "tasks": {
+      "title": "My Tasks",
+      "subtitle": "Manage your enterprise tasks",
+      "create_task": "Create Task",
+      "create_first_task": "Create your first task",
+      "search": "Search",
+      "search_placeholder": "Search tasks...",
+      "filter_status": "Filter by status",
+      "no_tasks": "No tasks",
+      "no_tasks_desc": "You haven't created any tasks yet. Create your first task to get started.",
+      "submissions": "submissions",
+      "back_to_list": "Back to list",
+      "status": {
+        "all": "All",
+        "pending_validation": "Pending Validation",
+        "archived": "Archived"
+      },
+      "detail": {
+        "total_submissions": "Total Submissions",
+        "points": "Points",
+        "experience_level": "Experience Level",
+        "created_date": "Created Date",
+        "task_information": "Task Information",
+        "duration": "Duration",
+        "days": "days",
+        "submissions": "Submissions",
+        "no_submissions": "No submissions",
+        "no_submissions_desc": "This task hasn't received any submissions yet.",
+        "candidate": "Candidate",
+        "submitted_date": "Submitted Date",
+        "status": "Status",
+        "score": "Score",
+        "actions": "Actions"
+      }
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Performance overview and metrics",
+      "period": "Period",
+      "all_time": "All Time",
+      "this_month": "This Month",
+      "this_week": "This Week",
+      "active": "active",
+      "submissions": "submissions",
+      "good": "Good",
+      "average": "Average",
+      "needs_improvement": "Needs Improvement",
+      "approval_rate_desc": "Task approval rate",
+      "performance_overview": "Performance Overview",
+      "task_performance": "Task Performance",
+      "pending_tasks": "Pending Tasks",
+      "candidate_engagement": "Candidate Engagement",
+      "total_submissions": "Total Submissions",
+      "unique_candidates": "Unique Candidates",
+      "avg_submissions_per_task": "Avg. submissions/task",
+      "quick_insights": "Quick Insights",
+      "insight_tasks": "You have {{count}} task(s) in total",
+      "insight_avg_score": "Average score of {{score}}%",
+      "insight_candidates": "{{count}} candidate(s) have submitted work"
+    }
+  }
+}

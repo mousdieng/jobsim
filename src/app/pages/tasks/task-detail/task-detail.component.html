@@ -7,13 +7,13 @@
     <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
     </svg>
-    Back to Tasks
+    Retour aux Tâches
   </button>
 
   <!-- Loading State -->
   <div *ngIf="isLoading" class="text-center py-12">
     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-    <p class="mt-4 text-gray-500">Loading task details...</p>
+    <p class="mt-4 text-gray-500">Chargement des détails de la tâche...</p>
   </div>
 
   <!-- Error State -->
@@ -36,8 +36,8 @@
     <div *ngIf="!taskStarted && !userSubmission" class="mb-6 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-6">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-1">Ready to begin?</h3>
-          <p class="text-sm text-gray-600">Start this task to get your deadline and AI-powered meeting simulations</p>
+          <h3 class="text-lg font-semibold text-gray-900 mb-1">Prêt à commencer?</h3>
+          <p class="text-sm text-gray-600">Démarrez cette tâche pour obtenir votre date limite et des simulations de réunion assistées par IA</p>
           <p *ngIf="startTaskError" class="mt-2 text-sm text-red-600">{{ startTaskError }}</p>
         </div>
         <button
@@ -45,13 +45,13 @@
           [disabled]="isStartingTask"
           class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
         >
-          <span *ngIf="!isStartingTask">Start Task</span>
+          <span *ngIf="!isStartingTask">Démarrer la Tâche</span>
           <span *ngIf="isStartingTask" class="flex items-center">
             <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Starting...
+            Démarrage...
           </span>
         </button>
       </div>
@@ -64,8 +64,8 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <div>
-          <p class="text-sm font-medium text-green-800">Task started successfully!</p>
-          <p class="text-sm text-green-700">Deadline: {{ taskDeadline | date:'fullDate' }} at {{ taskDeadline | date:'shortTime' }}</p>
+          <p class="text-sm font-medium text-green-800">Tâche démarrée avec succès!</p>
+          <p class="text-sm text-green-700">Date limite: {{ taskDeadline | date:'fullDate' }} à {{ taskDeadline | date:'shortTime' }}</p>
         </div>
       </div>
     </div>
@@ -78,13 +78,13 @@
             <h1 class="text-2xl font-bold text-gray-900">{{ task.title }}</h1>
             <div class="mt-2 flex flex-wrap gap-2">
               <span [ngClass]="getDifficultyColor(task.difficulty_level)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                {{ formatDifficulty(task.difficulty_level) }}
+                {{ 'task.difficulty.' + task.difficulty_level | translate }}
               </span>
               <span [ngClass]="getCreatorBadge(task.created_by)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
                 {{ task.created_by | titlecase }}
               </span>
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                {{ formatJobField(task.job_field) }}
+                {{ 'job_field.' + task.job_field | translate }}
               </span>
             </div>
           </div>
@@ -93,7 +93,7 @@
             (click)="openSubmissionForm()"
             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
           >
-            Submit Work
+            Soumettre le Travail
           </button>
         </div>
       </div>
@@ -105,20 +105,20 @@
             <svg class="h-5 w-5 text-blue-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span class="text-sm text-blue-700">You have already submitted this task</span>
+            <span class="text-sm text-blue-700">Vous avez déjà soumis cette tâche</span>
           </div>
           <div class="flex items-center gap-2">
             <span [ngClass]="getStatusColor(userSubmission.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-              {{ formatStatus(userSubmission.status) }}
+              {{ 'task.status.' + userSubmission.status | translate }}
             </span>
             <button
               *ngIf="!userSubmission.score && !isEvaluating"
               (click)="evaluateSubmission()"
               class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700"
             >
-              Get AI Evaluation
+              Obtenir l'Évaluation IA
             </button>
-            <span *ngIf="isEvaluating" class="text-xs text-blue-600">Evaluating...</span>
+            <span *ngIf="isEvaluating" class="text-xs text-blue-600">Évaluation en cours...</span>
           </div>
         </div>
         <div *ngIf="userSubmission.score" class="mt-2 text-sm text-blue-600">
@@ -133,23 +133,23 @@
           <h4 class="text-sm font-semibold text-gray-900 mb-2">AI Evaluation Results</h4>
           <div class="space-y-2">
             <div>
-              <span class="text-sm font-medium text-gray-700">Score: </span>
+              <span class="text-sm font-medium text-gray-700">Note: </span>
               <span class="text-sm text-gray-900">{{ evaluationResult.overall_score }}/100 ({{ evaluationResult.letter_grade }})</span>
             </div>
             <div *ngIf="evaluationResult.strengths?.length > 0">
-              <p class="text-sm font-medium text-gray-700 mb-1">Strengths:</p>
+              <p class="text-sm font-medium text-gray-700 mb-1">Points Forts:</p>
               <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
                 <li *ngFor="let strength of evaluationResult.strengths">{{ strength }}</li>
               </ul>
             </div>
             <div *ngIf="evaluationResult.weaknesses?.length > 0">
-              <p class="text-sm font-medium text-gray-700 mb-1">Areas for Improvement:</p>
+              <p class="text-sm font-medium text-gray-700 mb-1">Axes d'Amélioration:</p>
               <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
                 <li *ngFor="let weakness of evaluationResult.weaknesses">{{ weakness }}</li>
               </ul>
             </div>
             <div *ngIf="evaluationResult.detailed_feedback">
-              <p class="text-sm font-medium text-gray-700 mb-1">Detailed Feedback:</p>
+              <p class="text-sm font-medium text-gray-700 mb-1">Retour Détaillé:</p>
               <p class="text-sm text-gray-600">{{ evaluationResult.detailed_feedback }}</p>
             </div>
           </div>
@@ -160,19 +160,19 @@
       <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
         <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
           <div *ngIf="task.estimated_duration">
-            <dt class="text-sm font-medium text-gray-500">Estimated Duration</dt>
+            <dt class="text-sm font-medium text-gray-500">Durée Estimée</dt>
             <dd class="mt-1 text-sm text-gray-900">{{ task.estimated_duration }}</dd>
           </div>
           <div *ngIf="task.deadline">
-            <dt class="text-sm font-medium text-gray-500">Deadline</dt>
+            <dt class="text-sm font-medium text-gray-500">Date Limite</dt>
             <dd class="mt-1 text-sm text-gray-900">{{ task.deadline | date:'fullDate' }}</dd>
           </div>
           <div *ngIf="task.enterprise">
-            <dt class="text-sm font-medium text-gray-500">Enterprise</dt>
+            <dt class="text-sm font-medium text-gray-500">Entreprise</dt>
             <dd class="mt-1 text-sm text-gray-900">{{ task.enterprise.name }}</dd>
           </div>
           <div>
-            <dt class="text-sm font-medium text-gray-500">Skills Required</dt>
+            <dt class="text-sm font-medium text-gray-500">Compétences Requises</dt>
             <dd class="mt-1">
               <div class="flex flex-wrap gap-1">
                 <span *ngFor="let skill of task.skills_required" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
@@ -198,7 +198,7 @@
 
       <!-- Deliverables -->
       <div *ngIf="task.deliverables.length > 0" class="border-t border-gray-200 px-4 py-5 sm:px-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-3">Deliverables</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-3">Livrables</h3>
         <ul class="space-y-3">
           <li *ngFor="let deliverable of task.deliverables" class="flex items-start">
             <svg class="h-5 w-5 text-indigo-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -207,7 +207,7 @@
             <div>
               <p class="text-sm font-medium text-gray-900">{{ deliverable.title }}</p>
               <p class="text-xs text-gray-500">{{ deliverable.description }}</p>
-              <span *ngIf="deliverable.required" class="text-xs text-red-600">Required</span>
+              <span *ngIf="deliverable.required" class="text-xs text-red-600">Requis</span>
             </div>
           </li>
         </ul>
@@ -215,7 +215,7 @@
 
       <!-- Resources -->
       <div *ngIf="task.resources.length > 0" class="border-t border-gray-200 px-4 py-5 sm:px-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-3">Resources</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-3">Ressources</h3>
         <ul class="space-y-2">
           <li *ngFor="let resource of task.resources">
             <a [href]="resource.url" target="_blank" class="flex items-center text-sm text-indigo-600 hover:text-indigo-500">
@@ -230,7 +230,7 @@
 
       <!-- Tags -->
       <div *ngIf="task.tags.length > 0" class="border-t border-gray-200 px-4 py-5 sm:px-6">
-        <h3 class="text-sm font-medium text-gray-500 mb-2">Tags</h3>
+        <h3 class="text-sm font-medium text-gray-500 mb-2">Étiquettes</h3>
         <div class="flex flex-wrap gap-2">
           <span *ngFor="let tag of task.tags" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
             {{ tag }}
@@ -243,7 +243,7 @@
     <div *ngIf="meetings.length > 0" class="mt-6 bg-white shadow overflow-hidden sm:rounded-lg">
       <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
         <div class="flex items-center justify-between">
-          <h3 class="text-lg font-medium text-gray-900">AI-Generated Meetings</h3>
+          <h3 class="text-lg font-medium text-gray-900">Réunions Générées par IA</h3>
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
             <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
               <path d="M13 7H7v6h6V7z"/>
@@ -273,14 +273,14 @@
                     {{ meeting.scheduled_for | date:'medium' }}
                   </p>
                   <p *ngIf="meeting.duration_minutes" class="text-xs text-gray-400 mt-1">
-                    Duration: {{ meeting.duration_minutes }} minutes
+                    Durée: {{ meeting.duration_minutes }} minutes
                   </p>
                 </div>
               </div>
             </div>
             <div class="flex items-center gap-2">
               <span [class]="meeting.completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                {{ meeting.completed ? 'Completed' : 'Scheduled' }}
+                {{ meeting.completed ? 'Complété' : 'Planifié' }}
               </span>
             </div>
           </div>
@@ -298,7 +298,7 @@
 
       <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Submit Your Work</h3>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Soumettre Votre Travail</h3>
 
           <!-- Success Message -->
           <div *ngIf="submissionSuccess" class="rounded-md bg-green-50 p-4 mb-4">
@@ -309,7 +309,7 @@
                 </svg>
               </div>
               <div class="ml-3">
-                <p class="text-sm font-medium text-green-800">Submission successful!</p>
+                <p class="text-sm font-medium text-green-800">Soumission réussie!</p>
               </div>
             </div>
           </div>
@@ -322,23 +322,23 @@
           <!-- Form -->
           <div class="space-y-4">
             <div>
-              <label for="content" class="block text-sm font-medium text-gray-700">Your Submission</label>
+              <label for="content" class="block text-sm font-medium text-gray-700">Votre Soumission</label>
               <textarea
                 id="content"
                 [(ngModel)]="submissionContent"
                 rows="10"
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                placeholder="Enter your work here... (code, text, analysis, etc.)"
+                placeholder="Entrez votre travail ici... (code, texte, analyse, etc.)"
               ></textarea>
             </div>
             <div>
-              <label for="notes" class="block text-sm font-medium text-gray-700">Notes (Optional)</label>
+              <label for="notes" class="block text-sm font-medium text-gray-700">Notes (Optionnel)</label>
               <textarea
                 id="notes"
                 [(ngModel)]="submissionNotes"
                 rows="3"
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                placeholder="Any additional notes or comments..."
+                placeholder="Notes ou commentaires supplémentaires..."
               ></textarea>
             </div>
           </div>
@@ -351,13 +351,13 @@
             [disabled]="isSubmitting || !submissionContent.trim()"
             class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
           >
-            <span *ngIf="!isSubmitting">Submit</span>
+            <span *ngIf="!isSubmitting">Soumettre</span>
             <span *ngIf="isSubmitting" class="flex items-center">
               <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Submitting...
+              Soumission en cours...
             </span>
           </button>
           <button
@@ -365,7 +365,7 @@
             (click)="closeSubmissionForm()"
             class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
           >
-            Cancel
+            Annuler
           </button>
         </div>
       </div>

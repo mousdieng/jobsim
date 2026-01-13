@@ -430,6 +430,8 @@ export interface TaskFilters {
   is_featured?: boolean;
   search?: string;
   skills?: string[];
+  is_active?: boolean;
+  lifecycle_status?: TaskLifecycleStatus;
 }
 
 // ============================================

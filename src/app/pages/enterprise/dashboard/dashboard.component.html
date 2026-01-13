@@ -1,0 +1,301 @@
+<div class="max-w-7xl mx-auto">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="rounded-md bg-red-50 p-4 mb-6">
+    <div class="flex">
+      <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+      </svg>
+      <div class="ml-3">
+        <p class="text-sm font-medium text-red-800">{{ error }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!isLoading && !error">
+    <!-- Welcome Header -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <h1 class="text-2xl font-bold text-gray-900">
+            {{ 'enterprise.dashboard.welcome' | translate: {name: enterprise?.name} }}
+          </h1>
+          <p class="mt-1 text-sm text-gray-500" *ngIf="enterprise && enterprise.sector">
+            {{ enterprise.sector }}
+          </p>
+        </div>
+        <div>
+          <span [ngClass]="getVerificationStatusColor()" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium">
+            <svg class="w-4 h-4 mr-1.5" *ngIf="enterprise?.is_verified" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            {{ getVerificationStatusText() }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Task Creation Permission Warning -->
+      <div *ngIf="!canCreateTasks()" class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <div class="flex">
+          <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+          <div class="ml-3">
+            <p class="text-sm text-yellow-800">
+              {{ 'enterprise.dashboard.task_creation_disabled' | translate }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+      <!-- Total Tasks -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">
+                  {{ 'enterprise.dashboard.stats.total_tasks' | translate }}
+                </dt>
+                <dd class="text-3xl font-semibold text-gray-900">
+                  {{ stats?.total_tasks || 0 }}
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Tasks -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">
+                  {{ 'enterprise.dashboard.stats.active_tasks' | translate }}
+                </dt>
+                <dd class="text-3xl font-semibold text-gray-900">
+                  {{ stats?.active_tasks || 0 }}
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Submissions -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">
+                  {{ 'enterprise.dashboard.stats.total_submissions' | translate }}
+                </dt>
+                <dd class="text-3xl font-semibold text-gray-900">
+                  {{ stats?.total_submissions || 0 }}
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Candidates -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">
+                  {{ 'enterprise.dashboard.stats.total_candidates' | translate }}
+                </dt>
+                <dd class="text-3xl font-semibold text-gray-900">
+                  {{ stats?.total_candidates || 0 }}
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Stats Row -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-3 mb-6">
+      <!-- Average Score -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-sm font-medium text-gray-500">
+            {{ 'enterprise.dashboard.stats.average_score' | translate }}
+          </dt>
+          <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
+            <div class="flex items-baseline text-2xl font-semibold text-emerald-600">
+              {{ stats?.average_score || 0 }}%
+            </div>
+          </dd>
+        </div>
+      </div>
+
+      <!-- Approval Rate -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-sm font-medium text-gray-500">
+            {{ 'enterprise.dashboard.stats.task_approval_rate' | translate }}
+          </dt>
+          <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
+            <div class="flex items-baseline text-2xl font-semibold text-blue-600">
+              {{ stats?.task_approval_rate || 0 }}%
+            </div>
+          </dd>
+        </div>
+      </div>
+
+      <!-- Pending Tasks -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-sm font-medium text-gray-500">
+            {{ 'enterprise.dashboard.stats.pending_validation' | translate }}
+          </dt>
+          <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
+            <div class="flex items-baseline text-2xl font-semibold text-yellow-600">
+              {{ stats?.pending_tasks || 0 }}
+            </div>
+          </dd>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">
+          {{ 'enterprise.dashboard.quick_actions' | translate }}
+        </h3>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <a
+            [routerLink]="['/enterprise/tasks/create']"
+            [class.pointer-events-none]="!canCreateTasks()"
+            [class.opacity-50]="!canCreateTasks()"
+            class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-500 hover:bg-gray-50 border-2 border-gray-200 rounded-lg transition-all"
+          >
+            <div>
+              <span class="rounded-lg inline-flex p-3 bg-emerald-50 text-emerald-700 ring-4 ring-white">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+              </span>
+            </div>
+            <div class="mt-4">
+              <h3 class="text-lg font-medium">
+                <span class="focus:outline-none">
+                  {{ 'enterprise.dashboard.actions.create_task' | translate }}
+                </span>
+              </h3>
+              <p class="mt-2 text-sm text-gray-500">
+                {{ 'enterprise.dashboard.actions.create_task_desc' | translate }}
+              </p>
+            </div>
+          </a>
+
+          <a
+            [routerLink]="['/enterprise/tasks']"
+            class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-500 hover:bg-gray-50 border-2 border-gray-200 rounded-lg transition-all"
+          >
+            <div>
+              <span class="rounded-lg inline-flex p-3 bg-blue-50 text-blue-700 ring-4 ring-white">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              </span>
+            </div>
+            <div class="mt-4">
+              <h3 class="text-lg font-medium">
+                <span class="focus:outline-none">
+                  {{ 'enterprise.dashboard.actions.manage_tasks' | translate }}
+                </span>
+              </h3>
+              <p class="mt-2 text-sm text-gray-500">
+                {{ 'enterprise.dashboard.actions.manage_tasks_desc' | translate }}
+              </p>
+            </div>
+          </a>
+
+          <a
+            [routerLink]="['/enterprise/candidates']"
+            class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-500 hover:bg-gray-50 border-2 border-gray-200 rounded-lg transition-all"
+          >
+            <div>
+              <span class="rounded-lg inline-flex p-3 bg-purple-50 text-purple-700 ring-4 ring-white">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              </span>
+            </div>
+            <div class="mt-4">
+              <h3 class="text-lg font-medium">
+                <span class="focus:outline-none">
+                  {{ 'enterprise.dashboard.actions.view_candidates' | translate }}
+                </span>
+              </h3>
+              <p class="mt-2 text-sm text-gray-500">
+                {{ 'enterprise.dashboard.actions.view_candidates_desc' | translate }}
+              </p>
+            </div>
+          </a>
+
+          <a
+            [routerLink]="['/enterprise/analytics']"
+            class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-500 hover:bg-gray-50 border-2 border-gray-200 rounded-lg transition-all"
+          >
+            <div>
+              <span class="rounded-lg inline-flex p-3 bg-indigo-50 text-indigo-700 ring-4 ring-white">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </span>
+            </div>
+            <div class="mt-4">
+              <h3 class="text-lg font-medium">
+                <span class="focus:outline-none">
+                  {{ 'enterprise.dashboard.actions.view_analytics' | translate }}
+                </span>
+              </h3>
+              <p class="mt-2 text-sm text-gray-500">
+                {{ 'enterprise.dashboard.actions.view_analytics_desc' | translate }}
+              </p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

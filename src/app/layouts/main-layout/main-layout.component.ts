@@ -1,13 +1,16 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
+import { LanguageService } from '../../services/language.service';
+import { NotificationToastComponent } from '../../components/notification-toast/notification-toast.component';
 import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule, NotificationToastComponent],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.css']
 })
@@ -19,7 +22,8 @@ export class MainLayoutComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    public languageService: LanguageService
   ) {
     this.authService.currentUser$.subscribe(user => {
       this.user = user;
@@ -60,12 +64,6 @@ export class MainLayoutComponent {
       return `${names[0][0]}${names[1][0]}`.toUpperCase();
     }
     return names[0][0].toUpperCase();
-  }
-
-  formatJobField(field: string): string {
-    return field.split('_').map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
   }
 
   isAdmin(): boolean {

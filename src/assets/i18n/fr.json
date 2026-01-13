@@ -1,0 +1,606 @@
+{
+  "common": {
+    "buttons": {
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "submit": "Soumettre",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "view": "Voir",
+      "create": "Créer",
+      "search": "Rechercher",
+      "filter": "Filtrer",
+      "clear": "Effacer",
+      "back": "Retour",
+      "next": "Suivant",
+      "previous": "Précédent",
+      "close": "Fermer",
+      "confirm": "Confirmer",
+      "loading": "Chargement...",
+      "view_all": "Voir tout",
+      "view_details": "Voir les détails",
+      "sign_out": "Se déconnecter"
+    },
+    "messages": {
+      "loading": "Chargement...",
+      "error": "Erreur",
+      "success": "Succès",
+      "no_data": "Aucune donnée disponible",
+      "authenticating": "Authentification...",
+      "saving": "Enregistrement...",
+      "deleting": "Suppression...",
+      "updating": "Mise à jour..."
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "pending": "En attente",
+      "completed": "Terminé",
+      "failed": "Échoué"
+    }
+  },
+  "nav": {
+    "brand": "JobSim Senegal",
+    "menu": {
+      "tasks": "Tâches",
+      "submissions": "Soumissions",
+      "profile": "Profil",
+      "admin": "Admin",
+      "support": "Support",
+      "dashboard": "Tableau de bord",
+      "settings": "Paramètres",
+      "home": "Accueil"
+    },
+    "user_menu": {
+      "your_profile": "Votre profil",
+      "my_submissions": "Mes soumissions",
+      "settings": "Paramètres",
+      "sign_out": "Se déconnecter"
+    },
+    "language_switcher": "Changer de langue"
+  },
+  "auth": {
+    "login": {
+      "title": "Connectez-vous à votre compte",
+      "email_label": "Adresse e-mail",
+      "email_placeholder": "vous@exemple.com",
+      "password_label": "Mot de passe",
+      "password_placeholder": "••••••••",
+      "forgot_password": "Mot de passe oublié?",
+      "submit": "Se connecter",
+      "signing_in": "Connexion en cours...",
+      "create_account": "créer un nouveau compte",
+      "no_account": "Vous n'avez pas de compte?",
+      "success": "Connexion réussie!",
+      "error": "Échec de la connexion. Veuillez vérifier vos identifiants."
+    },
+    "register": {
+      "title": "Créez votre compte",
+      "full_name": "Nom complet",
+      "full_name_placeholder": "Jean Dupont",
+      "email_label": "Adresse e-mail",
+      "email_placeholder": "vous@exemple.com",
+      "job_field": "Domaine professionnel",
+      "experience_level": "Niveau d'expérience",
+      "password": "Mot de passe",
+      "password_placeholder": "••••••••",
+      "confirm_password": "Confirmer le mot de passe",
+      "confirm_password_placeholder": "••••••••",
+      "password_strength": "Force du mot de passe:",
+      "password_hint": "Utilisez 8+ caractères avec un mélange de lettres, chiffres et symboles",
+      "submit": "Créer un compte",
+      "creating_account": "Création du compte...",
+      "have_account": "Vous avez déjà un compte?",
+      "sign_in": "Se connecter",
+      "success": "Compte créé avec succès!",
+      "error": "Échec de la création du compte."
+    },
+    "forgot_password": {
+      "title": "Réinitialiser votre mot de passe",
+      "description": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+      "email_label": "Adresse e-mail",
+      "submit": "Envoyer le lien de réinitialisation",
+      "back_to_login": "Retour à la connexion",
+      "success": "Lien de réinitialisation envoyé! Vérifiez votre e-mail.",
+      "error": "Échec de l'envoi du lien de réinitialisation."
+    },
+    "reset_password": {
+      "title": "Créer un nouveau mot de passe",
+      "password_label": "Nouveau mot de passe",
+      "confirm_password_label": "Confirmer le nouveau mot de passe",
+      "submit": "Réinitialiser le mot de passe",
+      "success": "Mot de passe réinitialisé avec succès!",
+      "error": "Échec de la réinitialisation du mot de passe."
+    }
+  },
+  "home": {
+    "welcome": "Bienvenue, {{name}}!",
+    "subtitle": "Prêt à améliorer vos compétences aujourd'hui?",
+    "explore_tasks": "Explorer les tâches",
+    "stats": {
+      "completed_tasks": "Tâches complétées",
+      "pending_review": "En attente de révision",
+      "average_score": "Score moyen",
+      "total_points": "Points totaux",
+      "great_progress": "Excellent progrès!",
+      "awaiting_feedback": "En attente de retour",
+      "performance_rating": "Évaluation de performance",
+      "keep_it_up": "Continuez comme ça!"
+    },
+    "recommended": {
+      "title": "Tâches recommandées pour vous",
+      "subtitle": "Sélectionnées selon votre profil",
+      "view_all": "Voir tout",
+      "no_tasks": "Aucune tâche disponible",
+      "check_later": "Revenez plus tard pour de nouvelles tâches dans votre domaine."
+    },
+    "recent_activity": "Activité récente",
+    "no_activity": "Aucune activité récente"
+  },
+  "task": {
+    "list": {
+      "title": "Tâches disponibles",
+      "subtitle": "Parcourir et compléter des tâches d'entreprise réelles",
+      "search_placeholder": "Rechercher des tâches...",
+      "filters": {
+        "search": "Rechercher",
+        "job_field": "Domaine",
+        "difficulty": "Difficulté",
+        "clear_all": "Effacer tous les filtres",
+        "all": "Tous"
+      },
+      "showing": "Affichage de",
+      "tasks": "tâche(s)",
+      "no_tasks": "Aucune tâche trouvée",
+      "no_tasks_description": "Essayez d'ajuster vos filtres ou votre recherche.",
+      "loading": "Chargement des tâches..."
+    },
+    "detail": {
+      "back_to_tasks": "Retour aux tâches",
+      "loading": "Chargement des détails de la tâche...",
+      "ready_to_begin": "Prêt à commencer?",
+      "start_description": "Commencez cette tâche pour obtenir votre date limite et des simulations de réunions assistées par IA",
+      "start_task": "Commencer la tâche",
+      "starting": "Démarrage...",
+      "started_success": "Tâche démarrée avec succès!",
+      "deadline": "Date limite:",
+      "description": "Description",
+      "requirements": "Exigences",
+      "deliverables": "Livrables",
+      "resources": "Ressources",
+      "difficulty_level": "Niveau de difficulté",
+      "estimated_time": "Temps estimé",
+      "points": "Points"
+    },
+    "difficulty": {
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé",
+      "expert": "Expert"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "published": "Publié",
+      "submitted": "Soumis",
+      "under_review": "En révision",
+      "reviewed": "Révisé",
+      "approved": "Approuvé",
+      "rejected": "Rejeté",
+      "completed": "Terminé",
+      "in_progress": "En cours"
+    }
+  },
+  "job_field": {
+    "software_engineering": "Génie logiciel",
+    "accounting": "Comptabilité",
+    "marketing": "Marketing",
+    "sales": "Ventes",
+    "human_resources": "Ressources humaines",
+    "project_management": "Gestion de projet",
+    "data_science": "Science des données",
+    "graphic_design": "Design graphique",
+    "customer_service": "Service client",
+    "finance": "Finance",
+    "legal": "Juridique",
+    "healthcare": "Santé",
+    "education": "Éducation",
+    "operations": "Opérations",
+    "consulting": "Conseil",
+    "other": "Autre"
+  },
+  "experience": {
+    "junior": "Junior (0-2 ans)",
+    "mid": "Intermédiaire (2-5 ans)",
+    "senior": "Senior (5+ ans)"
+  },
+  "profile": {
+    "title": "Profil utilisateur",
+    "subtitle": "Informations personnelles et paramètres",
+    "edit": "Modifier le profil",
+    "save": "Enregistrer les modifications",
+    "cancel": "Annuler",
+    "updated_success": "Profil mis à jour avec succès!",
+    "fields": {
+      "full_name": "Nom complet",
+      "email": "Adresse e-mail",
+      "job_field": "Domaine professionnel",
+      "experience_level": "Niveau d'expérience",
+      "location": "Localisation",
+      "location_placeholder": "Ville, Pays",
+      "bio": "Biographie",
+      "bio_placeholder": "Parlez-nous de vous...",
+      "skills": "Compétences",
+      "skills_placeholder": "JavaScript, Python, Gestion de projet (séparés par des virgules)",
+      "available_for_hire": "Disponible pour l'embauche",
+      "linkedin": "LinkedIn",
+      "github": "GitHub",
+      "portfolio": "Portfolio"
+    },
+    "stats": {
+      "tasks_completed": "Tâches complétées",
+      "average_score": "Score moyen",
+      "total_points": "Points totaux",
+      "rank": "Classement"
+    }
+  },
+  "submissions": {
+    "title": "Mes soumissions",
+    "subtitle": "Suivez vos tâches soumises et leur statut",
+    "no_submissions": "Aucune soumission",
+    "no_submissions_description": "Vous n'avez pas encore soumis de tâches.",
+    "task_name": "Nom de la tâche",
+    "submitted_date": "Date de soumission",
+    "status": "Statut",
+    "score": "Score",
+    "feedback": "Retour",
+    "view_details": "Voir les détails"
+  },
+  "admin": {
+    "title": "Panneau d'administration",
+    "subtitle": "Gouvernance et gestion de la plateforme",
+    "panel_title": "Admin JobSim",
+    "header_title": "Panneau d'administration",
+    "nav": {
+      "overview": "Vue d'ensemble",
+      "users": "Utilisateurs",
+      "enterprises": "Entreprises",
+      "tasks": "Tâches",
+      "submissions": "Soumissions",
+      "domains": "Domaines",
+      "analytics": "Analyses",
+      "system": "Système",
+      "audit_logs": "Journaux d'audit"
+    },
+    "dashboard": {
+      "title": "Tableau de bord Admin",
+      "subtitle": "Gouvernance et gestion de la plateforme",
+      "stats": {
+        "total_users": "Utilisateurs totaux",
+        "total_enterprises": "Entreprises totales",
+        "total_tasks": "Tâches totales",
+        "total_submissions": "Soumissions totales",
+        "pending_approval": "en attente d'approbation",
+        "active_users": "Utilisateurs actifs"
+      },
+      "action_required": "Action requise",
+      "enterprise_approvals": "Approbations d'entreprises",
+      "task_validations": "Validations de tâches",
+      "flagged_tasks": "Tâches signalées",
+      "all_caught_up": "Tout est à jour! Aucune action en attente.",
+      "recent_actions": "Actions administratives récentes",
+      "no_recent_actions": "Aucune action administrative récente",
+      "quick_actions": "Actions rapides",
+      "manage_users": "Gérer les utilisateurs",
+      "manage_tasks": "Gérer les tâches",
+      "manage_enterprises": "Gérer les entreprises",
+      "audit_logs": "Journaux d'audit"
+    },
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "subtitle": "Gérer les comptes utilisateurs et les rôles",
+      "add_user": "Ajouter un utilisateur",
+      "search_placeholder": "Rechercher des utilisateurs...",
+      "role": "Rôle",
+      "status": "Statut",
+      "actions": "Actions",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "roles": {
+        "admin": "Administrateur",
+        "student": "Étudiant",
+        "enterprise": "Entreprise",
+        "support": "Support"
+      }
+    },
+    "tasks": {
+      "title": "Gestion des tâches",
+      "subtitle": "Gérer les tâches d'entreprise",
+      "create_task": "Créer une tâche",
+      "search_placeholder": "Rechercher des tâches...",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "publish": "Publier",
+      "unpublish": "Dépublier"
+    },
+    "enterprises": {
+      "title": "Gestion des entreprises",
+      "subtitle": "Gérer les comptes d'entreprise",
+      "add_enterprise": "Ajouter une entreprise",
+      "search_placeholder": "Rechercher des entreprises...",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "status": {
+        "pending": "En attente",
+        "approved": "Approuvé",
+        "rejected": "Rejeté",
+        "suspended": "Suspendu"
+      }
+    },
+    "submissions": {
+      "title": "Gestion des soumissions",
+      "subtitle": "Réviser et noter les soumissions d'étudiants",
+      "review": "Réviser",
+      "grade": "Noter"
+    },
+    "domains": {
+      "title": "Gestion des domaines",
+      "subtitle": "Gérer les domaines professionnels et les catégories",
+      "add_domain": "Ajouter un domaine"
+    },
+    "audit_logs": {
+      "title": "Journaux d'audit",
+      "subtitle": "Historique des activités du système",
+      "search_placeholder": "Rechercher dans les journaux...",
+      "user": "Utilisateur",
+      "action": "Action",
+      "timestamp": "Horodatage",
+      "details": "Détails"
+    },
+    "settings": {
+      "title": "Paramètres système",
+      "subtitle": "Configurer les paramètres de la plateforme",
+      "general": "Général",
+      "notifications": "Notifications",
+      "security": "Sécurité",
+      "integrations": "Intégrations"
+    }
+  },
+  "support": {
+    "dashboard": {
+      "title": "Tableau de bord Support",
+      "subtitle": "Assistance et modération des utilisateurs"
+    },
+    "tickets": {
+      "title": "Tickets",
+      "subtitle": "Gérer les demandes d'assistance",
+      "create_ticket": "Créer un ticket",
+      "open": "Ouvert",
+      "closed": "Fermé",
+      "resolved": "Résolu"
+    },
+    "users": {
+      "title": "Assistance utilisateur",
+      "subtitle": "Aider les utilisateurs avec leurs problèmes"
+    },
+    "tasks": {
+      "title": "Modération des tâches",
+      "subtitle": "Réviser et modérer le contenu des tâches"
+    },
+    "escalations": {
+      "title": "Escalades",
+      "subtitle": "Problèmes escaladés nécessitant une attention"
+    },
+    "knowledge": {
+      "title": "Base de connaissances",
+      "subtitle": "Articles d'aide et documentation"
+    },
+    "logs": {
+      "title": "Journaux d'activité",
+      "subtitle": "Activité utilisateur et journaux système"
+    }
+  },
+  "validation": {
+    "required": "{{field}} est requis",
+    "email": "Veuillez entrer une adresse e-mail valide",
+    "min_length": "{{field}} doit contenir au moins {{length}} caractères",
+    "max_length": "{{field}} ne peut pas dépasser {{length}} caractères",
+    "password_mismatch": "Les mots de passe ne correspondent pas",
+    "invalid_format": "Format invalide"
+  },
+  "error": {
+    "unauthorized": {
+      "title": "Accès refusé",
+      "message": "Vous n'avez pas la permission d'accéder à cette page.",
+      "back_home": "Retour à l'accueil"
+    },
+    "not_found": {
+      "title": "Page non trouvée",
+      "message": "La page que vous recherchez n'existe pas.",
+      "back_home": "Retour à l'accueil"
+    },
+    "server_error": {
+      "title": "Erreur serveur",
+      "message": "Une erreur s'est produite. Veuillez réessayer plus tard."
+    }
+  },
+  "landing": {
+    "hero": {
+      "title": "Maîtrisez les compétences professionnelles réelles",
+      "subtitle": "Acquérez une expérience pratique avec des tâches d'entreprise réelles",
+      "cta_get_started": "Commencer",
+      "cta_browse_tasks": "Parcourir les tâches"
+    },
+    "features": {
+      "title": "Pourquoi JobSim?",
+      "real_world": "Tâches du monde réel",
+      "real_world_desc": "Travaillez sur de vraies tâches d'entreprise",
+      "ai_powered": "Alimenté par l'IA",
+      "ai_powered_desc": "Simulations de réunions assistées par l'IA",
+      "skill_building": "Développement de compétences",
+      "skill_building_desc": "Développez des compétences demandées par l'industrie"
+    },
+    "how_it_works": {
+      "title": "Comment ça marche",
+      "step1": "Créer un profil",
+      "step2": "Choisir une tâche",
+      "step3": "Soumettre votre travail",
+      "step4": "Recevoir des retours"
+    },
+    "cta": {
+      "title": "Prêt à commencer?",
+      "subtitle": "Rejoignez des milliers d'étudiants qui acquièrent une expérience réelle",
+      "button": "Créer un compte gratuit"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérer vos préférences de compte",
+    "account": "Compte",
+    "notifications": "Notifications",
+    "privacy": "Confidentialité",
+    "language": "Langue",
+    "theme": "Thème"
+  },
+  "meetings": {
+    "title": "Réunions",
+    "subtitle": "Simulations de réunions pour la tâche",
+    "schedule": "Planifier une réunion",
+    "upcoming": "Réunions à venir",
+    "past": "Réunions passées",
+    "no_meetings": "Aucune réunion planifiée"
+  },
+  "enterprise": {
+    "dashboard": {
+      "welcome": "Bienvenue, {{name}}",
+      "task_creation_disabled": "La création de tâches est actuellement désactivée. Contactez le support pour activer cette fonctionnalité.",
+      "stats": {
+        "total_tasks": "Tâches totales",
+        "active_tasks": "Tâches actives",
+        "total_submissions": "Soumissions totales",
+        "total_candidates": "Candidats totaux",
+        "average_score": "Score moyen",
+        "task_approval_rate": "Taux d'approbation",
+        "pending_validation": "En attente de validation"
+      },
+      "quick_actions": "Actions rapides",
+      "actions": {
+        "create_task": "Créer une tâche",
+        "create_task_desc": "Créer une nouvelle tâche pour les professionnels",
+        "manage_tasks": "Gérer les tâches",
+        "manage_tasks_desc": "Voir et gérer toutes vos tâches",
+        "view_candidates": "Voir les candidats",
+        "view_candidates_desc": "Parcourir les soumissions de candidats",
+        "view_analytics": "Voir les analyses",
+        "view_analytics_desc": "Voir les métriques de performance"
+      }
+    },
+    "profile": {
+      "title": "Profil de l'entreprise",
+      "subtitle": "Gérer les informations de votre entreprise",
+      "save_success": "Profil mis à jour avec succès!",
+      "edit_button": "Modifier le profil",
+      "read_only": "(Lecture seule)",
+      "not_specified": "Non spécifié",
+      "view_logo": "Voir le logo",
+      "fields": {
+        "name": "Nom de l'entreprise",
+        "sector": "Secteur",
+        "size": "Taille de l'entreprise",
+        "description": "Description",
+        "logo_url": "Logo URL",
+        "website": "Site web",
+        "location": "Localisation",
+        "contact_email": "E-mail de contact",
+        "contact_phone": "Téléphone de contact",
+        "verification_status": "Statut de vérification",
+        "account_created": "Compte créé"
+      },
+      "edit": {
+        "title": "Modifier le profil de l'entreprise",
+        "description_label": "Description",
+        "description_placeholder": "Décrivez votre entreprise, votre mission et vos valeurs...",
+        "description_help": "Une brève description de votre entreprise (optionnel)",
+        "logo_url_label": "URL du logo",
+        "logo_url_placeholder": "https://exemple.com/logo.png",
+        "logo_url_help": "URL de l'image du logo de votre entreprise (optionnel)",
+        "website_label": "Site web",
+        "website_placeholder": "https://www.votre-entreprise.com",
+        "website_help": "Site web de votre entreprise (optionnel)",
+        "location_label": "Localisation",
+        "location_placeholder": "Ville, Pays",
+        "location_help": "Localisation principale de votre entreprise (optionnel)",
+        "contact_email_label": "E-mail de contact",
+        "contact_email_placeholder": "contact@votre-entreprise.com",
+        "contact_email_help": "E-mail de contact principal",
+        "contact_phone_label": "Téléphone de contact",
+        "contact_phone_placeholder": "+221 XX XXX XX XX",
+        "contact_phone_help": "Numéro de téléphone de contact (optionnel)",
+        "save_button": "Enregistrer les modifications",
+        "cancel_button": "Annuler",
+        "saving": "Enregistrement..."
+      }
+    },
+    "tasks": {
+      "title": "Mes tâches",
+      "subtitle": "Gérer vos tâches d'entreprise",
+      "create_task": "Créer une tâche",
+      "create_first_task": "Créer votre première tâche",
+      "search": "Rechercher",
+      "search_placeholder": "Rechercher des tâches...",
+      "filter_status": "Filtrer par statut",
+      "no_tasks": "Aucune tâche",
+      "no_tasks_desc": "Vous n'avez pas encore créé de tâches. Créez votre première tâche pour commencer.",
+      "submissions": "soumissions",
+      "back_to_list": "Retour à la liste",
+      "status": {
+        "all": "Tous",
+        "pending_validation": "En attente de validation",
+        "archived": "Archivé"
+      },
+      "detail": {
+        "total_submissions": "Soumissions totales",
+        "points": "Points",
+        "experience_level": "Niveau d'expérience",
+        "created_date": "Date de création",
+        "task_information": "Informations sur la tâche",
+        "duration": "Durée",
+        "days": "jours",
+        "submissions": "Soumissions",
+        "no_submissions": "Aucune soumission",
+        "no_submissions_desc": "Cette tâche n'a pas encore reçu de soumissions.",
+        "candidate": "Candidat",
+        "submitted_date": "Date de soumission",
+        "status": "Statut",
+        "score": "Score",
+        "actions": "Actions"
+      }
+    },
+    "analytics": {
+      "title": "Analyses",
+      "subtitle": "Aperçu des performances et métriques",
+      "period": "Période",
+      "all_time": "Tout le temps",
+      "this_month": "Ce mois",
+      "this_week": "Cette semaine",
+      "active": "actif",
+      "submissions": "soumissions",
+      "good": "Bon",
+      "average": "Moyen",
+      "needs_improvement": "À améliorer",
+      "approval_rate_desc": "Taux d'approbation des tâches",
+      "performance_overview": "Aperçu des performances",
+      "task_performance": "Performance des tâches",
+      "pending_tasks": "Tâches en attente",
+      "candidate_engagement": "Engagement des candidats",
+      "total_submissions": "Soumissions totales",
+      "unique_candidates": "Candidats uniques",
+      "avg_submissions_per_task": "Moy. soumissions/tâche",
+      "quick_insights": "Aperçus rapides",
+      "insight_tasks": "Vous avez {{count}} tâche(s) au total",
+      "insight_avg_score": "Score moyen de {{score}}%",
+      "insight_candidates": "{{count}} candidat(s) ont soumis des travaux"
+    }
+  }
+}

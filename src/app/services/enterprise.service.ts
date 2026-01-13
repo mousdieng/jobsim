@@ -61,10 +61,15 @@ export class EnterpriseService {
       .from('enterprises')
       .select('id')
       .eq('admin_user_id', user.id)
-      .single();
+      .maybeSingle(); // Use maybeSingle instead of single to avoid 406 errors
 
-    if (error || !enterprise) {
-      throw new Error('No enterprise linked to this user');
+    if (error) {
+      console.error('Database error fetching enterprise:', error);
+      throw new Error('Failed to fetch enterprise information');
+    }
+
+    if (!enterprise) {
+      throw new Error('NO_ENTERPRISE_LINKED');
     }
 
     return enterprise.id;
@@ -401,7 +406,7 @@ export class EnterpriseService {
 
     const totalSubmissions = submissions.data?.length || 0;
     const totalCandidates = new Set(submissions.data?.map(s => s.id)).size;
-    const averageScore = submissions.data?.reduce((acc, s) => acc + (s.score || 0), 0) / (totalSubmissions || 1);
+    const averageScore = (submissions.data?.reduce((acc, s) => acc + (s.score || 0), 0) || 0) / (totalSubmissions || 1);
 
     return {
       total_tasks: tasksCount.count || 0,

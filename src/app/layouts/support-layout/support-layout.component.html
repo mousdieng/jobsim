@@ -1,4 +1,7 @@
 <div class="flex h-screen bg-gray-100">
+  <!-- Notification Toast -->
+  <app-notification-toast></app-notification-toast>
+
   <!-- Sidebar -->
   <aside [class]="isSidebarCollapsed ? 'w-20' : 'w-64'" class="bg-gradient-to-b from-blue-600 to-cyan-700 text-white transition-all duration-300 flex flex-col shadow-xl">
     <!-- Header -->
@@ -10,8 +13,8 @@
           </svg>
         </div>
         <div *ngIf="!isSidebarCollapsed" class="ml-3">
-          <h1 class="text-lg font-bold">Support Center</h1>
-          <p class="text-xs text-blue-200">Customer Service</p>
+          <h1 class="text-lg font-bold">{{ 'support.panel_title' | translate }}</h1>
+          <p class="text-xs text-blue-200">{{ 'support.panel_subtitle' | translate }}</p>
         </div>
       </div>
     </div>
@@ -25,16 +28,15 @@
           routerLinkActive="bg-blue-700 shadow-lg"
           [class]="isSidebarCollapsed ? 'justify-center' : ''"
           class="flex items-center px-3 py-2.5 rounded-lg text-blue-50 hover:bg-blue-700 transition-colors group relative"
-          [title]="isSidebarCollapsed ? item.label : ''"
         >
           <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getIconPath(item.icon)" />
           </svg>
-          <span *ngIf="!isSidebarCollapsed" class="ml-3 text-sm font-medium">{{ item.label }}</span>
+          <span *ngIf="!isSidebarCollapsed" class="ml-3 text-sm font-medium">{{ item.labelKey | translate }}</span>
 
           <!-- Tooltip for collapsed state -->
           <div *ngIf="isSidebarCollapsed" class="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50">
-            {{ item.label }}
+            {{ item.labelKey | translate }}
           </div>
         </a>
       </div>
@@ -47,7 +49,7 @@
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
         </span>
-        <span class="text-blue-100">Online & Ready</span>
+        <span class="text-blue-100">{{ 'support.status_online' | translate }}</span>
       </div>
     </div>
 
@@ -73,8 +75,8 @@
     <header class="bg-white shadow-sm border-b border-gray-200">
       <div class="px-6 py-4 flex items-center justify-between">
         <div>
-          <h2 class="text-xl font-semibold text-gray-800">Support Portal</h2>
-          <p class="text-sm text-gray-500">Assist users and maintain platform quality</p>
+          <h2 class="text-xl font-semibold text-gray-800">{{ 'support.header_title' | translate }}</h2>
+          <p class="text-sm text-gray-500">{{ 'support.header_subtitle' | translate }}</p>
         </div>
         <div class="flex items-center space-x-4">
           <!-- Quick Stats -->
@@ -84,7 +86,7 @@
                 <circle cx="10" cy="10" r="8"/>
               </svg>
               <span class="text-sm font-semibold text-gray-700">12</span>
-              <span class="text-xs text-gray-500">Open</span>
+              <span class="text-xs text-gray-500">{{ 'support.stats.open' | translate }}</span>
             </div>
             <div class="h-4 w-px bg-gray-300"></div>
             <div class="flex items-center space-x-1">
@@ -92,7 +94,7 @@
                 <circle cx="10" cy="10" r="8"/>
               </svg>
               <span class="text-sm font-semibold text-gray-700">7</span>
-              <span class="text-xs text-gray-500">In Progress</span>
+              <span class="text-xs text-gray-500">{{ 'support.stats.in_progress' | translate }}</span>
             </div>
           </div>
 
@@ -103,7 +105,7 @@
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            Logout
+            {{ 'common.buttons.logout' | translate }}
           </button>
         </div>
       </div>

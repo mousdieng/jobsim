@@ -3,12 +3,12 @@
     <!-- Header -->
     <div>
       <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-        Create your account
+        {{ 'auth.register.title' | translate }}
       </h2>
       <p class="mt-2 text-center text-sm text-gray-600">
-        Already have an account?
+        {{ 'auth.register.have_account' | translate }}
         <a routerLink="/auth/login" class="font-medium text-indigo-600 hover:text-indigo-500">
-          Sign in
+          {{ 'auth.register.sign_in' | translate }}
         </a>
       </p>
     </div>
@@ -46,7 +46,7 @@
       <div class="rounded-md shadow-sm space-y-4">
         <!-- Name Field -->
         <div>
-          <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+          <label for="name" class="block text-sm font-medium text-gray-700">{{ 'auth.register.full_name' | translate }}</label>
           <input
             id="name"
             name="name"
@@ -55,7 +55,7 @@
             autocomplete="name"
             class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             [class.border-red-500]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
-            placeholder="John Doe"
+            [placeholder]="'auth.register.full_name_placeholder' | translate"
           />
           <p *ngIf="getErrorMessage('name')" class="mt-1 text-sm text-red-600">
             {{ getErrorMessage('name') }}
@@ -64,7 +64,7 @@
 
         <!-- Email Field -->
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+          <label for="email" class="block text-sm font-medium text-gray-700">{{ 'auth.register.email_label' | translate }}</label>
           <input
             id="email"
             name="email"
@@ -73,7 +73,7 @@
             autocomplete="email"
             class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             [class.border-red-500]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-            placeholder="you@example.com"
+            [placeholder]="'auth.register.email_placeholder' | translate"
           />
           <p *ngIf="getErrorMessage('email')" class="mt-1 text-sm text-red-600">
             {{ getErrorMessage('email') }}
@@ -82,7 +82,7 @@
 
         <!-- Job Field -->
         <div>
-          <label for="job_field" class="block text-sm font-medium text-gray-700">Job Field</label>
+          <label for="job_field" class="block text-sm font-medium text-gray-700">{{ 'auth.register.job_field' | translate }}</label>
           <select
             id="job_field"
             name="job_field"
@@ -90,8 +90,8 @@
             class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             [class.border-red-500]="registerForm.get('job_field')?.invalid && registerForm.get('job_field')?.touched"
           >
-            <option *ngFor="let field of jobFields" [value]="field.value">
-              {{ field.label }}
+            <option *ngFor="let field of jobFields" [value]="field">
+              {{ 'job_field.' + field | translate }}
             </option>
           </select>
           <p *ngIf="getErrorMessage('job_field')" class="mt-1 text-sm text-red-600">
@@ -101,7 +101,7 @@
 
         <!-- Experience Level -->
         <div>
-          <label for="experience_level" class="block text-sm font-medium text-gray-700">Experience Level</label>
+          <label for="experience_level" class="block text-sm font-medium text-gray-700">{{ 'auth.register.experience_level' | translate }}</label>
           <select
             id="experience_level"
             name="experience_level"
@@ -109,8 +109,8 @@
             class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             [class.border-red-500]="registerForm.get('experience_level')?.invalid && registerForm.get('experience_level')?.touched"
           >
-            <option *ngFor="let level of experienceLevels" [value]="level.value">
-              {{ level.label }}
+            <option *ngFor="let level of experienceLevels" [value]="level">
+              {{ 'experience.' + level | translate }}
             </option>
           </select>
           <p *ngIf="getErrorMessage('experience_level')" class="mt-1 text-sm text-red-600">
@@ -120,7 +120,7 @@
 
         <!-- Password Field -->
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <label for="password" class="block text-sm font-medium text-gray-700">Mot de Passe</label>
           <div class="relative mt-1">
             <input
               id="password"
@@ -151,7 +151,7 @@
           <!-- Password Strength Indicator -->
           <div *ngIf="registerForm.get('password')?.value" class="mt-2">
             <div class="flex items-center justify-between mb-1">
-              <span class="text-xs text-gray-600">Password strength:</span>
+              <span class="text-xs text-gray-600">Force du mot de passe:</span>
               <span class="text-xs font-medium" [ngClass]="getPasswordStrengthColor()">
                 {{ getPasswordStrengthLabel() }}
               </span>
@@ -164,7 +164,7 @@
               ></div>
             </div>
             <p class="mt-1 text-xs text-gray-500">
-              Use 8+ characters with a mix of letters, numbers & symbols
+              Utilisez 8+ caractères avec un mélange de lettres, chiffres et symboles
             </p>
           </div>
 
@@ -175,7 +175,7 @@
 
         <!-- Confirm Password Field -->
         <div>
-          <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+          <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirmer le Mot de Passe</label>
           <div class="relative mt-1">
             <input
               id="confirmPassword"
@@ -218,13 +218,13 @@
           [disabled]="isLoading || registerForm.invalid"
           class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span *ngIf="!isLoading">Create Account</span>
+          <span *ngIf="!isLoading">Créer un Compte</span>
           <span *ngIf="isLoading" class="flex items-center">
             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Creating account...
+            Création du compte...
           </span>
         </button>
       </div>

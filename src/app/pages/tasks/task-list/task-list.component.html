@@ -1,8 +1,8 @@
 <div class="px-4 py-6 sm:px-0">
   <!-- Header -->
   <div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">Available Tasks</h1>
-    <p class="mt-1 text-sm text-gray-500">Browse and complete real-world enterprise tasks</p>
+    <h1 class="text-2xl font-bold text-gray-900">{{ 'task.list.title' | translate }}</h1>
+    <p class="mt-1 text-sm text-gray-500">{{ 'task.list.subtitle' | translate }}</p>
   </div>
 
   <!-- Filters -->
@@ -10,43 +10,45 @@
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
       <!-- Search -->
       <div class="sm:col-span-2">
-        <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+        <label for="search" class="block text-sm font-medium text-gray-700">{{ 'task.list.filters.search' | translate }}</label>
         <input
           type="text"
           id="search"
           [(ngModel)]="searchQuery"
           (ngModelChange)="onSearchChange()"
-          placeholder="Search tasks..."
+          [placeholder]="'task.list.search_placeholder' | translate"
           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         />
       </div>
 
       <!-- Job Field Filter -->
       <div>
-        <label for="jobField" class="block text-sm font-medium text-gray-700">Job Field</label>
+        <label for="jobField" class="block text-sm font-medium text-gray-700">{{ 'task.list.filters.job_field' | translate }}</label>
         <select
           id="jobField"
           [(ngModel)]="selectedJobField"
           (ngModelChange)="onFilterChange()"
           class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         >
-          <option *ngFor="let field of jobFields" [value]="field.value">
-            {{ field.label }}
+          <option *ngFor="let field of jobFields" [value]="field">
+            <ng-container *ngIf="field === ''; else jobFieldLabel">{{ 'task.list.filters.all' | translate }}</ng-container>
+            <ng-template #jobFieldLabel>{{ 'job_field.' + field | translate }}</ng-template>
           </option>
         </select>
       </div>
 
       <!-- Difficulty Filter -->
       <div>
-        <label for="difficulty" class="block text-sm font-medium text-gray-700">Difficulty</label>
+        <label for="difficulty" class="block text-sm font-medium text-gray-700">{{ 'task.list.filters.difficulty' | translate }}</label>
         <select
           id="difficulty"
           [(ngModel)]="selectedDifficulty"
           (ngModelChange)="onFilterChange()"
           class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         >
-          <option *ngFor="let level of difficultyLevels" [value]="level.value">
-            {{ level.label }}
+          <option *ngFor="let level of difficultyLevels" [value]="level">
+            <ng-container *ngIf="level === ''; else difficultyLabel">{{ 'task.list.filters.all' | translate }}</ng-container>
+            <ng-template #difficultyLabel>{{ 'task.difficulty.' + level | translate }}</ng-template>
           </option>
         </select>
       </div>
@@ -58,7 +60,7 @@
         (click)="clearFilters()"
         class="text-sm text-indigo-600 hover:text-indigo-500"
       >
-        Clear all filters
+        Effacer tous les filtres
       </button>
     </div>
   </div>
@@ -66,7 +68,7 @@
   <!-- Loading State -->
   <div *ngIf="isLoading" class="text-center py-12">
     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-    <p class="mt-4 text-gray-500">Loading tasks...</p>
+    <p class="mt-4 text-gray-500">Chargement des tâches...</p>
   </div>
 
   <!-- Error State -->
@@ -87,7 +89,7 @@
   <div *ngIf="!isLoading && !error">
     <!-- Results Count -->
     <p class="text-sm text-gray-500 mb-4">
-      Showing {{ filteredTasks.length }} task{{ filteredTasks.length !== 1 ? 's' : '' }}
+      Affichage de {{ filteredTasks.length }} tâche{{ filteredTasks.length !== 1 ? 's' : '' }}
     </p>
 
     <!-- Empty State -->
@@ -95,8 +97,8 @@
       <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
       </svg>
-      <h3 class="mt-2 text-sm font-medium text-gray-900">No tasks found</h3>
-      <p class="mt-1 text-sm text-gray-500">Try adjusting your filters or search query.</p>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune tâche trouvée</h3>
+      <p class="mt-1 text-sm text-gray-500">Essayez d'ajuster vos filtres ou votre recherche.</p>
     </div>
 
     <!-- Task Cards -->
@@ -114,13 +116,13 @@
           <!-- Badges -->
           <div class="flex flex-wrap gap-2 mb-3">
             <span [ngClass]="getDifficultyColor(task.difficulty_level)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-              {{ formatDifficulty(task.difficulty_level) }}
+              {{ 'task.difficulty.' + task.difficulty_level | translate }}
             </span>
             <span [ngClass]="getCreatorBadge(task.created_by)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
               {{ task.created_by | titlecase }}
             </span>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-              {{ formatJobField(task.job_field) }}
+              {{ 'job_field.' + task.job_field | translate }}
             </span>
           </div>
 
@@ -149,7 +151,7 @@
               {{ tag }}
             </span>
             <span *ngIf="task.tags.length > 3" class="text-xs text-gray-400">
-              +{{ task.tags.length - 3 }} more
+              +{{ task.tags.length - 3 }} de plus
             </span>
           </div>
 
@@ -158,7 +160,7 @@
             [routerLink]="['/app/tasks', task.id]"
             class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            View Details
+            Voir les Détails
           </a>
         </div>
       </div>

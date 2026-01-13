@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
+import { LanguageService } from '../../services/language.service';
+import { NotificationToastComponent } from '../../components/notification-toast/notification-toast.component';
 
 interface NavItem {
-  label: string;
+  labelKey: string;
   route: string;
   icon: string;
 }
@@ -12,7 +15,7 @@ interface NavItem {
 @Component({
   selector: 'app-support-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule, NotificationToastComponent],
   templateUrl: './support-layout.component.html',
   styleUrls: ['./support-layout.component.css']
 })
@@ -20,18 +23,19 @@ export class SupportLayoutComponent {
   isSidebarCollapsed = false;
 
   navItems: NavItem[] = [
-    { label: 'Dashboard', route: '/support/dashboard', icon: 'chart' },
-    { label: 'Tickets', route: '/support/tickets', icon: 'ticket' },
-    { label: 'User Assistance', route: '/support/users', icon: 'users' },
-    { label: 'Task Moderation', route: '/support/tasks', icon: 'flag' },
-    { label: 'Escalations', route: '/support/escalations', icon: 'alert' },
-    { label: 'Knowledge Base', route: '/support/knowledge', icon: 'book' },
-    { label: 'Activity Logs', route: '/support/logs', icon: 'history' }
+    { labelKey: 'support.nav.dashboard', route: '/support/dashboard', icon: 'chart' },
+    { labelKey: 'support.nav.tickets', route: '/support/tickets', icon: 'ticket' },
+    { labelKey: 'support.nav.user_assistance', route: '/support/users', icon: 'users' },
+    { labelKey: 'support.nav.task_moderation', route: '/support/tasks', icon: 'flag' },
+    { labelKey: 'support.nav.escalations', route: '/support/escalations', icon: 'alert' },
+    { labelKey: 'support.nav.knowledge_base', route: '/support/knowledge', icon: 'book' },
+    { labelKey: 'support.nav.activity_logs', route: '/support/logs', icon: 'history' }
   ];
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    public languageService: LanguageService
   ) {}
 
   toggleSidebar(): void {
