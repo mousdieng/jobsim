@@ -47,6 +47,23 @@ export class EnterprisesManagementComponent implements OnInit {
   availableUsers: any[] = [];
   loadingUsers = false;
 
+  // Edit enterprise modal
+  showEditModal = false;
+  editingEnterprise: Enterprise | null = null;
+  editForm = {
+    name: '',
+    sector: '',
+    description: '',
+    website: '',
+    location: '',
+    size: '',
+    contact_email: '',
+    contact_phone: '',
+    logo_url: '',
+    can_create_tasks: false,
+    admin_user_id: ''
+  };
+
   constructor(
     private adminService: AdminService,
     private route: ActivatedRoute,
@@ -171,7 +188,7 @@ export class EnterprisesManagementComponent implements OnInit {
 
   loadEnterpriseUsers(): void {
     this.loadingUsers = true;
-    this.adminService.getAllUsers({ user_type: 'enterprise' }).subscribe({
+    this.adminService.getAllUsers({ role: 'enterprise_rep' }).subscribe({
       next: (users) => {
         this.availableUsers = users;
         this.loadingUsers = false;
@@ -247,7 +264,28 @@ export class EnterprisesManagementComponent implements OnInit {
     this.notificationService.info('Pour compléter la liaison, veuillez mettre à jour l\'administrateur de l\'entreprise via la page de détails de l\'entreprise');
   }
 
-  getStatusBadge(status: string): string {
+  /**
+   * Derive status from new schema boolean fields
+   * New schema uses: is_active, is_suspended, is_verified
+   */
+  getEnterpriseStatus(enterprise: Enterprise): string {
+    // Cast to any to access new schema fields
+    const company = enterprise as any;
+
+    if (!company.is_verified) {
+      return 'pending';
+    }
+    if (company.is_suspended) {
+      return 'suspended';
+    }
+    if (!company.is_active) {
+      return 'banned';
+    }
+    return 'active';
+  }
+
+  getStatusBadge(enterprise: Enterprise): string {
+    const status = this.getEnterpriseStatus(enterprise);
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800';
@@ -265,5 +303,93 @@ export class EnterprisesManagementComponent implements OnInit {
   formatDate(dateString?: string): string {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString();
+  }
+
+  openEditModal(enterprise: Enterprise): void {
+    this.editingEnterprise = enterprise;
+    this.showEditModal = true;
+
+    // Populate edit form with current values
+    this.editForm = {
+      name: enterprise.name || '',
+      sector: enterprise.sector || '',
+      description: enterprise.description || '',
+      website: enterprise.website || '',
+      location: enterprise.location || '',
+      size: enterprise.size || '',
+      contact_email: enterprise.contact_email || '',
+      contact_phone: enterprise.contact_phone || '',
+      logo_url: enterprise.logo_url || '',
+      can_create_tasks: enterprise.can_create_tasks || false,
+      admin_user_id: (enterprise as any).admin_user_id || ''
+    };
+
+    this.validationErrors = {};
+    this.loadEnterpriseUsers();
+  }
+
+  closeEditModal(): void {
+    this.showEditModal = false;
+    this.editingEnterprise = null;
+  }
+
+  updateEnterprise(): void {
+    if (!this.editingEnterprise) return;
+
+    // Validate form
+    this.validationErrors = {};
+
+    if (!this.editForm.name) {
+      this.validationErrors['name'] = 'Enterprise name is required';
+    }
+    if (!this.editForm.sector) {
+      this.validationErrors['sector'] = 'Industry/Sector is required';
+    }
+    if (!this.editForm.contact_email) {
+      this.validationErrors['contact_email'] = 'Contact email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.editForm.contact_email)) {
+      this.validationErrors['contact_email'] = 'Invalid email format';
+    }
+    if (this.editForm.website && !/^https?:\/\/.+/.test(this.editForm.website)) {
+      this.validationErrors['website'] = 'Website must start with http:// or https://';
+    }
+
+    if (Object.keys(this.validationErrors).length > 0) {
+      this.notificationService.error('Veuillez remplir tous les champs requis correctement');
+      return;
+    }
+
+    this.actionLoading = true;
+
+    // Update enterprise
+    this.adminService.updateEnterprise(this.editingEnterprise.id, {
+      name: this.editForm.name,
+      industry: this.editForm.sector,
+      description: this.editForm.description || undefined,
+      website: this.editForm.website || undefined,
+      size: this.editForm.size || undefined,
+      location: this.editForm.location || undefined,
+      contact_email: this.editForm.contact_email,
+      contact_phone: this.editForm.contact_phone || undefined,
+      logo_url: this.editForm.logo_url || undefined,
+      can_create_tasks: this.editForm.can_create_tasks
+    }).subscribe({
+      next: () => {
+        this.actionLoading = false;
+        this.closeEditModal();
+        this.loadEnterprises();
+        this.notificationService.success(`Enterprise "${this.editForm.name}" updated successfully!`);
+
+        // If admin_user_id changed, update the link
+        if (this.editForm.admin_user_id && this.editForm.admin_user_id !== (this.editingEnterprise as any).admin_user_id) {
+          this.linkEnterpriseUser(this.editingEnterprise!.id, this.editForm.admin_user_id);
+        }
+      },
+      error: (err: any) => {
+        this.actionLoading = false;
+        this.notificationService.error('Échec de la mise à jour de l\'entreprise: ' + err.message);
+        console.error('Update enterprise error:', err);
+      }
+    });
   }
 }

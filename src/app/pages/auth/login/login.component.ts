@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { User } from '../../../core/models/database.types';
 
 @Component({
   selector: 'app-login',
@@ -50,9 +51,27 @@ export class LoginComponent {
 
       if (response.error) {
         this.errorMessage = response.error;
-      } else if (response.user) {
-        // Successful login, navigate to return URL
-        this.router.navigateByUrl(this.returnUrl);
+      } else if (response.data) {
+        // Successful login - route based on user role
+        const user: User = response.data;
+
+        switch (user.role) {
+          case 'candidate':
+            this.router.navigate(['/app/dashboard']);
+            break;
+          case 'enterprise_rep':
+            this.router.navigate(['/app/enterprise/dashboard']);
+            break;
+          case 'admin':
+            this.router.navigate(['/app/admin/dashboard']);
+            break;
+          case 'platform_support':
+            this.router.navigate(['/app/support/dashboard']);
+            break;
+          default:
+            // Fallback to return URL
+            this.router.navigateByUrl(this.returnUrl);
+        }
       }
     } catch (error: any) {
       this.errorMessage = error.message || 'An unexpected error occurred';

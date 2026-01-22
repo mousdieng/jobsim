@@ -79,36 +79,48 @@
     </div>
 
     <!-- Tasks Grid -->
-    <div *ngIf="!loading" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div *ngFor="let task of tasks" class="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
+    <div *ngIf="!loading" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div *ngFor="let task of tasks" class="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-indigo-200 transition-all duration-200">
         <div class="p-6">
           <!-- Header with badges -->
-          <div class="flex items-start justify-between mb-4">
+          <div class="flex items-start justify-between mb-3">
             <div class="flex-1">
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ task.title }}</h3>
+              <div class="flex items-center gap-2 mb-2">
+                <div class="p-2 bg-indigo-50 rounded-lg">
+                  <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <span *ngIf="task.is_featured" class="text-yellow-500" title="Featured Task">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                </span>
+              </div>
+              <h3 class="text-lg font-bold text-gray-900 mb-3 leading-tight">{{ task.title }}</h3>
               <div class="flex flex-wrap gap-2">
                 <span
-                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                  class="px-3 py-1 inline-flex text-xs font-semibold rounded-full"
                   [ngClass]="getLifecycleStatusBadge(task.lifecycle_status)"
                 >
                   {{ getLifecycleStatusLabel(task.lifecycle_status) }}
                 </span>
                 <span
                   *ngIf="task.flagged"
-                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"
+                  class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-red-100 text-red-700 flex items-center gap-1"
                 >
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clip-rule="evenodd" />
+                  </svg>
                   Flagged
                 </span>
                 <span
-                  *ngIf="task.is_featured"
-                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800"
-                >
-                  Featured
-                </span>
-                <span
                   *ngIf="task.is_approved"
-                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800"
+                  class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-green-100 text-green-700 flex items-center gap-1"
                 >
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
                   Approved
                 </span>
               </div>
@@ -116,50 +128,114 @@
           </div>
 
           <!-- Description -->
-          <p class="text-sm text-gray-600 mb-4">
+          <p class="text-sm text-gray-600 mb-4 line-clamp-3">
             {{ truncateText(task.description || 'No description', 150) }}
           </p>
 
           <!-- Details Grid -->
-          <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <p class="text-xs text-gray-500">Field</p>
-              <p class="text-sm font-medium text-gray-900">{{ task.job_field || 'N/A' }}</p>
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+              <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <div class="flex-1">
+                <p class="text-xs text-gray-500">Field</p>
+                <p class="text-sm font-semibold text-gray-900 truncate">{{ task.job_field || 'N/A' }}</p>
+              </div>
             </div>
-            <div>
-              <p class="text-xs text-gray-500">Difficulty</p>
-              <p class="text-sm font-medium text-gray-900">{{ task.difficulty_level || 'N/A' }}</p>
+            <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+              <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <div class="flex-1">
+                <p class="text-xs text-gray-500">Difficulty</p>
+                <p class="text-sm font-semibold text-gray-900 capitalize">{{ task.difficulty_level || 'N/A' }}</p>
+              </div>
             </div>
-            <div>
-              <p class="text-xs text-gray-500">Duration</p>
-              <p class="text-sm font-medium text-gray-900">{{ task.estimated_duration || 0 }} min</p>
+            <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+              <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div class="flex-1">
+                <p class="text-xs text-gray-500">Duration</p>
+                <p class="text-sm font-semibold text-gray-900">{{ task.estimated_duration || 0 }} min</p>
+              </div>
             </div>
-            <div>
-              <p class="text-xs text-gray-500">Created</p>
-              <p class="text-sm font-medium text-gray-900">{{ formatDate(task.created_at) }}</p>
+            <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+              <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <div class="flex-1">
+                <p class="text-xs text-gray-500">Created</p>
+                <p class="text-sm font-semibold text-gray-900">{{ formatDate(task.created_at) }}</p>
+              </div>
             </div>
           </div>
 
           <!-- Enterprise Info (if available) -->
-          <div *ngIf="task.enterprise" class="mb-4 p-3 bg-gray-50 rounded-lg">
-            <p class="text-xs font-medium text-gray-700">Enterprise</p>
-            <p class="text-sm text-gray-900">{{ task.enterprise.name }}</p>
+          <div *ngIf="task.enterprise" class="mb-4 p-3 bg-indigo-50 rounded-lg border border-indigo-100">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              <div>
+                <p class="text-xs font-medium text-indigo-700">Enterprise</p>
+                <p class="text-sm font-semibold text-indigo-900">{{ task.enterprise.name }}</p>
+              </div>
+            </div>
           </div>
 
           <!-- Flag Reason -->
-          <div *ngIf="task.flagged && task.flag_reason" class="mb-4 p-3 bg-red-50 rounded-lg">
-            <p class="text-xs font-medium text-red-800">Flag Reason</p>
-            <p class="text-sm text-red-700">{{ task.flag_reason }}</p>
+          <div *ngIf="task.flagged && task.flag_reason" class="mb-4 p-3 bg-red-50 rounded-lg border border-red-200">
+            <div class="flex items-start gap-2">
+              <svg class="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+              <div>
+                <p class="text-xs font-medium text-red-800">Flag Reason</p>
+                <p class="text-sm text-red-700">{{ task.flag_reason }}</p>
+              </div>
+            </div>
           </div>
 
           <!-- Validation Notes -->
-          <div *ngIf="task.validation_notes" class="mb-4 p-3 bg-yellow-50 rounded-lg">
-            <p class="text-xs font-medium text-yellow-800">Validation Notes</p>
-            <p class="text-sm text-yellow-700">{{ task.validation_notes }}</p>
+          <div *ngIf="task.validation_notes" class="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+            <div class="flex items-start gap-2">
+              <svg class="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <p class="text-xs font-medium text-yellow-800">Validation Notes</p>
+                <p class="text-sm text-yellow-700">{{ task.validation_notes }}</p>
+              </div>
+            </div>
           </div>
 
           <!-- Actions -->
           <div class="flex flex-wrap gap-2">
+            <!-- Primary Actions -->
+            <button
+              (click)="editTask(task)"
+              class="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors flex items-center space-x-1"
+              title="Edit Task"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              <span>Edit</span>
+            </button>
+            <button
+              (click)="openActionModal(task, 'delete')"
+              class="px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 transition-colors flex items-center space-x-1"
+              title="Delete Task"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <span>Delete</span>
+            </button>
+
+            <!-- Status Actions -->
             <button
               *ngIf="task.lifecycle_status === 'validation_pending'"
               (click)="openActionModal(task, 'validate')"
@@ -170,7 +246,7 @@
             <button
               *ngIf="task.lifecycle_status === 'validation_pending'"
               (click)="openActionModal(task, 'reject')"
-              class="px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 transition-colors"
+              class="px-3 py-1.5 bg-orange-600 text-white text-sm font-medium rounded hover:bg-orange-700 transition-colors"
             >
               Reject Validation
             </button>
@@ -225,6 +301,7 @@
          actionType === 'reject' ? 'Reject Task Validation' :
          actionType === 'flag' ? 'Flag Task' :
          actionType === 'archive' ? 'Archive Task' :
+         actionType === 'delete' ? 'Delete Task' :
          (featureValue ? 'Feature Task' : 'Unfeature Task') }}
     </h3>
 
@@ -238,9 +315,12 @@
       <p *ngIf="actionType === 'reject'" class="text-xs text-red-600 mt-2">
         This will send the task back to draft status for the creator to revise.
       </p>
+      <p *ngIf="actionType === 'delete'" class="text-xs text-red-600 mt-2 font-semibold">
+        ⚠️ Warning: This action cannot be undone. All submissions and data related to this task will be permanently deleted.
+      </p>
     </div>
 
-    <div *ngIf="actionType !== 'feature'" class="mb-4">
+    <div *ngIf="actionType !== 'feature' && actionType !== 'delete'" class="mb-4">
       <label class="block text-sm font-medium text-gray-700 mb-2">
         {{ actionType === 'reject' || actionType === 'flag' ? 'Reason' : 'Notes (Optional)' }}
         <span *ngIf="actionType === 'reject' || actionType === 'flag'" class="text-red-500">*</span>
@@ -270,13 +350,14 @@
         class="flex-1 px-4 py-2 rounded-lg text-white transition-colors disabled:opacity-50"
         [ngClass]="{
           'bg-green-600 hover:bg-green-700': actionType === 'validate',
-          'bg-red-600 hover:bg-red-700': actionType === 'reject',
+          'bg-orange-600 hover:bg-orange-700': actionType === 'reject',
           'bg-yellow-600 hover:bg-yellow-700': actionType === 'flag',
           'bg-gray-600 hover:bg-gray-700': actionType === 'archive',
-          'bg-purple-600 hover:bg-purple-700': actionType === 'feature'
+          'bg-purple-600 hover:bg-purple-700': actionType === 'feature',
+          'bg-red-600 hover:bg-red-700': actionType === 'delete'
         }"
       >
-        <span *ngIf="!actionLoading">Confirm</span>
+        <span *ngIf="!actionLoading">{{ actionType === 'delete' ? 'Delete Permanently' : 'Confirm' }}</span>
         <span *ngIf="actionLoading">Processing...</span>
       </button>
     </div>

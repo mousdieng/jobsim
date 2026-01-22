@@ -1,0 +1,60 @@
+/* Form styling */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
+
+/* File input styling */
+input[type="file"]::-webkit-file-upload-button {
+  cursor: pointer;
+}
+
+/* Disabled state */
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Validation error borders */
+.border-red-500 {
+  border-color: #ef4444 !important;
+}
+
+/* Section spacing */
+.space-y-8 > * + * {
+  margin-top: 2rem;
+}
+
+/* Grid gap adjustment for mobile */
+@media (max-width: 768px) {
+  .grid {
+    gap: 1rem;
+  }
+}
+
+/* Form array items */
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+/* Attachment list */
+.attachment-item:hover {
+  background-color: #f9fafb;
+}
+
+/* Success/Error messages animation */
+.rounded-md.bg-green-50,
+.rounded-md.bg-red-50 {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

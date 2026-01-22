@@ -1,0 +1,56 @@
+<div class="xp-progress-widget" [class.compact]="compact">
+  <!-- Full View -->
+  <div *ngIf="!compact" class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 shadow-sm">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <div class="text-3xl font-bold text-indigo-900">Level {{ level }}</div>
+        <div class="text-sm text-indigo-600">{{ currentXP }} XP</div>
+      </div>
+      <div class="text-right" *ngIf="levelInfo">
+        <div class="text-xs text-gray-600">Next Level</div>
+        <div class="text-lg font-semibold text-indigo-900">{{ levelInfo.xp_for_next_level }} XP</div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div *ngIf="levelInfo">
+      <div class="flex items-center justify-between text-xs text-gray-600 mb-2">
+        <span>Progress to Level {{ level + 1 }}</span>
+        <span class="font-semibold">{{ progressPercentage }}%</span>
+      </div>
+      <div class="w-full h-4 bg-white rounded-full overflow-hidden shadow-inner">
+        <div
+          class="h-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500 rounded-full flex items-center justify-end pr-2"
+          [style.width.%]="progressPercentage"
+        >
+          <span *ngIf="progressPercentage > 15" class="text-xs text-white font-medium">
+            {{ xpToNextLevel }} XP to go
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compact View -->
+  <div *ngIf="compact" class="flex items-center space-x-3">
+    <div class="flex-shrink-0">
+      <div class="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow">
+        {{ level }}
+      </div>
+    </div>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center justify-between text-xs text-gray-600 mb-1">
+        <span class="font-medium">Level {{ level }}</span>
+        <span>{{ progressPercentage }}%</span>
+      </div>
+      <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div
+          class="h-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500 rounded-full"
+          [style.width.%]="progressPercentage"
+        ></div>
+      </div>
+      <div class="mt-1 text-xs text-gray-500">{{ currentXP }} / {{ levelInfo?.xp_for_next_level }} XP</div>
+    </div>
+  </div>
+</div>

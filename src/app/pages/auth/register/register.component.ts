@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../../services/auth.service';
-import { JobField, ExperienceLevel } from '../../../models/platform.model';
+import { AuthService } from '../../../core/services/auth.service';
+import { UserRole } from '../../../core/models/database.types';
 
 @Component({
   selector: 'app-register',
@@ -21,26 +21,19 @@ export class RegisterComponent {
   showPassword = false;
   showConfirmPassword = false;
 
-  jobFields: JobField[] = [
-    'software_engineering',
-    'accounting',
-    'marketing',
-    'sales',
-    'human_resources',
-    'project_management',
-    'data_science',
-    'graphic_design',
-    'customer_service',
-    'finance',
-    'legal',
-    'healthcare',
-    'education',
-    'operations',
-    'consulting',
-    'other'
+  // Available roles for registration
+  availableRoles: { value: UserRole; label: string; description: string }[] = [
+    {
+      value: 'candidate',
+      label: 'Candidate',
+      description: 'Join as a candidate to complete tasks and gain experience'
+    },
+    {
+      value: 'enterprise_rep',
+      label: 'Enterprise Representative',
+      description: 'Represent your company, create tasks, and review submissions'
+    }
   ];
-
-  experienceLevels: ExperienceLevel[] = ['junior', 'mid', 'senior'];
 
   constructor(
     private fb: FormBuilder,
@@ -49,12 +42,11 @@ export class RegisterComponent {
     private translate: TranslateService
   ) {
     this.registerForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
+      full_name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
-      job_field: ['software_engineering', [Validators.required]],
-      experience_level: ['junior', [Validators.required]]
+      role: ['candidate', [Validators.required]]
     }, {
       validators: this.passwordMatchValidator
     });
@@ -82,30 +74,38 @@ export class RegisterComponent {
     this.successMessage = null;
 
     try {
-      const { name, email, password, job_field, experience_level } = this.registerForm.value;
+      const { full_name, email, password, role } = this.registerForm.value;
 
       this.successMessage = 'Creating your account...';
 
       const response = await this.authService.signUp({
-        name,
+        full_name,
         email,
         password,
-        job_field,
-        experience_level
+        role
       });
 
       if (response.error) {
         this.errorMessage = response.error;
         this.successMessage = null;
-      } else if (response.user) {
+      } else if (response.data) {
         this.successMessage = 'Account created successfully! Redirecting...';
 
-        // Redirect to dashboard
+        // Redirect based on role
         setTimeout(() => {
-          this.router.navigate(['/app/dashboard']);
+          const user = response.data!;
+          switch (user.role) {
+            case 'candidate':
+              this.router.navigate(['/app/dashboard']);
+              break;
+            case 'enterprise_rep':
+              this.router.navigate(['/app/enterprise/dashboard']);
+              break;
+            default:
+              this.router.navigate(['/app/dashboard']);
+          }
         }, 1500);
       } else {
-        // This shouldn't happen with the retry logic, but handle it just in case
         this.errorMessage = 'Account created but profile is still loading. Please try signing in.';
         this.successMessage = null;
       }
@@ -148,9 +148,8 @@ export class RegisterComponent {
   }
 
   private capitalize(str: string): string {
-    if (str === 'name') return 'Name';
-    if (str === 'job_field') return 'Job field';
-    if (str === 'experience_level') return 'Experience level';
+    if (str === 'full_name') return 'Full name';
+    if (str === 'role') return 'Role';
     if (str === 'confirmPassword') return 'Confirm password';
     return str.charAt(0).toUpperCase() + str.slice(1);
   }

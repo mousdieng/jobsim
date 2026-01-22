@@ -1,0 +1,23 @@
+.achievement-list {
+  width: 100%;
+}
+
+.achievement-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.achievement-card.unlocked {
+  border-color: #FCD34D;
+}
+
+.achievement-card.locked {
+  border-color: #E5E7EB;
+}
+
+.achievement-card:hover {
+  transform: translateY(-2px);
+}
+
+.grayscale {
+  filter: grayscale(100%);
+}

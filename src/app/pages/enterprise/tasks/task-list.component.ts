@@ -5,8 +5,6 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { EnterpriseService } from '../../../services/enterprise.service';
-import { PermissionService } from '../../../services/permission.service';
-import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-enterprise-task-list',
@@ -28,9 +26,7 @@ export class EnterpriseTaskListComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   constructor(
-    private enterpriseService: EnterpriseService,
-    private authService: AuthService,
-    private permissionService: PermissionService
+    private enterpriseService: EnterpriseService
   ) {}
 
   ngOnInit(): void {
@@ -60,10 +56,16 @@ export class EnterpriseTaskListComponent implements OnInit, OnDestroy {
   }
 
   checkTaskCreationPermission(): void {
-    const user = this.authService.getCurrentUser();
-    if (user && user.user_type) {
-      this.canCreateTasks = this.permissionService.canCreateTasks(user.user_type);
-    }
+    const sub = this.enterpriseService.canCreateTasks().subscribe({
+      next: (canCreate) => {
+        this.canCreateTasks = canCreate;
+      },
+      error: (err) => {
+        console.error('Error checking task creation permission:', err);
+        this.canCreateTasks = false;
+      }
+    });
+    this.subscriptions.push(sub);
   }
 
   getFilteredTasks(): any[] {

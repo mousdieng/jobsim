@@ -88,13 +88,36 @@
               </span>
             </div>
           </div>
-          <button
-            *ngIf="!userSubmission"
-            (click)="openSubmissionForm()"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
-          >
-            Soumettre le Travail
-          </button>
+          <!-- Action Buttons based on state -->
+          <div class="flex items-center gap-3">
+            <!-- Not Started State -->
+            <div *ngIf="!taskStarted && !userSubmission" class="flex items-center gap-2 text-sm text-gray-600">
+              <svg class="h-5 w-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span class="font-medium">Cliquez sur "Démarrer la Tâche" ci-dessous pour commencer</span>
+            </div>
+
+            <!-- Task Started - Can Submit -->
+            <button
+              *ngIf="taskStarted && !userSubmission"
+              (click)="openSubmissionForm()"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Soumettre le Travail
+            </button>
+
+            <!-- Already Submitted -->
+            <div *ngIf="userSubmission" class="flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-md">
+              <svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span class="text-sm font-medium text-green-800">Travail Soumis</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -171,7 +194,7 @@
             <dt class="text-sm font-medium text-gray-500">Entreprise</dt>
             <dd class="mt-1 text-sm text-gray-900">{{ task.enterprise.name }}</dd>
           </div>
-          <div>
+          <div *ngIf="task.skills_required && task.skills_required.length > 0">
             <dt class="text-sm font-medium text-gray-500">Compétences Requises</dt>
             <dd class="mt-1">
               <div class="flex flex-wrap gap-1">
@@ -197,7 +220,7 @@
       </div>
 
       <!-- Deliverables -->
-      <div *ngIf="task.deliverables.length > 0" class="border-t border-gray-200 px-4 py-5 sm:px-6">
+      <div *ngIf="task.deliverables && task.deliverables.length > 0" class="border-t border-gray-200 px-4 py-5 sm:px-6">
         <h3 class="text-lg font-medium text-gray-900 mb-3">Livrables</h3>
         <ul class="space-y-3">
           <li *ngFor="let deliverable of task.deliverables" class="flex items-start">
@@ -214,7 +237,7 @@
       </div>
 
       <!-- Resources -->
-      <div *ngIf="task.resources.length > 0" class="border-t border-gray-200 px-4 py-5 sm:px-6">
+      <div *ngIf="task.resources && task.resources.length > 0" class="border-t border-gray-200 px-4 py-5 sm:px-6">
         <h3 class="text-lg font-medium text-gray-900 mb-3">Ressources</h3>
         <ul class="space-y-2">
           <li *ngFor="let resource of task.resources">
@@ -229,7 +252,7 @@
       </div>
 
       <!-- Tags -->
-      <div *ngIf="task.tags.length > 0" class="border-t border-gray-200 px-4 py-5 sm:px-6">
+      <div *ngIf="task.tags && task.tags.length > 0" class="border-t border-gray-200 px-4 py-5 sm:px-6">
         <h3 class="text-sm font-medium text-gray-500 mb-2">Étiquettes</h3>
         <div class="flex flex-wrap gap-2">
           <span *ngFor="let tag of task.tags" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
@@ -239,8 +262,46 @@
       </div>
     </div>
 
+    <!-- Submission History Section -->
+    <div *ngIf="taskStarted && userSubmissions && userSubmissions.length > 0" class="mt-6 bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-medium text-gray-900">Historique des Soumissions</h3>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+            {{ userSubmissions.length }} soumission{{ userSubmissions.length > 1 ? 's' : '' }} sur 5
+          </span>
+        </div>
+        <p class="mt-1 text-sm text-gray-500">Vous pouvez soumettre jusqu'à 5 tentatives pour cette tâche</p>
+      </div>
+      <ul class="divide-y divide-gray-200">
+        <li *ngFor="let submission of userSubmissions; let i = index" class="px-4 py-4 sm:px-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-3">
+                <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-indigo-100 text-indigo-800 text-sm font-medium">
+                  #{{ i + 1 }}
+                </span>
+                <div>
+                  <p class="text-sm font-medium text-gray-900">Tentative {{ i + 1 }}</p>
+                  <p class="text-xs text-gray-500">{{ submission.submitted_at | date:'medium' }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span [ngClass]="getStatusColor(submission.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                {{ submission.status }}
+              </span>
+              <span *ngIf="submission.score" class="text-sm font-medium text-gray-900">
+                {{ submission.score }}/100
+              </span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
     <!-- Meetings Section -->
-    <div *ngIf="meetings.length > 0" class="mt-6 bg-white shadow overflow-hidden sm:rounded-lg">
+    <div *ngIf="taskStarted && meetings && meetings.length > 0" class="mt-6 bg-white shadow overflow-hidden sm:rounded-lg">
       <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
         <div class="flex items-center justify-between">
           <h3 class="text-lg font-medium text-gray-900">Réunions Générées par IA</h3>

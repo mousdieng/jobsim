@@ -1,0 +1,124 @@
+<div class="achievement-list" [class.compact]="compact">
+  <!-- Header -->
+  <div class="mb-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">Achievements</h3>
+    <div class="flex items-center justify-between text-sm text-gray-600">
+      <span>{{ unlockedCount }} / {{ totalCount }} Unlocked</span>
+      <span>{{ progressPercentage }}%</span>
+    </div>
+    <div class="mt-2 w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div
+        class="h-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-500"
+        [style.width.%]="progressPercentage"
+      ></div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-8">
+    <svg class="animate-spin h-8 w-8 mx-auto text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+  </div>
+
+  <!-- Full View -->
+  <div *ngIf="!isLoading && !compact" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div
+      *ngFor="let achievement of achievements"
+      class="achievement-card bg-white rounded-lg p-4 shadow-sm border-2 transition-all hover:shadow-md"
+      [class.unlocked]="achievement.unlocked"
+      [class.locked]="!achievement.unlocked"
+    >
+      <!-- Icon -->
+      <div class="text-center mb-3">
+        <div
+          class="inline-flex items-center justify-center w-16 h-16 rounded-full text-3xl transition-all"
+          [class.bg-gradient-to-r]="achievement.unlocked"
+          [class.from-yellow-400]="achievement.unlocked"
+          [class.to-orange-500]="achievement.unlocked"
+          [class.bg-gray-200]="!achievement.unlocked"
+          [class.grayscale]="!achievement.unlocked"
+          [class.opacity-50]="!achievement.unlocked"
+        >
+          {{ achievement.icon }}
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="text-center">
+        <h4
+          class="font-semibold mb-1"
+          [class.text-gray-900]="achievement.unlocked"
+          [class.text-gray-400]="!achievement.unlocked"
+        >
+          {{ achievement.title }}
+        </h4>
+        <p
+          class="text-xs mb-2"
+          [class.text-gray-600]="achievement.unlocked"
+          [class.text-gray-400]="!achievement.unlocked"
+        >
+          {{ achievement.description }}
+        </p>
+        <p class="text-xs text-gray-500 italic">{{ achievement.condition }}</p>
+      </div>
+
+      <!-- Unlocked Badge -->
+      <div *ngIf="achievement.unlocked" class="mt-3 text-center">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          Unlocked
+        </span>
+      </div>
+
+      <!-- Locked Badge -->
+      <div *ngIf="!achievement.unlocked" class="mt-3 text-center">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+          <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+          </svg>
+          Locked
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compact View -->
+  <div *ngIf="!isLoading && compact" class="space-y-2">
+    <div
+      *ngFor="let achievement of achievements.slice(0, 5)"
+      class="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm"
+      [class.opacity-50]="!achievement.unlocked"
+    >
+      <div
+        class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-2xl"
+        [class.bg-gradient-to-r]="achievement.unlocked"
+        [class.from-yellow-400]="achievement.unlocked"
+        [class.to-orange-500]="achievement.unlocked"
+        [class.bg-gray-200]="!achievement.unlocked"
+      >
+        {{ achievement.icon }}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-gray-900 truncate">{{ achievement.title }}</p>
+        <p class="text-xs text-gray-500 truncate">{{ achievement.description }}</p>
+      </div>
+      <div class="flex-shrink-0">
+        <svg *ngIf="achievement.unlocked" class="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <svg *ngIf="!achievement.unlocked" class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && achievements.length === 0" class="text-center py-8 text-gray-500">
+    <p>No achievements available yet.</p>
+  </div>
+</div>

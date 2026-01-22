@@ -1,0 +1,586 @@
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="mb-8 flex justify-between items-start">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">User Management</h1>
+      <p class="mt-2 text-sm text-gray-600">
+        Manage all users in the system
+      </p>
+    </div>
+    <button
+      type="button"
+      (click)="openCreateUserModal()"
+      class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    >
+      <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      Create User
+    </button>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="mb-6 rounded-md bg-red-50 p-4">
+    <div class="flex">
+      <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+      </svg>
+      <div class="ml-3">
+        <p class="text-sm font-medium text-red-800">{{ error }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white shadow rounded-lg p-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <!-- Search -->
+      <div class="md:col-span-2">
+        <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+        <input
+          type="text"
+          id="search"
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="onSearchChange()"
+          placeholder="Search by name or email..."
+          class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+        />
+      </div>
+
+      <!-- Role Filter -->
+      <div>
+        <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+        <select
+          id="role"
+          [(ngModel)]="selectedRole"
+          (ngModelChange)="onFilterChange()"
+          class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+        >
+          <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
+        </select>
+      </div>
+
+      <!-- Status Filter -->
+      <div>
+        <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+        <select
+          id="status"
+          [(ngModel)]="selectedStatus"
+          (ngModelChange)="onFilterChange()"
+          class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+        >
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Filter Actions -->
+    <div class="mt-4 flex items-center justify-between">
+      <div class="text-sm text-gray-600">
+        Showing {{ filteredUsers.length }} of {{ users.length }} users
+      </div>
+      <button
+        type="button"
+        (click)="clearFilters()"
+        class="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+      >
+        Clear Filters
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-12">
+    <svg class="animate-spin h-10 w-10 mx-auto text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    <p class="mt-4 text-gray-600">Loading users...</p>
+  </div>
+
+  <!-- Users Table -->
+  <div *ngIf="!isLoading" class="bg-white shadow rounded-lg overflow-hidden">
+    <!-- Empty State -->
+    <div *ngIf="filteredUsers.length === 0" class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No users found</h3>
+      <p class="mt-1 text-sm text-gray-500">Try adjusting your filters</p>
+    </div>
+
+    <!-- Table -->
+    <div *ngIf="filteredUsers.length > 0" class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              User
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Role
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Status
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Joined
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Last Active
+            </th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let user of paginatedUsers" class="hover:bg-gray-50">
+            <!-- User Info -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 h-10 w-10">
+                  <div
+                    *ngIf="!user.avatar_url"
+                    class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center"
+                  >
+                    <span class="text-sm font-medium text-indigo-600">
+                      {{ getInitials(user.full_name, user.email) }}
+                    </span>
+                  </div>
+                  <img
+                    *ngIf="user.avatar_url"
+                    [src]="user.avatar_url"
+                    [alt]="user.full_name || user.email"
+                    class="h-10 w-10 rounded-full object-cover"
+                  />
+                </div>
+                <div class="ml-4">
+                  <div class="text-sm font-medium text-gray-900">
+                    {{ user.full_name || 'No Name' }}
+                  </div>
+                  <div class="text-sm text-gray-500">{{ user.email }}</div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Role -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                [ngClass]="getRoleBadgeColor(user.role)"
+              >
+                {{ getRoleLabel(user.role) }}
+              </span>
+            </td>
+
+            <!-- Status -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                [ngClass]="getStatusBadgeColor(user.is_active)"
+              >
+                {{ user.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+
+            <!-- Joined Date -->
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ formatDate(user.created_at) }}
+            </td>
+
+            <!-- Last Active -->
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ formatDate(user.last_active_at) }}
+            </td>
+
+            <!-- Actions -->
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <button
+                type="button"
+                (click)="viewUserDetails(user)"
+                class="text-indigo-600 hover:text-indigo-900 mr-4"
+              >
+                View
+              </button>
+              <button
+                type="button"
+                (click)="toggleUserStatus(user)"
+                [disabled]="actionInProgress"
+                class="text-gray-600 hover:text-gray-900 disabled:opacity-50"
+              >
+                {{ user.is_active ? 'Deactivate' : 'Activate' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+      <div class="flex-1 flex justify-between sm:hidden">
+        <button
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <button
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+      <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+            Showing
+            <span class="font-medium">{{ (currentPage - 1) * perPage + 1 }}</span>
+            to
+            <span class="font-medium">{{ currentPage * perPage > totalUsers ? totalUsers : currentPage * perPage }}</span>
+            of
+            <span class="font-medium">{{ totalUsers }}</span>
+            results
+          </p>
+        </div>
+        <div>
+          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            <button
+              (click)="previousPage()"
+              [disabled]="currentPage === 1"
+              class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+            >
+              <span class="sr-only">Previous</span>
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+            <button
+              *ngFor="let page of pages"
+              (click)="goToPage(page)"
+              [class.bg-indigo-50]="page === currentPage"
+              [class.border-indigo-500]="page === currentPage"
+              [class.text-indigo-600]="page === currentPage"
+              class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              {{ page }}
+            </button>
+            <button
+              (click)="nextPage()"
+              [disabled]="currentPage === totalPages"
+              class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+            >
+              <span class="sr-only">Next</span>
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Details Modal -->
+  <div
+    *ngIf="showUserDetails && selectedUser"
+    class="fixed z-10 inset-0 overflow-y-auto"
+    aria-labelledby="modal-title"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <!-- Background overlay -->
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" (click)="closeUserDetails()"></div>
+
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+      <!-- Modal panel -->
+      <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
+        <div class="absolute top-0 right-0 pt-4 pr-4">
+          <button
+            type="button"
+            (click)="closeUserDetails()"
+            class="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
+          >
+            <span class="sr-only">Close</span>
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="sm:flex sm:items-start">
+          <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+              User Details
+            </h3>
+
+            <div class="mt-6 border-t border-gray-200 pt-6">
+              <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                  <dt class="text-sm font-medium text-gray-500">Full Name</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ selectedUser.full_name || 'Not provided' }}</dd>
+                </div>
+
+                <div class="sm:col-span-2">
+                  <dt class="text-sm font-medium text-gray-500">Email</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ selectedUser.email }}</dd>
+                </div>
+
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Role</dt>
+                  <dd class="mt-1">
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                      [ngClass]="getRoleBadgeColor(selectedUser.role)"
+                    >
+                      {{ getRoleLabel(selectedUser.role) }}
+                    </span>
+                  </dd>
+                </div>
+
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Status</dt>
+                  <dd class="mt-1">
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                      [ngClass]="getStatusBadgeColor(selectedUser.is_active)"
+                    >
+                      {{ selectedUser.is_active ? 'Active' : 'Inactive' }}
+                    </span>
+                  </dd>
+                </div>
+
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Joined Date</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ formatDate(selectedUser.created_at) }}</dd>
+                </div>
+
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Last Active</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ formatDate(selectedUser.last_active_at) }}</dd>
+                </div>
+
+                <!-- Candidate-specific info -->
+                <div *ngIf="selectedUser.role === 'candidate' && selectedUser.candidateProfile" class="sm:col-span-2">
+                  <dt class="text-sm font-medium text-gray-500 mb-2">Candidate Stats</dt>
+                  <dd class="mt-1 grid grid-cols-3 gap-4">
+                    <div class="bg-gray-50 px-4 py-3 rounded-md">
+                      <div class="text-sm text-gray-500">Level</div>
+                      <div class="text-lg font-semibold text-gray-900">{{ selectedUser.candidateProfile.overall_level }}</div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 rounded-md">
+                      <div class="text-sm text-gray-500">XP</div>
+                      <div class="text-lg font-semibold text-gray-900">{{ selectedUser.candidateProfile.overall_xp }}</div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 rounded-md">
+                      <div class="text-sm text-gray-500">Tasks</div>
+                      <div class="text-lg font-semibold text-gray-900">{{ selectedUser.candidateProfile.tasks_completed }}</div>
+                    </div>
+                  </dd>
+                </div>
+
+                <!-- Enterprise Rep-specific info -->
+                <div *ngIf="selectedUser.role === 'enterprise_rep' && selectedUser.enterpriseRepProfile" class="sm:col-span-2">
+                  <dt class="text-sm font-medium text-gray-500 mb-2">Enterprise Rep Info</dt>
+                  <dd class="mt-1 text-sm text-gray-900">
+                    <div class="mb-2">
+                      <span class="font-medium">Company:</span>
+                      {{ selectedUser.company?.name || 'Not assigned' }}
+                    </div>
+                    <div class="mb-2">
+                      <span class="font-medium">Job Title:</span>
+                      {{ selectedUser.enterpriseRepProfile.job_title || 'Not provided' }}
+                    </div>
+                    <div>
+                      <span class="font-medium">Reviews Completed:</span>
+                      {{ selectedUser.enterpriseRepProfile.reviews_completed }}
+                    </div>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="mt-6 flex space-x-3">
+              <button
+                type="button"
+                (click)="toggleUserStatus(selectedUser)"
+                [disabled]="actionInProgress"
+                class="flex-1 inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none disabled:opacity-50"
+              >
+                {{ selectedUser.is_active ? 'Deactivate User' : 'Activate User' }}
+              </button>
+              <button
+                type="button"
+                (click)="deleteUser(selectedUser)"
+                [disabled]="actionInProgress"
+                class="flex-1 inline-flex justify-center items-center px-4 py-2 border border-red-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none disabled:opacity-50"
+              >
+                Delete User
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create User Modal -->
+  <div
+    *ngIf="showCreateUserModal"
+    class="fixed z-10 inset-0 overflow-y-auto"
+    aria-labelledby="modal-title"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <!-- Background overlay -->
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" (click)="closeCreateUserModal()"></div>
+
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+      <!-- Modal panel -->
+      <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+        <div class="absolute top-0 right-0 pt-4 pr-4">
+          <button
+            type="button"
+            (click)="closeCreateUserModal()"
+            class="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
+          >
+            <span class="sr-only">Close</span>
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="sm:flex sm:items-start">
+          <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
+              Create New User
+            </h3>
+
+            <form (ngSubmit)="createUser()" class="space-y-4">
+              <!-- Error Message -->
+              <div *ngIf="createUserError" class="rounded-md bg-red-50 p-3">
+                <p class="text-sm text-red-800">{{ createUserError }}</p>
+              </div>
+
+              <!-- Success Message -->
+              <div *ngIf="createUserSuccess" class="rounded-md bg-green-50 p-3">
+                <p class="text-sm text-green-800">User created successfully!</p>
+              </div>
+
+              <!-- Full Name -->
+              <div>
+                <label for="create-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                <input
+                  type="text"
+                  id="create-name"
+                  [(ngModel)]="newUser.name"
+                  name="name"
+                  required
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  placeholder="John Doe"
+                />
+              </div>
+
+              <!-- Email -->
+              <div>
+                <label for="create-email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input
+                  type="email"
+                  id="create-email"
+                  [(ngModel)]="newUser.email"
+                  name="email"
+                  required
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  placeholder="john@example.com"
+                />
+              </div>
+
+              <!-- Password -->
+              <div>
+                <label for="create-password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input
+                  type="password"
+                  id="create-password"
+                  [(ngModel)]="newUser.password"
+                  name="password"
+                  required
+                  minlength="8"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  placeholder="Min 8 characters"
+                />
+              </div>
+
+              <!-- Role -->
+              <div>
+                <label for="create-role" class="block text-sm font-medium text-gray-700">Role</label>
+                <select
+                  id="create-role"
+                  [(ngModel)]="newUser.role"
+                  name="role"
+                  required
+                  (ngModelChange)="onRoleChange()"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select a role</option>
+                  <option value="candidate">Candidate</option>
+                  <option value="enterprise_rep">Enterprise Representative</option>
+                  <option value="admin">Admin</option>
+                  <option value="platform_support">Platform Support</option>
+                </select>
+              </div>
+
+              <!-- Company (only for enterprise_rep) -->
+              <div *ngIf="newUser.role === 'enterprise_rep'">
+                <label for="create-company" class="block text-sm font-medium text-gray-700">Company</label>
+                <select
+                  id="create-company"
+                  [(ngModel)]="newUser.company_id"
+                  name="company_id"
+                  [required]="newUser.role === 'enterprise_rep'"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select a company</option>
+                  <option *ngFor="let company of companies" [value]="company.id">{{ company.name }}</option>
+                </select>
+                <p class="mt-1 text-xs text-gray-500">
+                  Enterprise representatives must be assigned to a company
+                </p>
+              </div>
+
+              <!-- Form Actions -->
+              <div class="mt-5 sm:mt-4 flex space-x-3">
+                <button
+                  type="submit"
+                  [disabled]="createUserInProgress"
+                  class="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none disabled:opacity-50"
+                >
+                  <span *ngIf="!createUserInProgress">Create User</span>
+                  <span *ngIf="createUserInProgress">Creating...</span>
+                </button>
+                <button
+                  type="button"
+                  (click)="closeCreateUserModal()"
+                  [disabled]="createUserInProgress"
+                  class="flex-1 inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

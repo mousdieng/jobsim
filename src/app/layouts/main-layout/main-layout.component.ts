@@ -67,18 +67,18 @@ export class MainLayoutComponent {
   }
 
   isAdmin(): boolean {
-    return this.user?.user_type === 'admin';
+    return this.user?.role === 'admin';
   }
 
   isStudent(): boolean {
-    return this.user?.user_type === 'student' || !this.user?.user_type;
+    return this.user?.role === 'candidate' || !this.user?.role;
   }
 
   isEnterprise(): boolean {
-    return this.user?.user_type === 'enterprise';
+    return this.user?.role === 'enterprise_rep';
   }
 
   isSupport(): boolean {
-    return this.user?.user_type === 'support';
+    return this.user?.role === 'platform_support';
   }
 }

@@ -36,90 +36,82 @@
     <div *ngIf="!isEditing" class="border-t border-gray-200">
       <dl>
         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.name' | translate }}</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user?.name }}</dd>
+          <dt class="text-sm font-medium text-gray-500">Full Name</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user?.full_name }}</dd>
         </div>
         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.email' | translate }}</dt>
+          <dt class="text-sm font-medium text-gray-500">Email</dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user?.email }}</dd>
         </div>
         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.job_field' | translate }}</dt>
+          <dt class="text-sm font-medium text-gray-500">Role</dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-              {{ 'job_field.' + (user?.job_field || 'other') | translate }}
+              {{ user?.role }}
             </span>
           </dd>
         </div>
-        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.experience_level' | translate }}</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ 'experience.' + user?.experience_level | translate }}</dd>
-        </div>
-        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.location' | translate }}</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user?.location || ('profile.not_specified' | translate) }}</dd>
-        </div>
-        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.bio' | translate }}</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user?.bio || ('profile.no_bio' | translate) }}</dd>
-        </div>
-        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.skills' | translate }}</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-            <div *ngIf="user?.skills && (user?.skills || []).length > 0" class="flex flex-wrap gap-2">
-              <span *ngFor="let skill of (user?.skills || [])" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                {{ skill }}
-              </span>
-            </div>
-            <span *ngIf="!user?.skills || (user?.skills || []).length === 0" class="text-gray-500">{{ 'profile.no_skills' | translate }}</span>
-          </dd>
-        </div>
-        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.available_for_hire' | translate }}</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-            <span [class]="user?.is_available_for_hire ? 'text-green-600' : 'text-gray-500'">
-              {{ (user?.is_available_for_hire ? 'common.yes' : 'common.no') | translate }}
-            </span>
-          </dd>
-        </div>
-        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.social_links' | translate }}</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-            <div class="space-y-1">
-              <a *ngIf="user?.linkedin_url" [href]="user?.linkedin_url || ''" target="_blank" class="text-indigo-600 hover:text-indigo-500 block">
-                LinkedIn
-              </a>
-              <a *ngIf="user?.github_url" [href]="user?.github_url || ''" target="_blank" class="text-indigo-600 hover:text-indigo-500 block">
-                GitHub
-              </a>
-              <a *ngIf="user?.portfolio_url" [href]="user?.portfolio_url || ''" target="_blank" class="text-indigo-600 hover:text-indigo-500 block">
-                Portfolio
-              </a>
-              <span *ngIf="!user?.linkedin_url && !user?.github_url && !user?.portfolio_url" class="text-gray-500">
-                {{ 'profile.no_links' | translate }}
-              </span>
-            </div>
-          </dd>
-        </div>
-        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">{{ 'profile.fields.stats' | translate }}</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-            <div class="grid grid-cols-3 gap-4">
-              <div>
-                <p class="text-2xl font-semibold text-indigo-600">{{ user?.completed_tasks_count || 0 }}</p>
-                <p class="text-xs text-gray-500">{{ 'profile.stats.tasks_completed' | translate }}</p>
+
+        <!-- Candidate-specific fields -->
+        <ng-container *ngIf="user?.role === 'candidate' && user?.candidateProfile">
+          <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Skills</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              <div *ngIf="(user?.candidateProfile?.skills?.length ?? 0) > 0" class="flex flex-wrap gap-2">
+                <span *ngFor="let skill of user?.candidateProfile?.skills" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  {{ skill }}
+                </span>
               </div>
-              <div>
-                <p class="text-2xl font-semibold text-indigo-600">{{ user?.average_score || 0 }}%</p>
-                <p class="text-xs text-gray-500">{{ 'profile.stats.average_score' | translate }}</p>
+              <span *ngIf="!user?.candidateProfile?.skills || user?.candidateProfile?.skills?.length === 0" class="text-gray-500">No skills added</span>
+            </dd>
+          </div>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Preferred Categories</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              <div *ngIf="(user?.candidateProfile?.preferred_categories?.length ?? 0) > 0" class="flex flex-wrap gap-2">
+                <span *ngFor="let category of user?.candidateProfile?.preferred_categories" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                  {{ category }}
+                </span>
               </div>
-              <div>
-                <p class="text-2xl font-semibold text-indigo-600">{{ user?.total_score || 0 }}</p>
-                <p class="text-xs text-gray-500">{{ 'profile.stats.total_points' | translate }}</p>
+              <span *ngIf="!user?.candidateProfile?.preferred_categories || user?.candidateProfile?.preferred_categories?.length === 0" class="text-gray-500">No preferences set</span>
+            </dd>
+          </div>
+          <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Social Links</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              <div class="space-y-1">
+                <a *ngIf="user?.candidateProfile?.linkedin_url" [href]="user?.candidateProfile?.linkedin_url" target="_blank" class="text-indigo-600 hover:text-indigo-500 block">
+                  LinkedIn
+                </a>
+                <a *ngIf="user?.candidateProfile?.portfolio_url" [href]="user?.candidateProfile?.portfolio_url" target="_blank" class="text-indigo-600 hover:text-indigo-500 block">
+                  Portfolio
+                </a>
+                <span *ngIf="!user?.candidateProfile?.linkedin_url && !user?.candidateProfile?.portfolio_url" class="text-gray-500">
+                  No links added
+                </span>
               </div>
-            </div>
-          </dd>
-        </div>
+            </dd>
+          </div>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Stats</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              <div class="grid grid-cols-3 gap-4">
+                <div>
+                  <p class="text-2xl font-semibold text-indigo-600">{{ user?.candidateProfile?.tasks_completed || 0 }}</p>
+                  <p class="text-xs text-gray-500">Tasks Completed</p>
+                </div>
+                <div>
+                  <p class="text-2xl font-semibold text-green-600">{{ user?.candidateProfile?.approval_rate || 0 }}%</p>
+                  <p class="text-xs text-gray-500">Approval Rate</p>
+                </div>
+                <div>
+                  <p class="text-2xl font-semibold text-purple-600">{{ user?.candidateProfile?.overall_xp || 0 }}</p>
+                  <p class="text-xs text-gray-500">Total XP</p>
+                </div>
+              </div>
+            </dd>
+          </div>
+        </ng-container>
       </dl>
     </div>
 
@@ -132,121 +124,78 @@
 
       <div class="space-y-6">
         <div>
-          <label for="name" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.name_label' | translate }}</label>
+          <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
           <input
             type="text"
-            id="name"
-            [(ngModel)]="editForm.name"
+            id="full_name"
+            [(ngModel)]="editForm.full_name"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            placeholder="Enter your full name"
           />
         </div>
 
-        <div>
-          <label for="bio" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.bio_label' | translate }}</label>
-          <textarea
-            id="bio"
-            [(ngModel)]="editForm.bio"
-            rows="3"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            [placeholder]="'profile.edit.bio_placeholder' | translate"
-          ></textarea>
-        </div>
-
-        <div>
-          <label for="location" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.location_label' | translate }}</label>
-          <input
-            type="text"
-            id="location"
-            [(ngModel)]="editForm.location"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            [placeholder]="'profile.edit.location_placeholder' | translate"
-          />
-        </div>
-
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <!-- Candidate-specific fields -->
+        <ng-container *ngIf="user?.role === 'candidate'">
           <div>
-            <label for="job_field" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.job_field_label' | translate }}</label>
-            <select
-              id="job_field"
-              [(ngModel)]="editForm.job_field"
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option *ngFor="let field of jobFields" [value]="field">
-                {{ 'job_field.' + field | translate }}
-              </option>
-            </select>
+            <label for="skills" class="block text-sm font-medium text-gray-700">Skills</label>
+            <input
+              type="text"
+              id="skills"
+              [(ngModel)]="editForm.skills"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="e.g., JavaScript, Python, Marketing"
+            />
+            <p class="mt-1 text-xs text-gray-500">Separate skills with commas</p>
           </div>
 
           <div>
-            <label for="experience_level" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.experience_label' | translate }}</label>
-            <select
-              id="experience_level"
-              [(ngModel)]="editForm.experience_level"
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option *ngFor="let level of experienceLevels" [value]="level">
-                {{ 'experience.' + level | translate }}
-              </option>
-            </select>
+            <label for="preferred_categories" class="block text-sm font-medium text-gray-700">Preferred Categories</label>
+            <input
+              type="text"
+              id="preferred_categories"
+              [(ngModel)]="editForm.preferred_categories"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="e.g., Marketing, Sales, Development"
+            />
+            <p class="mt-1 text-xs text-gray-500">Separate categories with commas</p>
           </div>
-        </div>
 
-        <div>
-          <label for="skills" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.skills_label' | translate }}</label>
-          <input
-            type="text"
-            id="skills"
-            [(ngModel)]="editForm.skills"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            [placeholder]="'profile.edit.skills_placeholder' | translate"
-          />
-          <p class="mt-1 text-xs text-gray-500">{{ 'profile.edit.skills_help' | translate }}</p>
-        </div>
+          <div>
+            <label for="linkedin_url" class="block text-sm font-medium text-gray-700">LinkedIn URL</label>
+            <input
+              type="url"
+              id="linkedin_url"
+              [(ngModel)]="editForm.linkedin_url"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="https://linkedin.com/in/yourprofile"
+            />
+          </div>
 
-        <div>
-          <label for="linkedin_url" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.linkedin_label' | translate }}</label>
-          <input
-            type="url"
-            id="linkedin_url"
-            [(ngModel)]="editForm.linkedin_url"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            [placeholder]="'profile.edit.linkedin_placeholder' | translate"
-          />
-        </div>
+          <div>
+            <label for="portfolio_url" class="block text-sm font-medium text-gray-700">Portfolio URL</label>
+            <input
+              type="url"
+              id="portfolio_url"
+              [(ngModel)]="editForm.portfolio_url"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="https://yourportfolio.com"
+            />
+          </div>
 
-        <div>
-          <label for="github_url" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.github_label' | translate }}</label>
-          <input
-            type="url"
-            id="github_url"
-            [(ngModel)]="editForm.github_url"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            [placeholder]="'profile.edit.github_placeholder' | translate"
-          />
-        </div>
-
-        <div>
-          <label for="portfolio_url" class="block text-sm font-medium text-gray-700">{{ 'profile.edit.portfolio_label' | translate }}</label>
-          <input
-            type="url"
-            id="portfolio_url"
-            [(ngModel)]="editForm.portfolio_url"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            [placeholder]="'profile.edit.portfolio_placeholder' | translate"
-          />
-        </div>
-
-        <div class="flex items-center">
-          <input
-            type="checkbox"
-            id="is_available_for_hire"
-            [(ngModel)]="editForm.is_available_for_hire"
-            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-          />
-          <label for="is_available_for_hire" class="ml-2 block text-sm text-gray-900">
-            {{ 'profile.edit.available_for_hire_label' | translate }}
-          </label>
-        </div>
+          <div>
+            <label for="availability_hours" class="block text-sm font-medium text-gray-700">Availability (hours/week)</label>
+            <input
+              type="number"
+              id="availability_hours"
+              [(ngModel)]="editForm.availability_hours"
+              min="0"
+              max="168"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="10"
+            />
+            <p class="mt-1 text-xs text-gray-500">How many hours per week you can dedicate to tasks</p>
+          </div>
+        </ng-container>
 
         <div class="flex justify-end space-x-3">
           <button

@@ -194,14 +194,6 @@ export const routes: Routes = [
         path: 'analytics',
         loadComponent: () => import('./pages/enterprise/analytics/analytics.component').then(m => m.EnterpriseAnalyticsComponent),
         title: 'Analytics - JobSim Senegal'
-      }
-      // TODO: Uncomment routes below as components are created
-      /*
-      {
-        path: 'tasks/create',
-        loadComponent: () => import('./pages/enterprise/tasks/task-create.component').then(m => m.EnterpriseTaskCreateComponent),
-        canActivate: [taskCreationGuard],
-        title: 'Create Task - JobSim Senegal'
       },
       {
         path: 'candidates',
@@ -212,7 +204,9 @@ export const routes: Routes = [
         path: 'candidates/:id',
         loadComponent: () => import('./pages/enterprise/candidates/candidate-detail.component').then(m => m.EnterpriseCandidateDetailComponent),
         title: 'Candidate Details - JobSim Senegal'
-      },
+      }
+      // TODO: Uncomment routes below as components are created
+      /*
       {
         path: 'support',
         loadComponent: () => import('./pages/enterprise/support/support.component').then(m => m.EnterpriseSupportComponent),
@@ -242,12 +236,12 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard',
-        loadComponent: () => import('./pages/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+        loadComponent: () => import('./pages/admin/analytics-dashboard/analytics-dashboard.component').then(m => m.AnalyticsDashboardComponent),
         title: 'Admin Dashboard - JobSim Senegal'
       },
       {
         path: 'users',
-        loadComponent: () => import('./pages/admin/users-management/users-management.component').then(m => m.UsersManagementComponent),
+        loadComponent: () => import('./pages/admin/user-management/user-management.component').then(m => m.UserManagementComponent),
         title: 'User Management - JobSim Senegal'
       },
       {
@@ -262,12 +256,12 @@ export const routes: Routes = [
       },
       {
         path: 'tasks/create',
-        loadComponent: () => import('./pages/admin/task-create/task-create.component').then(m => m.TaskCreateComponent),
+        loadComponent: () => import('./pages/admin/create-task/create-task.component').then(m => m.CreateTaskComponent),
         title: 'Create Task - JobSim Senegal'
       },
       {
         path: 'submissions',
-        loadComponent: () => import('./pages/admin/submissions-management/submissions-management.component').then(m => m.SubmissionsManagementComponent),
+        loadComponent: () => import('./pages/admin/submission-monitoring/submission-monitoring.component').then(m => m.SubmissionMonitoringComponent),
         title: 'Submission Management - JobSim Senegal'
       },
       {
@@ -277,7 +271,7 @@ export const routes: Routes = [
       },
       {
         path: 'analytics',
-        loadComponent: () => import('./pages/admin/analytics/analytics.component').then(m => m.AnalyticsComponent),
+        loadComponent: () => import('./pages/admin/analytics-dashboard/analytics-dashboard.component').then(m => m.AnalyticsDashboardComponent),
         title: 'Analytics - JobSim Senegal'
       },
       {

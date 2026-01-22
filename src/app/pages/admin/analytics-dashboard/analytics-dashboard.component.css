@@ -1,0 +1,97 @@
+/* Progress bar animations */
+.h-2 {
+  transition: width 0.5s ease-in-out;
+}
+
+/* Card hover effects */
+.bg-white.rounded-lg.shadow {
+  transition: all 0.2s ease;
+}
+
+.bg-white.rounded-lg.shadow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Metric cards */
+.flex-shrink-0.rounded-md {
+  transition: transform 0.2s ease;
+}
+
+.flex-shrink-0.rounded-md:hover {
+  transform: scale(1.05);
+}
+
+/* Activity timeline */
+.flow-root ul li {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Top candidates gradient */
+.bg-gradient-to-r {
+  transition: all 0.2s ease;
+}
+
+.bg-gradient-to-r:hover {
+  background: linear-gradient(to right, #eef2ff, #faf5ff);
+  transform: translateX(4px);
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Badge animations */
+.inline-flex.items-center.justify-center {
+  transition: all 0.2s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid {
+    gap: 1rem;
+  }
+
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+}
+
+/* Submission status cards */
+.bg-gray-50,
+.bg-blue-50,
+.bg-yellow-50,
+.bg-green-50,
+.bg-red-50 {
+  transition: all 0.2s ease;
+}
+
+.bg-gray-50:hover,
+.bg-blue-50:hover,
+.bg-yellow-50:hover,
+.bg-green-50:hover,
+.bg-red-50:hover {
+  transform: translateX(4px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}

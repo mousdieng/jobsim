@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
 import { Task } from '../../../models/platform.model';
 
@@ -24,14 +24,15 @@ export class TasksManagementComponent implements OnInit {
   // Action modal
   selectedTask: Task | null = null;
   showActionModal = false;
-  actionType: 'validate' | 'reject' | 'flag' | 'archive' | 'feature' | null = null;
+  actionType: 'validate' | 'reject' | 'flag' | 'archive' | 'feature' | 'delete' | null = null;
   actionNotes = '';
   actionLoading = false;
   featureValue = false;
 
   constructor(
     private adminService: AdminService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -96,7 +97,7 @@ export class TasksManagementComponent implements OnInit {
 
   openActionModal(
     task: Task,
-    action: 'validate' | 'reject' | 'flag' | 'archive' | 'feature'
+    action: 'validate' | 'reject' | 'flag' | 'archive' | 'feature' | 'delete'
   ): void {
     this.selectedTask = task;
     this.actionType = action;
@@ -106,6 +107,11 @@ export class TasksManagementComponent implements OnInit {
     if (action === 'feature') {
       this.featureValue = !task.is_featured;
     }
+  }
+
+  editTask(task: Task): void {
+    // Navigate to create task page with task ID for editing
+    this.router.navigate(['/admin/tasks/create'], { queryParams: { id: task.id } });
   }
 
   closeActionModal(): void {
@@ -141,6 +147,9 @@ export class TasksManagementComponent implements OnInit {
         break;
       case 'feature':
         action$ = this.adminService.featureTask(this.selectedTask.id, this.featureValue);
+        break;
+      case 'delete':
+        action$ = this.adminService.deleteTask(this.selectedTask.id, this.actionNotes);
         break;
       default:
         this.actionLoading = false;

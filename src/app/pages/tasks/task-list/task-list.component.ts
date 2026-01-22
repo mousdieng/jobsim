@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { PlatformService } from '../../../services/platform.service';
-import { Task, JobField, DifficultyLevel, TaskFilters } from '../../../models/platform.model';
+import { TaskService } from '../../../core/services/task.service';
+import { Task, TaskDifficulty } from '../../../core/models/database.types';
 
 @Component({
   selector: 'app-task-list',
@@ -20,31 +20,15 @@ export class TaskListComponent implements OnInit {
   error: string | null = null;
 
   // Filters
-  selectedJobField: JobField | '' = '';
-  selectedDifficulty: DifficultyLevel | '' = '';
+  selectedCategory: string = '';
+  selectedDifficulty: TaskDifficulty | '' = '';
+  selectedJobField: string = '';
   searchQuery = '';
 
-  jobFields: (JobField | '')[] = [
-    '',
-    'software_engineering',
-    'accounting',
-    'marketing',
-    'sales',
-    'human_resources',
-    'project_management',
-    'data_science',
-    'graphic_design',
-    'customer_service',
-    'finance',
-    'legal',
-    'healthcare',
-    'education',
-    'operations',
-    'consulting',
-    'other'
-  ];
+  categories: string[] = [];
+  jobFields: string[] = [];
 
-  difficultyLevels: (DifficultyLevel | '')[] = [
+  difficultyLevels: (TaskDifficulty | '')[] = [
     '',
     'beginner',
     'intermediate',
@@ -52,46 +36,39 @@ export class TaskListComponent implements OnInit {
     'expert'
   ];
 
-  constructor(private platformService: PlatformService) {}
+  constructor(private taskService: TaskService) {}
 
   ngOnInit(): void {
     this.loadTasks();
+    this.loadCategories();
   }
 
-  async loadTasks(): Promise<void> {
+  loadTasks(): void {
     this.isLoading = true;
     this.error = null;
 
-    try {
-      const filters: TaskFilters = {};
-      if (this.selectedJobField) filters.job_field = this.selectedJobField;
-      if (this.selectedDifficulty) filters.difficulty_level = this.selectedDifficulty;
+    const filters: any = {};
+    if (this.selectedCategory) filters.category = this.selectedCategory;
+    if (this.selectedDifficulty) filters.difficulty = this.selectedDifficulty;
+    if (this.searchQuery) filters.search = this.searchQuery;
 
-      const response = await this.platformService.getTasks(filters);
-      if (response.error) {
-        this.error = response.error;
+    this.taskService.getTasks(filters).subscribe(result => {
+      if (result.error) {
+        this.error = result.error;
       } else {
-        this.tasks = response.data || [];
-        this.applySearchFilter();
+        this.tasks = result.data || [];
+        this.filteredTasks = this.tasks;
       }
-    } catch (err: any) {
-      this.error = err.message || 'Failed to load tasks';
-    } finally {
       this.isLoading = false;
-    }
+    });
   }
 
-  applySearchFilter(): void {
-    if (!this.searchQuery.trim()) {
-      this.filteredTasks = this.tasks;
-    } else {
-      const query = this.searchQuery.toLowerCase();
-      this.filteredTasks = this.tasks.filter(task =>
-        task.title.toLowerCase().includes(query) ||
-        task.description.toLowerCase().includes(query) ||
-        task.tags.some(tag => tag.toLowerCase().includes(query))
-      );
-    }
+  loadCategories(): void {
+    this.taskService.getCategories().subscribe(result => {
+      if (result.data) {
+        this.categories = result.data;
+      }
+    });
   }
 
   onFilterChange(): void {
@@ -99,11 +76,11 @@ export class TaskListComponent implements OnInit {
   }
 
   onSearchChange(): void {
-    this.applySearchFilter();
+    this.loadTasks();
   }
 
   clearFilters(): void {
-    this.selectedJobField = '';
+    this.selectedCategory = '';
     this.selectedDifficulty = '';
     this.searchQuery = '';
     this.loadTasks();
@@ -119,7 +96,7 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  getCreatorBadge(creator: string): string {
+  getCreatorBadge(creator: string | null): string {
     switch (creator) {
       case 'ai': return 'bg-purple-100 text-purple-800';
       case 'enterprise': return 'bg-blue-100 text-blue-800';

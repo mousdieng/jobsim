@@ -66,13 +66,11 @@ export const guestGuard: CanActivateFn = (route, state) => {
 
       // User is already authenticated, redirect to appropriate dashboard based on role
       const user = authService.getCurrentUser();
-      const userType = user?.user_type || 'student';
+      const userRole = user?.role || 'candidate';
 
-      if (userType === 'admin') {
+      if (userRole === 'admin' || userRole === 'platform_support') {
         router.navigate(['/admin/dashboard']);
-      } else if (userType === 'support') {
-        router.navigate(['/support/dashboard']);
-      } else if (userType === 'enterprise') {
+      } else if (userRole === 'enterprise_rep') {
         router.navigate(['/enterprise/dashboard']);
       } else {
         router.navigate(['/app/dashboard']);
@@ -107,9 +105,10 @@ export function roleGuard(allowedRoles: string[]): CanActivateFn {
           return false;
         }
 
-        const userRole = user.user_type || user.role?.toLowerCase();
+        // Use the new 'role' field from the enhanced schema
+        const userRole = user.role;
 
-        if (allowedRoles.includes(userRole as string)) {
+        if (userRole && allowedRoles.includes(userRole)) {
           return true;
         }
 
@@ -122,9 +121,9 @@ export function roleGuard(allowedRoles: string[]): CanActivateFn {
 }
 
 // Pre-configured role guards for convenience
-export const studentGuard: CanActivateFn = roleGuard(['student']);
-export const enterpriseGuard: CanActivateFn = roleGuard(['enterprise']);
-export const adminGuard: CanActivateFn = roleGuard(['admin']);
+export const studentGuard: CanActivateFn = roleGuard(['candidate']);
+export const enterpriseGuard: CanActivateFn = roleGuard(['enterprise_rep']);
+export const adminGuard: CanActivateFn = roleGuard(['admin', 'platform_support']);
 
 /**
  * Student/Enterprise Guard - Allows only students and enterprises to access /app/* routes
@@ -143,27 +142,21 @@ export const studentOrEnterpriseGuard: CanActivateFn = (route, state) => {
         return false;
       }
 
-      const userType = user.user_type || 'student';
+      const userRole = user.role || 'candidate';
 
       // Redirect admins to admin panel
-      if (userType === 'admin') {
+      if (userRole === 'admin' || userRole === 'platform_support') {
         router.navigate(['/admin/dashboard']);
         return false;
       }
 
-      // Redirect support to support center
-      if (userType === 'support') {
-        router.navigate(['/support/dashboard']);
-        return false;
-      }
-
       // Redirect enterprises to enterprise portal
-      if (userType === 'enterprise') {
+      if (userRole === 'enterprise_rep') {
         router.navigate(['/enterprise/dashboard']);
         return false;
       }
 
-      // Allow only students
+      // Allow only candidates
       return true;
     })
   );
@@ -180,20 +173,36 @@ export const taskCreationGuard: CanActivateFn = async (route, state) => {
 
   const user = authService.getCurrentUser();
 
-  if (!user || user.user_type !== 'enterprise') {
+  if (!user || user.role !== 'enterprise_rep') {
     router.navigate(['/unauthorized']);
     return false;
   }
 
   try {
-    // Check if enterprise can create tasks
+    // Get enterprise by admin_user_id (new schema)
     const { data: enterprise, error } = await supabaseService.client
-      .from('enterprises')
-      .select('can_create_tasks')
+      .from('companies')
+      .select('id, can_create_tasks')
       .eq('admin_user_id', user.id)
-      .single();
+      .maybeSingle();
 
-    if (error || !enterprise?.can_create_tasks) {
+    if (error) {
+      console.error('Error fetching enterprise:', error);
+      router.navigate(['/enterprise/dashboard'], {
+        queryParams: { error: 'fetch_error' }
+      });
+      return false;
+    }
+
+    if (!enterprise) {
+      router.navigate(['/enterprise/dashboard'], {
+        queryParams: { error: 'no_enterprise_linked' }
+      });
+      return false;
+    }
+
+    // Check if task creation is enabled
+    if (!enterprise.can_create_tasks) {
       router.navigate(['/enterprise/dashboard'], {
         queryParams: { error: 'task_creation_disabled' }
       });

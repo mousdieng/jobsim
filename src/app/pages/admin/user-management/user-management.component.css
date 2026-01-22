@@ -1,0 +1,65 @@
+/* Table styling */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+tr:hover {
+  transition: background-color 0.15s ease;
+}
+
+/* Avatar placeholder */
+.rounded-full {
+  transition: transform 0.2s ease;
+}
+
+tr:hover .rounded-full {
+  transform: scale(1.05);
+}
+
+/* Action buttons */
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Modal animation */
+.fixed.inset-0 {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Pagination */
+nav button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  transition: transform 0.15s ease;
+}
+
+/* Badge animations */
+.inline-flex.items-center {
+  transition: all 0.2s ease;
+}
+
+/* Empty state */
+.text-gray-400 svg {
+  opacity: 0.5;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Math property workaround */
+Math {
+  display: none;
+}

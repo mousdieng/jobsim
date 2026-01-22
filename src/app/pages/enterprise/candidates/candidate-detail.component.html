@@ -1,0 +1,345 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Back Button -->
+    <button
+      (click)="goBack()"
+      class="mb-6 flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+    >
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Back to Candidates
+    </button>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <p class="mt-4 text-gray-600">Loading candidate profile...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
+      <p class="text-red-800">{{ error }}</p>
+    </div>
+
+    <!-- Candidate Details -->
+    <div *ngIf="!loading && !error && candidate">
+      <!-- Header Card -->
+      <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+        <div class="flex items-start justify-between">
+          <div class="flex items-start space-x-6">
+            <!-- Avatar -->
+            <div>
+              <div
+                *ngIf="!candidate.avatar_url"
+                class="h-24 w-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-3xl font-bold"
+              >
+                {{ getInitials(candidate.full_name) }}
+              </div>
+              <img
+                *ngIf="candidate.avatar_url"
+                [src]="candidate.avatar_url"
+                [alt]="candidate.full_name"
+                class="h-24 w-24 rounded-full object-cover"
+              />
+            </div>
+
+            <!-- Info -->
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ candidate.full_name }}</h1>
+              <p class="text-gray-600 mb-2">{{ candidate.email }}</p>
+              <div class="flex items-center space-x-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                  Level {{ candidate.overall_level }} - {{ candidate.overall_xp }} XP
+                </span>
+                <span *ngIf="candidate.is_open_to_opportunities" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Open to opportunities
+                </span>
+              </div>
+
+              <div *ngIf="candidate.location" class="mt-3 flex items-center text-gray-600">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {{ candidate.location }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex space-x-3">
+            <button
+              (click)="contactCandidate()"
+              class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+            >
+              Contact
+            </button>
+            <button
+              (click)="shortlistCandidate()"
+              class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+            >
+              Shortlist
+            </button>
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <div *ngIf="candidate.bio" class="mt-6 pt-6 border-t border-gray-200">
+          <h3 class="text-sm font-medium text-gray-700 mb-2">About</h3>
+          <p class="text-gray-600">{{ candidate.bio }}</p>
+        </div>
+
+        <!-- Links -->
+        <div *ngIf="candidate.linkedin_url || candidate.portfolio_url || candidate.resume_url" class="mt-6 flex items-center space-x-4">
+          <a
+            *ngIf="candidate.linkedin_url"
+            [href]="candidate.linkedin_url"
+            target="_blank"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+            LinkedIn
+          </a>
+          <a
+            *ngIf="candidate.portfolio_url"
+            [href]="candidate.portfolio_url"
+            target="_blank"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+            </svg>
+            Portfolio
+          </a>
+          <a
+            *ngIf="candidate.resume_url"
+            [href]="candidate.resume_url"
+            target="_blank"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+            Resume
+          </a>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 bg-indigo-100 rounded-lg p-3">
+              <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Tasks Completed</p>
+              <p class="text-2xl font-bold text-gray-900">{{ candidate.tasks_completed || 0 }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
+              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Success Rate</p>
+              <p class="text-2xl font-bold text-gray-900">{{ ((candidate.approval_rate || 0) * 100).toFixed(0) }}%</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 bg-purple-100 rounded-lg p-3">
+              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total XP</p>
+              <p class="text-2xl font-bold text-gray-900">{{ candidate.overall_xp || 0 }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 bg-orange-100 rounded-lg p-3">
+              <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Skills</p>
+              <p class="text-2xl font-bold text-gray-900">{{ candidate.skills?.length || 0 }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="bg-white rounded-lg shadow">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+            <button
+              (click)="activeTab = 'overview'"
+              [class.border-indigo-500]="activeTab === 'overview'"
+              [class.text-indigo-600]="activeTab === 'overview'"
+              [class.border-transparent]="activeTab !== 'overview'"
+              [class.text-gray-500]="activeTab !== 'overview'"
+              class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-gray-700 hover:border-gray-300"
+            >
+              Overview
+            </button>
+            <button
+              (click)="activeTab = 'submissions'"
+              [class.border-indigo-500]="activeTab === 'submissions'"
+              [class.text-indigo-600]="activeTab === 'submissions'"
+              [class.border-transparent]="activeTab !== 'submissions'"
+              [class.text-gray-500]="activeTab !== 'submissions'"
+              class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-gray-700 hover:border-gray-300"
+            >
+              Completed Tasks ({{ submissions.length }})
+            </button>
+            <button
+              (click)="activeTab = 'skills'"
+              [class.border-indigo-500]="activeTab === 'skills'"
+              [class.text-indigo-600]="activeTab === 'skills'"
+              [class.border-transparent]="activeTab !== 'skills'"
+              [class.text-gray-500]="activeTab !== 'skills'"
+              class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-gray-700 hover:border-gray-300"
+            >
+              Skills & Categories
+            </button>
+          </nav>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="p-6">
+          <!-- Overview Tab -->
+          <div *ngIf="activeTab === 'overview'" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Preferred Categories -->
+              <div *ngIf="candidate.preferred_categories && candidate.preferred_categories.length > 0">
+                <h3 class="text-lg font-medium text-gray-900 mb-3">Preferred Categories</h3>
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    *ngFor="let category of candidate.preferred_categories"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
+                  >
+                    {{ category }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Availability -->
+              <div *ngIf="candidate.availability_hours">
+                <h3 class="text-lg font-medium text-gray-900 mb-3">Availability</h3>
+                <p class="text-gray-600">{{ candidate.availability_hours }} hours per week</p>
+              </div>
+            </div>
+
+            <!-- Achievements -->
+            <div *ngIf="candidate.achievements && candidate.achievements.length > 0">
+              <h3 class="text-lg font-medium text-gray-900 mb-3">Achievements</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div
+                  *ngFor="let achievement of candidate.achievements"
+                  class="flex items-center p-4 bg-yellow-50 rounded-lg"
+                >
+                  <svg class="w-8 h-8 text-yellow-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <span class="text-sm font-medium text-gray-900">{{ achievement }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submissions Tab -->
+          <div *ngIf="activeTab === 'submissions'">
+            <div *ngIf="submissions.length === 0" class="text-center py-12">
+              <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p class="text-gray-600">No completed tasks yet</p>
+            </div>
+
+            <div *ngIf="submissions.length > 0" class="space-y-4">
+              <div
+                *ngFor="let submission of submissions"
+                class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+              >
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h4 class="text-lg font-medium text-gray-900 mb-1">{{ submission.task.title }}</h4>
+                    <div class="flex items-center space-x-3 mb-2">
+                      <span [class]="getDifficultyClass(submission.task.difficulty_level)" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium">
+                        {{ submission.task.difficulty_level }}
+                      </span>
+                      <span class="text-sm text-gray-600">{{ submission.task.job_field }}</span>
+                    </div>
+                    <p class="text-sm text-gray-600">Submitted {{ formatDate(submission.submitted_at) }}</p>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-2xl font-bold text-indigo-600">{{ submission.score || 0 }}%</div>
+                    <div class="text-sm text-gray-600">+{{ submission.xp_earned }} XP</div>
+                  </div>
+                </div>
+
+                <div *ngIf="submission.feedback" class="mt-4 p-3 bg-gray-50 rounded">
+                  <p class="text-sm text-gray-700">{{ submission.feedback }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Skills Tab -->
+          <div *ngIf="activeTab === 'skills'">
+            <!-- Skills List -->
+            <div *ngIf="candidate.skills && candidate.skills.length > 0" class="mb-8">
+              <h3 class="text-lg font-medium text-gray-900 mb-4">Skills</h3>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  *ngFor="let skill of candidate.skills"
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800"
+                >
+                  {{ skill }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Category Progress -->
+            <div *ngIf="getCategoryEntries().length > 0">
+              <h3 class="text-lg font-medium text-gray-900 mb-4">Category Progress</h3>
+              <div class="space-y-4">
+                <div *ngFor="let entry of getCategoryEntries()" class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div class="flex-1">
+                    <h4 class="font-medium text-gray-900">{{ entry.category }}</h4>
+                    <div class="mt-1 flex items-center space-x-2">
+                      <span class="text-sm text-gray-600">Level {{ entry.level }}</span>
+                      <span class="text-xs text-gray-500">{{ entry.xp }} XP</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

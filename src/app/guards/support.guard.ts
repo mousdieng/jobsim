@@ -15,10 +15,10 @@ export const supportGuard: CanActivateFn = (route, state) => {
         return false;
       }
 
-      const userType = user.user_type || 'student';
+      const userType = user.role || 'candidate';
 
-      // Only support users can access
-      if (userType === 'support') {
+      // Only platform_support users can access
+      if (userType === 'platform_support') {
         return true;
       }
 

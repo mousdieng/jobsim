@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthService } from '../../services/auth.service';
-import { User } from '../../models/user.model';
-import { JobField, ExperienceLevel } from '../../models/platform.model';
+import { AuthService } from '../../core/services/auth.service';
+import { User } from '../../core/models/database.types';
 
 @Component({
   selector: 'app-profile',
@@ -20,40 +19,16 @@ export class ProfileComponent implements OnInit {
   saveError: string | null = null;
   saveSuccess = false;
 
-  // Edit form
+  // Edit form - matches new schema
   editForm = {
-    name: '',
-    bio: '',
-    location: '',
-    job_field: 'other' as JobField,
-    experience_level: 'junior' as ExperienceLevel,
+    full_name: '',
+    avatar_url: '',
     linkedin_url: '',
-    github_url: '',
     portfolio_url: '',
     skills: '',
-    is_available_for_hire: true
+    preferred_categories: '',
+    availability_hours: 0
   };
-
-  jobFields: JobField[] = [
-    'software_engineering',
-    'accounting',
-    'marketing',
-    'sales',
-    'human_resources',
-    'project_management',
-    'data_science',
-    'graphic_design',
-    'customer_service',
-    'finance',
-    'legal',
-    'healthcare',
-    'education',
-    'operations',
-    'consulting',
-    'other'
-  ];
-
-  experienceLevels: ExperienceLevel[] = ['junior', 'mid', 'senior'];
 
   constructor(private authService: AuthService) {}
 
@@ -70,16 +45,13 @@ export class ProfileComponent implements OnInit {
     if (!this.user) return;
 
     this.editForm = {
-      name: this.user.name || '',
-      bio: this.user.bio || '',
-      location: this.user.location || '',
-      job_field: this.user.job_field || 'other',
-      experience_level: this.user.experience_level || 'junior',
-      linkedin_url: this.user.linkedin_url || '',
-      github_url: this.user.github_url || '',
-      portfolio_url: this.user.portfolio_url || '',
-      skills: this.user.skills?.join(', ') || '',
-      is_available_for_hire: this.user.is_available_for_hire ?? true
+      full_name: this.user.full_name || '',
+      avatar_url: this.user.avatar_url || '',
+      linkedin_url: this.user.candidateProfile?.linkedin_url || '',
+      portfolio_url: this.user.candidateProfile?.portfolio_url || '',
+      skills: this.user.candidateProfile?.skills?.join(', ') || '',
+      preferred_categories: this.user.candidateProfile?.preferred_categories?.join(', ') || '',
+      availability_hours: this.user.candidateProfile?.availability_hours || 0
     };
   }
 
@@ -106,28 +78,43 @@ export class ProfileComponent implements OnInit {
         .map(s => s.trim())
         .filter(s => s.length > 0);
 
-      const response = await this.authService.updateProfile({
-        name: this.editForm.name,
-        bio: this.editForm.bio || undefined,
-        location: this.editForm.location || undefined,
-        job_field: this.editForm.job_field,
-        experience_level: this.editForm.experience_level,
-        linkedin_url: this.editForm.linkedin_url || undefined,
-        github_url: this.editForm.github_url || undefined,
-        portfolio_url: this.editForm.portfolio_url || undefined,
-        skills: skills,
-        is_available_for_hire: this.editForm.is_available_for_hire
+      const categories = this.editForm.preferred_categories
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+      // Update base profile
+      const profileResponse = await this.authService.updateProfile({
+        full_name: this.editForm.full_name,
+        avatar_url: this.editForm.avatar_url || undefined
       });
 
-      if (response.error) {
-        this.saveError = response.error;
-      } else {
-        this.saveSuccess = true;
-        this.isEditing = false;
-        setTimeout(() => {
-          this.saveSuccess = false;
-        }, 3000);
+      if (profileResponse.error) {
+        this.saveError = profileResponse.error;
+        return;
       }
+
+      // Update candidate profile if user is a candidate
+      if (this.user?.role === 'candidate') {
+        const candidateResponse = await this.authService.updateCandidateProfile({
+          linkedin_url: this.editForm.linkedin_url || undefined,
+          portfolio_url: this.editForm.portfolio_url || undefined,
+          skills: skills.length > 0 ? skills : undefined,
+          preferred_categories: categories.length > 0 ? categories : undefined,
+          availability_hours: this.editForm.availability_hours || undefined
+        });
+
+        if (candidateResponse.error) {
+          this.saveError = candidateResponse.error;
+          return;
+        }
+      }
+
+      this.saveSuccess = true;
+      this.isEditing = false;
+      setTimeout(() => {
+        this.saveSuccess = false;
+      }, 3000);
     } catch (err: any) {
       this.saveError = err.message || 'Failed to save profile';
     } finally {

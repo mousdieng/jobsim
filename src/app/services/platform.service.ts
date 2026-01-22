@@ -53,7 +53,7 @@ export class PlatformService {
       }
 
       const { data, error } = await this.supabase.client
-        .from('users')
+        .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
@@ -80,7 +80,7 @@ export class PlatformService {
       }
 
       const { data, error } = await this.supabase.client
-        .from('users')
+        .from('profiles')
         .update({
           ...updates,
           updated_at: new Date().toISOString()
@@ -105,7 +105,7 @@ export class PlatformService {
   async getUserById(userId: string): Promise<ApiResponse<UserProfile>> {
     try {
       const { data, error } = await this.supabase.client
-        .from('users')
+        .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
@@ -131,7 +131,7 @@ export class PlatformService {
     try {
       let query = this.supabase.client
         .from('tasks')
-        .select('*, enterprise:enterprises(*)')
+        .select('*')
         .eq('lifecycle_status', 'active')
         .eq('is_active', true)
         .order('created_at', { ascending: false });
@@ -179,7 +179,7 @@ export class PlatformService {
     try {
       const { data, error } = await this.supabase.client
         .from('tasks')
-        .select('*, enterprise:enterprises(*)')
+        .select('*')
         .eq('id', taskId)
         .single();
 
@@ -207,7 +207,7 @@ export class PlatformService {
       // Get task
       const { data: taskData, error: taskError } = await this.supabase.client
         .from('tasks')
-        .select('*, enterprise:enterprises(*)')
+        .select('*')
         .eq('id', taskId)
         .single();
 
@@ -217,10 +217,10 @@ export class PlatformService {
 
       // Get user's submission for this task
       const { data: submissionData } = await this.supabase.client
-        .from('task_submissions')
+        .from('submissions')
         .select('*')
         .eq('task_id', taskId)
-        .eq('user_id', user.id)
+        .eq('candidate_id', user.id)
         .maybeSingle();
 
       // Get user's progress for this task
@@ -261,7 +261,7 @@ export class PlatformService {
           ...task,
           lifecycle_status: 'draft' // New tasks start in draft state
         })
-        .select('*, enterprise:enterprises(*)')
+        .select('*')
         .single();
 
       if (error) {
@@ -290,10 +290,10 @@ export class PlatformService {
       }
 
       const { data, error } = await this.supabase.client
-        .from('task_submissions')
+        .from('submissions')
         .insert({
           ...submission,
-          user_id: user.id,
+          candidate_id: user.id,
           status: 'submitted',
           submitted_at: new Date().toISOString()
         })
@@ -327,17 +327,17 @@ export class PlatformService {
 
       // Check if draft already exists
       const { data: existingDraft } = await this.supabase.client
-        .from('task_submissions')
+        .from('submissions')
         .select('id')
         .eq('task_id', submission.task_id)
-        .eq('user_id', user.id)
+        .eq('candidate_id', user.id)
         .eq('status', 'draft')
         .maybeSingle();
 
       if (existingDraft) {
         // Update existing draft
         const { data, error } = await this.supabase.client
-          .from('task_submissions')
+          .from('submissions')
           .update({
             ...submission,
             updated_at: new Date().toISOString()
@@ -354,10 +354,10 @@ export class PlatformService {
       } else {
         // Create new draft
         const { data, error } = await this.supabase.client
-          .from('task_submissions')
+          .from('submissions')
           .insert({
             ...submission,
-            user_id: user.id,
+            candidate_id: user.id,
             status: 'draft'
           })
           .select('*, task:tasks(*)')
@@ -386,9 +386,9 @@ export class PlatformService {
       }
 
       const { data, error } = await this.supabase.client
-        .from('task_submissions')
+        .from('submissions')
         .select('*, task:tasks(*)')
-        .eq('user_id', user.id)
+        .eq('candidate_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -410,8 +410,8 @@ export class PlatformService {
   async getSubmission(submissionId: string): Promise<ApiResponse<TaskSubmission>> {
     try {
       const { data, error } = await this.supabase.client
-        .from('task_submissions')
-        .select('*, task:tasks(*), user:users(*)')
+        .from('submissions')
+        .select('*, task:tasks(*)')
         .eq('id', submissionId)
         .single();
 
@@ -434,7 +434,7 @@ export class PlatformService {
   ): Promise<ApiResponse<TaskSubmission>> {
     try {
       const { data, error } = await this.supabase.client
-        .from('task_submissions')
+        .from('submissions')
         .update({
           ...updates,
           updated_at: new Date().toISOString()
@@ -468,7 +468,7 @@ export class PlatformService {
       }
 
       const { data, error } = await this.supabase.client
-        .from('task_submissions')
+        .from('submissions')
         .update({
           score: review.score,
           feedback: review.feedback,
@@ -478,7 +478,7 @@ export class PlatformService {
           updated_at: new Date().toISOString()
         })
         .eq('id', submissionId)
-        .select('*, task:tasks(*), user:users(*)')
+        .select('*, task:tasks(*)')
         .single();
 
       if (error) {
@@ -620,7 +620,7 @@ export class PlatformService {
   async getEnterprises(): Promise<ApiResponse<Enterprise[]>> {
     try {
       const { data, error } = await this.supabase.client
-        .from('enterprises')
+        .from('companies')
         .select('*')
         .order('name', { ascending: true });
 
@@ -640,7 +640,7 @@ export class PlatformService {
   async getEnterprise(enterpriseId: string): Promise<ApiResponse<Enterprise>> {
     try {
       const { data, error } = await this.supabase.client
-        .from('enterprises')
+        .from('companies')
         .select('*')
         .eq('id', enterpriseId)
         .single();
@@ -667,7 +667,7 @@ export class PlatformService {
       }
 
       const { data, error } = await this.supabase.client
-        .from('enterprises')
+        .from('companies')
         .insert({
           ...enterprise,
           admin_user_id: user.id

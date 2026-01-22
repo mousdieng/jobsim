@@ -44,21 +44,21 @@
       </div>
 
       <div class="rounded-md shadow-sm space-y-4">
-        <!-- Name Field -->
+        <!-- Full Name Field -->
         <div>
-          <label for="name" class="block text-sm font-medium text-gray-700">{{ 'auth.register.full_name' | translate }}</label>
+          <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
           <input
-            id="name"
-            name="name"
+            id="full_name"
+            name="full_name"
             type="text"
-            formControlName="name"
+            formControlName="full_name"
             autocomplete="name"
             class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            [class.border-red-500]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
-            [placeholder]="'auth.register.full_name_placeholder' | translate"
+            [class.border-red-500]="registerForm.get('full_name')?.invalid && registerForm.get('full_name')?.touched"
+            placeholder="Enter your full name"
           />
-          <p *ngIf="getErrorMessage('name')" class="mt-1 text-sm text-red-600">
-            {{ getErrorMessage('name') }}
+          <p *ngIf="getErrorMessage('full_name')" class="mt-1 text-sm text-red-600">
+            {{ getErrorMessage('full_name') }}
           </p>
         </div>
 
@@ -80,41 +80,37 @@
           </p>
         </div>
 
-        <!-- Job Field -->
+        <!-- Role Selection -->
         <div>
-          <label for="job_field" class="block text-sm font-medium text-gray-700">{{ 'auth.register.job_field' | translate }}</label>
-          <select
-            id="job_field"
-            name="job_field"
-            formControlName="job_field"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            [class.border-red-500]="registerForm.get('job_field')?.invalid && registerForm.get('job_field')?.touched"
-          >
-            <option *ngFor="let field of jobFields" [value]="field">
-              {{ 'job_field.' + field | translate }}
-            </option>
-          </select>
-          <p *ngIf="getErrorMessage('job_field')" class="mt-1 text-sm text-red-600">
-            {{ getErrorMessage('job_field') }}
-          </p>
-        </div>
-
-        <!-- Experience Level -->
-        <div>
-          <label for="experience_level" class="block text-sm font-medium text-gray-700">{{ 'auth.register.experience_level' | translate }}</label>
-          <select
-            id="experience_level"
-            name="experience_level"
-            formControlName="experience_level"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            [class.border-red-500]="registerForm.get('experience_level')?.invalid && registerForm.get('experience_level')?.touched"
-          >
-            <option *ngFor="let level of experienceLevels" [value]="level">
-              {{ 'experience.' + level | translate }}
-            </option>
-          </select>
-          <p *ngIf="getErrorMessage('experience_level')" class="mt-1 text-sm text-red-600">
-            {{ getErrorMessage('experience_level') }}
+          <label for="role" class="block text-sm font-medium text-gray-700 mb-2">I want to join as:</label>
+          <div class="space-y-3">
+            <div *ngFor="let roleOption of availableRoles" class="relative">
+              <input
+                type="radio"
+                [id]="'role_' + roleOption.value"
+                name="role"
+                [value]="roleOption.value"
+                formControlName="role"
+                class="peer sr-only"
+              />
+              <label
+                [for]="'role_' + roleOption.value"
+                class="flex items-start p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-indigo-400 peer-checked:border-indigo-600 peer-checked:bg-indigo-50 transition-all"
+              >
+                <div class="flex-1">
+                  <div class="flex items-center">
+                    <span class="text-sm font-medium text-gray-900">{{ roleOption.label }}</span>
+                    <svg class="ml-auto h-5 w-5 text-indigo-600 opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <p class="mt-1 text-xs text-gray-500">{{ roleOption.description }}</p>
+                </div>
+              </label>
+            </div>
+          </div>
+          <p *ngIf="getErrorMessage('role')" class="mt-1 text-sm text-red-600">
+            {{ getErrorMessage('role') }}
           </p>
         </div>
 

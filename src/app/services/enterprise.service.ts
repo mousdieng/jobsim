@@ -53,12 +53,12 @@ export class EnterpriseService {
   private async fetchEnterpriseId(): Promise<string> {
     const user = this.authService.getCurrentUser();
 
-    if (!user || user.user_type !== 'enterprise') {
+    if (!user || user.role !== 'enterprise_rep') {
       throw new Error('Enterprise authentication required');
     }
 
     const { data: enterprise, error } = await this.supabase
-      .from('enterprises')
+      .from('companies')
       .select('id')
       .eq('admin_user_id', user.id)
       .maybeSingle(); // Use maybeSingle instead of single to avoid 406 errors
@@ -83,7 +83,7 @@ export class EnterpriseService {
     return this.getEnterpriseId().pipe(
       switchMap(enterpriseId =>
         from(this.supabase
-          .from('enterprises')
+          .from('companies')
           .select('*')
           .eq('id', enterpriseId)
           .single()
@@ -112,7 +112,7 @@ export class EnterpriseService {
     return this.getEnterpriseId().pipe(
       switchMap(enterpriseId =>
         from(this.supabase
-          .from('enterprises')
+          .from('companies')
           .update(filteredUpdates)
           .eq('id', enterpriseId)
           .select()
@@ -137,7 +137,7 @@ export class EnterpriseService {
     return this.getEnterpriseId().pipe(
       switchMap(enterpriseId =>
         from(this.supabase
-          .from('enterprises')
+          .from('companies')
           .select('can_create_tasks')
           .eq('id', enterpriseId)
           .single()
@@ -228,7 +228,7 @@ export class EnterpriseService {
 
     // Check if enterprise can create tasks
     const { data: enterprise } = await this.supabase
-      .from('enterprises')
+      .from('companies')
       .select('can_create_tasks')
       .eq('id', enterpriseId)
       .single();
@@ -368,10 +368,10 @@ export class EnterpriseService {
     }
 
     const { data, error } = await this.supabase
-      .from('task_submissions')
+      .from('submissions')
       .select(`
         *,
-        user:users(id, name, email, job_field, experience_level, user_type)
+        candidate:profiles!submissions_candidate_id_fkey(id, full_name, email)
       `)
       .eq('task_id', taskId)
       .order('submitted_at', { ascending: false });
@@ -393,15 +393,18 @@ export class EnterpriseService {
   }
 
   private async performGetStats(enterpriseId: string): Promise<any> {
+    // Get task IDs first to avoid empty array query
+    const taskIds = await this.getEnterpriseTaskIds(enterpriseId);
+
     // Get all counts in parallel
     const [tasksCount, activeTasksCount, pendingTasksCount, submissions] = await Promise.all([
       this.supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('enterprise_id', enterpriseId),
       this.supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('enterprise_id', enterpriseId).eq('lifecycle_status', 'active'),
       this.supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('enterprise_id', enterpriseId).eq('lifecycle_status', 'validation_pending'),
-      this.supabase
-        .from('task_submissions')
-        .select('id, score, task_id')
-        .in('task_id', await this.getEnterpriseTaskIds(enterpriseId))
+      // Only query submissions if there are tasks
+      taskIds.length > 0
+        ? this.supabase.from('submissions').select('id, score, task_id').in('task_id', taskIds)
+        : Promise.resolve({ data: [], error: null })
     ]);
 
     const totalSubmissions = submissions.data?.length || 0;

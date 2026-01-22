@@ -7,7 +7,7 @@ import { getRoleDisplayName } from '../utils/role.utils';
   standalone: true
 })
 export class RoleDisplayNamePipe implements PipeTransform {
-  transform(role: UserRole): string {
-    return getRoleDisplayName(role);
+  transform(role: UserRole | string): string {
+    return getRoleDisplayName(role as UserRole);
   }
 }

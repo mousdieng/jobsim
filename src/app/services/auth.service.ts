@@ -138,7 +138,7 @@ export class AuthService {
           }
 
           const { data, error } = await this.supabase.client
-            .from('users')
+            .from('profiles')
             .select('*')
             .eq('id', userId)
             .maybeSingle(); // Use maybeSingle() instead of single() to handle 0 rows gracefully
@@ -320,13 +320,13 @@ export class AuthService {
       }
 
       const { data, error } = await this.supabase.client
-        .from('users')
+        .from('profiles')
         .update({
           ...updates,
           updated_at: new Date().toISOString()
         })
         .eq('id', currentUser.id)
-        .select()
+        .select('*')
         .single();
 
       if (error) {

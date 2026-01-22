@@ -36,12 +36,12 @@ export class UsersManagementComponent implements OnInit {
     email: '',
     password: '',
     name: '',
-    user_type: 'support' as 'admin' | 'support' | 'enterprise',
-    enterprise_id: ''
+    role: 'platform_support' as 'candidate' | 'enterprise_rep' | 'admin' | 'platform_support',
+    company_id: ''
   };
 
   // Role change
-  newRole: 'admin' | 'support' | 'enterprise' | 'student' = 'student';
+  newRole: 'candidate' | 'enterprise_rep' | 'admin' | 'platform_support' = 'candidate';
 
   // Available enterprises for linking
   availableEnterprises: any[] = [];
@@ -85,7 +85,7 @@ export class UsersManagementComponent implements OnInit {
 
     const filters = {
       status: this.statusFilter || undefined,
-      user_type: this.userTypeFilter || undefined,
+      role: this.userTypeFilter || undefined,
       search: this.searchQuery || undefined
     };
 
@@ -119,8 +119,8 @@ export class UsersManagementComponent implements OnInit {
       email: '',
       password: '',
       name: '',
-      user_type: 'support',
-      enterprise_id: ''
+      role: 'platform_support',
+      company_id: ''
     };
   }
 
@@ -170,7 +170,7 @@ export class UsersManagementComponent implements OnInit {
     this.selectedUser = user;
     this.actionType = action;
     this.actionReason = '';
-    this.newRole = user.user_type as any;
+    this.newRole = user.role as any;
     this.showActionModal = true;
   }
 
@@ -226,7 +226,7 @@ export class UsersManagementComponent implements OnInit {
         action$ = this.adminService.deleteUser(this.selectedUser.id, this.actionReason);
         break;
       case 'changeRole':
-        if (this.newRole === this.selectedUser.user_type) {
+        if (this.newRole === this.selectedUser.role) {
           this.notificationService.warning('Veuillez sélectionner un rôle différent');
           this.actionLoading = false;
           return;
@@ -277,12 +277,12 @@ export class UsersManagementComponent implements OnInit {
     switch (role) {
       case 'admin':
         return 'bg-purple-100 text-purple-800';
-      case 'support':
+      case 'platform_support':
         return 'bg-indigo-100 text-indigo-800';
-      case 'enterprise':
+      case 'enterprise_rep':
         return 'bg-blue-100 text-blue-800';
-      case 'mentor':
-        return 'bg-indigo-100 text-indigo-800'; // Legacy, same as support
+      case 'candidate':
+        return 'bg-green-100 text-green-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }

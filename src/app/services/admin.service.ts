@@ -14,6 +14,7 @@ import {
   TaskSubmission,
   AdminActionType
 } from '../models/platform.model';
+import { UserRole } from '../core/models/database.types';
 
 @Injectable({
   providedIn: 'root'
@@ -49,14 +50,14 @@ export class AdminService {
       suspendedUsers,
       recentActions
     ] = await Promise.all([
-      this.supabase.from('users').select('*', { count: 'exact', head: true }),
-      this.supabase.from('enterprises').select('*', { count: 'exact', head: true }),
+      this.supabase.from('profiles').select('*', { count: 'exact', head: true }),
+      this.supabase.from('companies').select('*', { count: 'exact', head: true }),
       this.supabase.from('tasks').select('*', { count: 'exact', head: true }),
-      this.supabase.from('task_submissions').select('*', { count: 'exact', head: true }),
-      this.supabase.from('enterprises').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+      this.supabase.from('submissions').select('*', { count: 'exact', head: true }),
+      this.supabase.from('companies').select('*', { count: 'exact', head: true }).eq('is_verified', false),
       this.supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('lifecycle_status', 'validation_pending'),
       this.supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('flagged', true),
-      this.supabase.from('users').select('*', { count: 'exact', head: true }).eq('status', 'suspended'),
+      this.supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_active', false),
       this.supabase
         .from('admin_audit_logs')
         .select('*')
@@ -118,16 +119,15 @@ export class AdminService {
   // ============================================
 
   /**
-   * Create a new user with specific role (Admin, Support, Enterprise)
-   * Students cannot be created via admin - they self-register
+   * Create a new user with specific role
    * Only admins can create users
    */
   createUser(userData: {
     email: string;
     password: string;
     name: string;
-    user_type: 'admin' | 'support' | 'enterprise';
-    enterprise_id?: string; // Required if user_type is enterprise
+    role: UserRole;
+    company_id?: string; // Required if role is enterprise_rep
   }): Observable<UserProfile> {
     return from(this.performCreateUser(userData));
   }
@@ -155,8 +155,8 @@ export class AdminService {
           email: userData.email,
           password: userData.password,
           name: userData.name,
-          user_type: userData.user_type,
-          enterprise_id: userData.enterprise_id || undefined
+          role: userData.role,
+          company_id: userData.company_id || undefined
         })
       }
     );
@@ -174,7 +174,7 @@ export class AdminService {
    * Change user role (only admins can do this)
    * Tracks who made the change and when
    */
-  changeUserRole(userId: string, newRole: 'admin' | 'support' | 'enterprise' | 'student', reason: string): Observable<void> {
+  changeUserRole(userId: string, newRole: UserRole, reason: string): Observable<void> {
     return from(this.performChangeUserRole(userId, newRole, reason));
   }
 
@@ -188,18 +188,18 @@ export class AdminService {
 
     // Get current user to log before state
     const { data: currentUser } = await this.supabase
-      .from('users')
-      .select('user_type')
+      .from('profiles')
+      .select('role')
       .eq('id', userId)
       .single();
 
-    const oldRole = currentUser?.user_type;
+    const oldRole = currentUser?.role;
 
     // Update role
     const { error } = await this.supabase
-      .from('users')
+      .from('profiles')
       .update({
-        user_type: newRole,
+        role: newRole,
         role_assigned_by: adminId,
         role_assigned_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -228,7 +228,7 @@ export class AdminService {
   private async performDeleteUser(userId: string, reason: string): Promise<void> {
     // Get user info before deletion for audit log
     const { data: user } = await this.supabase
-      .from('users')
+      .from('profiles')
       .select('*')
       .eq('id', userId)
       .single();
@@ -242,28 +242,35 @@ export class AdminService {
     if (authError) throw authError;
 
     // Also delete from users table if it didn't cascade
-    await this.supabase.from('users').delete().eq('id', userId);
+    await this.supabase.from('profiles').delete().eq('id', userId);
   }
 
   getAllUsers(filters?: {
     status?: string;
     user_type?: string;
+    role?: string;
     search?: string;
   }): Observable<UserProfile[]> {
     return from(this.fetchUsers(filters));
   }
 
   private async fetchUsers(filters?: any): Promise<UserProfile[]> {
-    let query = this.supabase.from('users').select('*');
+    let query = this.supabase.from('profiles').select('*');
 
     if (filters?.status) {
-      query = query.eq('status', filters.status);
+      // Map old status values to new schema
+      if (filters.status === 'active') {
+        query = query.eq('is_active', true);
+      } else if (filters.status === 'suspended') {
+        query = query.eq('is_active', false);
+      }
     }
-    if (filters?.user_type) {
-      query = query.eq('user_type', filters.user_type);
+    // Support both user_type (legacy) and role (new)
+    if (filters?.user_type || filters?.role) {
+      query = query.eq('role', filters.user_type || filters.role);
     }
     if (filters?.search) {
-      query = query.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
+      query = query.or(`full_name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
     }
 
     const { data, error } = await query.order('created_at', { ascending: false });
@@ -278,11 +285,11 @@ export class AdminService {
 
   private async performSuspendUser(userId: string, reason: string): Promise<void> {
     const { error } = await this.supabase
-      .from('users')
+      .from('profiles')
       .update({
-        status: 'suspended',
+        is_active: false,
         suspended_at: new Date().toISOString(),
-        suspension_reason: reason
+        suspended_reason: reason
       })
       .eq('id', userId);
 
@@ -298,11 +305,11 @@ export class AdminService {
 
   private async performUnsuspendUser(userId: string): Promise<void> {
     const { error } = await this.supabase
-      .from('users')
+      .from('profiles')
       .update({
-        status: 'active',
+        is_active: true,
         suspended_at: null,
-        suspension_reason: null
+        suspended_reason: null
       })
       .eq('id', userId);
 
@@ -317,11 +324,11 @@ export class AdminService {
 
   private async performBanUser(userId: string, reason: string): Promise<void> {
     const { error } = await this.supabase
-      .from('users')
+      .from('profiles')
       .update({
-        status: 'banned',
+        is_active: false,
         suspended_at: new Date().toISOString(),
-        suspension_reason: reason
+        suspended_reason: reason
       })
       .eq('id', userId);
 
@@ -331,7 +338,7 @@ export class AdminService {
   }
 
   // ============================================
-  // ENTERPRISE MANAGEMENT
+  // COMPANY MANAGEMENT (formerly Enterprise Management)
   // ============================================
 
   getAllEnterprises(status?: string): Observable<Enterprise[]> {
@@ -339,10 +346,17 @@ export class AdminService {
   }
 
   private async fetchEnterprises(status?: string): Promise<Enterprise[]> {
-    let query = this.supabase.from('enterprises').select('*');
+    let query = this.supabase.from('companies').select('*');
 
+    // Map new schema: is_active boolean replaces status field
     if (status) {
-      query = query.eq('status', status);
+      if (status === 'active') {
+        query = query.eq('is_active', true).eq('is_suspended', false);
+      } else if (status === 'suspended') {
+        query = query.eq('is_suspended', true);
+      } else if (status === 'pending') {
+        query = query.eq('is_verified', false);
+      }
     }
 
     const { data, error } = await query.order('created_at', { ascending: false });
@@ -360,18 +374,19 @@ export class AdminService {
     const adminId = session.session?.user.id;
 
     const { error } = await this.supabase
-      .from('enterprises')
+      .from('companies')
       .update({
-        status: 'active',
+        is_active: true,
         is_verified: true,
         verified_at: new Date().toISOString(),
-        verified_by: adminId
+        verified_by: adminId,
+        is_suspended: false
       })
       .eq('id', enterpriseId);
 
     if (error) throw error;
 
-    await this.logAction('approve_enterprise', 'enterprise', enterpriseId, 'Enterprise approved');
+    await this.logAction('approve_enterprise', 'company', enterpriseId, 'Company approved');
   }
 
   rejectEnterprise(enterpriseId: string, reason: string): Observable<void> {
@@ -380,16 +395,17 @@ export class AdminService {
 
   private async performRejectEnterprise(enterpriseId: string, reason: string): Promise<void> {
     const { error } = await this.supabase
-      .from('enterprises')
+      .from('companies')
       .update({
-        status: 'banned',
-        suspension_reason: reason
+        is_active: false,
+        is_suspended: true,
+        suspended_reason: reason
       })
       .eq('id', enterpriseId);
 
     if (error) throw error;
 
-    await this.logAction('reject_enterprise', 'enterprise', enterpriseId, reason);
+    await this.logAction('reject_enterprise', 'company', enterpriseId, reason);
   }
 
   suspendEnterprise(enterpriseId: string, reason: string): Observable<void> {
@@ -398,17 +414,17 @@ export class AdminService {
 
   private async performSuspendEnterprise(enterpriseId: string, reason: string): Promise<void> {
     const { error } = await this.supabase
-      .from('enterprises')
+      .from('companies')
       .update({
-        status: 'suspended',
+        is_suspended: true,
         suspended_at: new Date().toISOString(),
-        suspension_reason: reason
+        suspended_reason: reason
       })
       .eq('id', enterpriseId);
 
     if (error) throw error;
 
-    await this.logAction('suspend_enterprise', 'enterprise', enterpriseId, reason);
+    await this.logAction('suspend_enterprise', 'company', enterpriseId, reason);
   }
 
   unsuspendEnterprise(enterpriseId: string): Observable<void> {
@@ -417,17 +433,17 @@ export class AdminService {
 
   private async performUnsuspendEnterprise(enterpriseId: string): Promise<void> {
     const { error } = await this.supabase
-      .from('enterprises')
+      .from('companies')
       .update({
-        status: 'active',
+        is_suspended: false,
         suspended_at: null,
-        suspension_reason: null
+        suspended_reason: null
       })
       .eq('id', enterpriseId);
 
     if (error) throw error;
 
-    await this.logAction('unsuspend_enterprise', 'enterprise', enterpriseId, 'Enterprise unsuspended');
+    await this.logAction('unsuspend_enterprise', 'company', enterpriseId, 'Company unsuspended');
   }
 
   /**
@@ -447,7 +463,7 @@ export class AdminService {
     }
 
     const { error } = await this.supabase
-      .from('enterprises')
+      .from('companies')
       .update({
         can_create_tasks: true,
         task_creation_enabled_by: adminId,
@@ -476,7 +492,7 @@ export class AdminService {
 
   private async performDisableEnterpriseTaskCreation(enterpriseId: string, reason: string): Promise<void> {
     const { error } = await this.supabase
-      .from('enterprises')
+      .from('companies')
       .update({
         can_create_tasks: false,
         task_creation_disabled_at: new Date().toISOString()
@@ -490,6 +506,75 @@ export class AdminService {
       'enterprise',
       enterpriseId,
       reason
+    );
+  }
+
+  /**
+   * Update an existing enterprise
+   * Only admins can update enterprises
+   */
+  updateEnterprise(enterpriseId: string, enterpriseData: {
+    name?: string;
+    description?: string;
+    website?: string;
+    industry?: string;
+    size?: string;
+    location?: string;
+    contact_email?: string;
+    contact_phone?: string;
+    logo_url?: string;
+    can_create_tasks?: boolean;
+  }): Observable<void> {
+    return from(this.performUpdateEnterprise(enterpriseId, enterpriseData));
+  }
+
+  private async performUpdateEnterprise(enterpriseId: string, enterpriseData: any): Promise<void> {
+    const { data: session } = await this.supabase.auth.getSession();
+    const adminId = session.session?.user.id;
+
+    if (!adminId) {
+      throw new Error('Admin authentication required');
+    }
+
+    const updateData: any = {
+      updated_at: new Date().toISOString()
+    };
+
+    // Only include provided fields
+    if (enterpriseData.name !== undefined) updateData.name = enterpriseData.name;
+    if (enterpriseData.description !== undefined) updateData.description = enterpriseData.description;
+    if (enterpriseData.website !== undefined) updateData.website = enterpriseData.website;
+    if (enterpriseData.industry !== undefined) updateData.industry = enterpriseData.industry;
+    if (enterpriseData.size !== undefined) updateData.size = enterpriseData.size;
+    if (enterpriseData.location !== undefined) updateData.location = enterpriseData.location;
+    if (enterpriseData.contact_email !== undefined) updateData.contact_email = enterpriseData.contact_email;
+    if (enterpriseData.contact_phone !== undefined) updateData.contact_phone = enterpriseData.contact_phone;
+    if (enterpriseData.logo_url !== undefined) updateData.logo_url = enterpriseData.logo_url;
+    if (enterpriseData.can_create_tasks !== undefined) {
+      updateData.can_create_tasks = enterpriseData.can_create_tasks;
+
+      // Track when task creation was enabled/disabled
+      if (enterpriseData.can_create_tasks) {
+        updateData.task_creation_enabled_by = adminId;
+        updateData.task_creation_enabled_at = new Date().toISOString();
+        updateData.task_creation_disabled_at = null;
+      } else {
+        updateData.task_creation_disabled_at = new Date().toISOString();
+      }
+    }
+
+    const { error } = await this.supabase
+      .from('companies')
+      .update(updateData)
+      .eq('id', enterpriseId);
+
+    if (error) throw error;
+
+    await this.logAction(
+      'update_enterprise',
+      'company',
+      enterpriseId,
+      `Updated company: ${enterpriseData.name || 'Unknown'}`
     );
   }
 
@@ -521,18 +606,19 @@ export class AdminService {
     }
 
     const { data: enterprise, error } = await this.supabase
-      .from('enterprises')
+      .from('companies')
       .insert({
         name: enterpriseData.name,
         description: enterpriseData.description,
         website: enterpriseData.website,
-        sector: enterpriseData.industry,
+        industry: enterpriseData.industry,
         size: enterpriseData.size,
         location: enterpriseData.location,
         contact_email: enterpriseData.contact_email,
         contact_phone: enterpriseData.contact_phone,
         logo_url: enterpriseData.logo_url,
-        status: 'active',
+        is_active: true,
+        is_suspended: false,
         is_verified: true,
         verified_by: adminId,
         verified_at: new Date().toISOString(),
@@ -547,9 +633,9 @@ export class AdminService {
 
     await this.logAction(
       'create_enterprise',
-      'enterprise',
+      'company',
       enterprise.id,
-      `Created enterprise: ${enterpriseData.name}`
+      `Created company: ${enterpriseData.name}`
     );
 
     return enterprise;
@@ -592,7 +678,7 @@ export class AdminService {
         skills_required: spec.task_objective.skills_evaluated,
         deliverables: spec.deliverables,
         created_by: spec.task_identity.created_by === 'Admin' ? 'platform' : 'enterprise',
-        created_by_role: spec.task_identity.created_by === 'Admin' ? 'admin' : 'enterprise',
+        created_by_role: spec.task_identity.created_by === 'Admin' ? 'admin' : 'enterprise_rep',
         created_by_user_id: adminId,
         lifecycle_status: spec.lifecycle_status,
         is_active: spec.lifecycle_status === 'active',
@@ -633,7 +719,7 @@ export class AdminService {
     difficulty_level: 'beginner' | 'intermediate' | 'advanced' | 'expert';
     estimated_duration: number;
     task_type: string;
-    enterprise_id?: string;
+    company_id?: string;
     created_by_role: 'admin' | 'platform';
   }): Observable<Task> {
     return from(this.performCreateTask(taskData));
@@ -658,7 +744,7 @@ export class AdminService {
         created_by: taskData.created_by_role === 'admin' ? 'platform' : 'enterprise',
         created_by_role: taskData.created_by_role,
         created_by_user_id: adminId,
-        enterprise_id: taskData.enterprise_id || null,
+        company_id: taskData.company_id || null,
         lifecycle_status: 'draft',
         is_active: false,
         is_approved: true,
@@ -737,7 +823,7 @@ export class AdminService {
   }
 
   private async fetchTasks(filters?: any): Promise<Task[]> {
-    let query = this.supabase.from('tasks').select('*, enterprise:enterprises(*)');
+    let query = this.supabase.from('tasks').select('*, company:companies(*)');
 
     if (filters?.flagged !== undefined) {
       query = query.eq('flagged', filters.flagged);
@@ -927,7 +1013,7 @@ export class AdminService {
   private async fetchTasksByLifecycleStatus(status: string): Promise<Task[]> {
     const { data, error } = await this.supabase
       .from('tasks')
-      .select('*, enterprise:enterprises(*)')
+      .select('*, company:companies(*)')
       .eq('lifecycle_status', status)
       .order('created_at', { ascending: false });
 
@@ -945,8 +1031,8 @@ export class AdminService {
 
   private async fetchSubmissions(filters?: any): Promise<TaskSubmission[]> {
     let query = this.supabase
-      .from('task_submissions')
-      .select('*, task:tasks(*), user:users(*)');
+      .from('submissions')
+      .select('*, task:tasks(*), candidate:profiles!submissions_candidate_id_fkey(id, full_name, email, avatar_url)');
 
     if (filters?.flagged !== undefined) {
       query = query.eq('flagged', filters.flagged);
@@ -979,7 +1065,7 @@ export class AdminService {
     const adminId = session.session?.user.id;
 
     const { error } = await this.supabase
-      .from('task_submissions')
+      .from('submissions')
       .update({
         score: newScore,
         score_overridden: true,
@@ -1000,7 +1086,7 @@ export class AdminService {
 
   private async performFlagSubmission(submissionId: string, reason: string): Promise<void> {
     const { error } = await this.supabase
-      .from('task_submissions')
+      .from('submissions')
       .update({
         flagged: true,
         flag_reason: reason
@@ -1066,14 +1152,14 @@ export class AdminService {
 
       // Get user profile to determine role
       const { data: profile } = await this.supabase
-        .from('users')
-        .select('user_type')
+        .from('profiles')
+        .select('role')
         .eq('id', user.id)
         .single();
 
       await this.supabase.from('admin_audit_logs').insert({
         actor_id: user.id,
-        actor_role: profile?.user_type || 'admin',
+        actor_role: profile?.role || 'admin',
         action_type: actionType,
         target_type: targetType,
         target_id: targetId,

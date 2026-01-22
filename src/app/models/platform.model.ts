@@ -43,7 +43,7 @@ export type MeetingType = 'kickoff' | 'standup' | 'review' | 'client_call' | 'ge
 
 export type TaskPriority = 'low' | 'normal' | 'high' | 'urgent';
 
-export type UserRole = 'student' | 'support' | 'admin' | 'enterprise' | 'mentor';
+export type UserRole = 'candidate' | 'enterprise_rep' | 'admin' | 'platform_support';
 
 export type UserStatus = 'active' | 'suspended' | 'banned';
 
@@ -56,18 +56,16 @@ export type PermissionKey = string;
 // Role display name mapping for 4-role model
 export const ROLE_DISPLAY_NAMES: Record<UserRole, string> = {
   admin: 'Admin',
-  support: 'Platform Support',
-  enterprise: 'Enterprise Recruiter',
-  student: 'Candidate',
-  mentor: 'Platform Support' // Legacy, mapped to Platform Support
+  platform_support: 'Platform Support',
+  enterprise_rep: 'Enterprise Representative',
+  candidate: 'Candidate'
 };
 
 export const ROLE_DESCRIPTIONS: Record<UserRole, string> = {
   admin: 'Platform governance and full authority',
-  support: 'Platform operations and support',
-  enterprise: 'Hiring-focused task creation',
-  student: 'Task solving and profile building',
-  mentor: 'Platform operations and support' // Legacy
+  platform_support: 'Platform operations and support',
+  enterprise_rep: 'Hiring-focused task creation and candidate review',
+  candidate: 'Task solving and profile building'
 };
 
 export type AdminActionType =
@@ -238,6 +236,12 @@ export interface Enterprise {
 
   // Admin
   admin_user_id?: string;
+
+  // Permissions
+  can_create_tasks?: boolean;
+  task_creation_enabled_by?: string;
+  task_creation_enabled_at?: string;
+  task_creation_disabled_at?: string;
 
   created_at: string;
   updated_at: string;

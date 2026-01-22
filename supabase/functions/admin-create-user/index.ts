@@ -41,12 +41,12 @@ serve(async (req) => {
 
     // Check if user is admin
     const { data: profile, error: profileError } = await supabaseClient
-      .from('users')
-      .select('user_type')
+      .from('profiles')
+      .select('role')
       .eq('id', user.id)
       .single()
 
-    if (profileError || profile?.user_type !== 'admin') {
+    if (profileError || profile?.role !== 'admin') {
       return new Response(
         JSON.stringify({ error: 'Only admins can create users' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -54,19 +54,29 @@ serve(async (req) => {
     }
 
     // Parse request body
-    const { email, password, name, user_type, enterprise_id } = await req.json()
+    const { email, password, name, role, company_id } = await req.json()
 
     // Validate input
-    if (!email || !password || !name || !user_type) {
+    if (!email || !password || !name || !role) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    if (user_type === 'student') {
+    // Validate role
+    const validRoles = ['candidate', 'enterprise_rep', 'admin', 'platform_support']
+    if (!validRoles.includes(role)) {
       return new Response(
-        JSON.stringify({ error: 'Students must self-register' }),
+        JSON.stringify({ error: `Invalid role. Must be one of: ${validRoles.join(', ')}` }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Validate company_id for enterprise_rep
+    if (role === 'enterprise_rep' && !company_id) {
+      return new Response(
+        JSON.stringify({ error: 'company_id is required for enterprise_rep role' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -89,8 +99,8 @@ serve(async (req) => {
       password,
       email_confirm: true,
       user_metadata: {
-        name,
-        user_type,
+        full_name: name,
+        role,
         created_by_admin: true
       }
     })
@@ -104,15 +114,13 @@ serve(async (req) => {
 
     // Create user profile
     const { data: userProfile, error: profileCreateError } = await supabaseAdmin
-      .from('users')
+      .from('profiles')
       .insert({
         id: authData.user.id,
         email,
-        name,
         full_name: name,
-        user_type,
-        status: 'active',
-        created_by_admin_id: user.id,
+        role,
+        is_active: true,
         role_assigned_by: user.id,
         role_assigned_at: new Date().toISOString()
       })
@@ -129,12 +137,27 @@ serve(async (req) => {
       )
     }
 
-    // If enterprise user, link to enterprise
-    if (user_type === 'enterprise' && enterprise_id) {
-      await supabaseAdmin
-        .from('enterprises')
-        .update({ admin_user_id: authData.user.id })
-        .eq('id', enterprise_id)
+    // Create role-specific profiles
+    if (role === 'candidate') {
+      // Create candidate profile
+      await supabaseAdmin.from('candidate_profiles').insert({
+        id: authData.user.id,
+        overall_xp: 0,
+        overall_level: 1,
+        tasks_completed: 0,
+        tasks_attempted: 0,
+        approval_rate: 0,
+        is_open_to_opportunities: true
+      })
+    } else if (role === 'enterprise_rep' && company_id) {
+      // Create enterprise rep profile
+      await supabaseAdmin.from('enterprise_rep_profiles').insert({
+        id: authData.user.id,
+        company_id,
+        can_review: false,
+        is_active: true,
+        reviews_completed: 0
+      })
     }
 
     // Log the action
@@ -144,7 +167,7 @@ serve(async (req) => {
       action_type: 'create_user',
       target_type: 'user',
       target_id: authData.user.id,
-      reason: `Created ${user_type} user: ${email}`,
+      reason: `Created ${role} user: ${email}`,
       admin_id: user.id,
       admin_email: user.email || '',
       reversible: false

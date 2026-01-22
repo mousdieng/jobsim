@@ -3,8 +3,8 @@ import { UserRole, ROLE_DISPLAY_NAMES, ROLE_DESCRIPTIONS } from '../models/platf
 /**
  * Get display name for a role
  */
-export function getRoleDisplayName(role: UserRole): string {
-  return ROLE_DISPLAY_NAMES[role] || role;
+export function getRoleDisplayName(role: UserRole | string): string {
+  return ROLE_DISPLAY_NAMES[role as UserRole] || role;
 }
 
 /**
@@ -33,7 +33,7 @@ export function hasPermission(userRole: UserRole, permission: string): boolean {
       'audit.view',
       'roles.assign'
     ],
-    support: [
+    platform_support: [
       'platform.support',
       'tasks.create',
       'tasks.validate',
@@ -43,7 +43,7 @@ export function hasPermission(userRole: UserRole, permission: string): boolean {
       'disputes.mediate',
       'audit.view'
     ],
-    enterprise: [
+    enterprise_rep: [
       'tasks.create',
       'tasks.manage_own',
       'submissions.review_own',
@@ -51,23 +51,12 @@ export function hasPermission(userRole: UserRole, permission: string): boolean {
       'candidates.rate',
       'analytics.view_own'
     ],
-    student: [
+    candidate: [
       'tasks.browse',
       'tasks.submit',
       'submissions.view_own',
       'profile.manage',
       'progress.track'
-    ],
-    mentor: [
-      // Legacy role, mapped to Platform Support permissions
-      'platform.support',
-      'tasks.create',
-      'tasks.validate',
-      'tasks.moderate',
-      'submissions.review',
-      'users.support',
-      'disputes.mediate',
-      'audit.view'
     ]
   };
 
@@ -92,7 +81,7 @@ export function canValidateTasks(userRole: UserRole): boolean {
  * Check if user is admin or support
  */
 export function isAdmin(userRole: UserRole): boolean {
-  return userRole === 'admin' || userRole === 'support';
+  return userRole === 'admin' || userRole === 'platform_support';
 }
 
 /**
