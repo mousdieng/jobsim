@@ -14,11 +14,11 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Wait for auth to finish loading before checking (with 5 second timeout)
+  // Wait for auth to finish loading before checking (with 10 second timeout for slow connections)
   return authService.loading$.pipe(
     filter(loading => !loading), // Wait until loading is false
     take(1),
-    timeout(5000), // Timeout after 5 seconds
+    timeout(10000), // Increased timeout to 10 seconds for slow connections
     map(() => {
       const isAuthenticated = authService.isAuthenticated();
 
@@ -32,11 +32,14 @@ export const authGuard: CanActivateFn = (route, state) => {
       });
       return false;
     }),
-    catchError(() => {
-      // Timeout or error - redirect to login
-      console.error('Auth guard timeout - redirecting to login');
+    catchError((error) => {
+      // Timeout or error - redirect to login with connection error notice
+      console.error('Auth guard timeout - possible connection issue:', error);
       router.navigate(['/auth/login'], {
-        queryParams: { returnUrl: state.url }
+        queryParams: {
+          returnUrl: state.url,
+          connectionError: 'true' // Add flag for connection issue
+        }
       });
       return of(false);
     })
@@ -52,11 +55,11 @@ export const guestGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Wait for auth to finish loading before checking (with 5 second timeout)
+  // Wait for auth to finish loading before checking (with 10 second timeout for slow connections)
   return authService.loading$.pipe(
     filter(loading => !loading), // Wait until loading is false
     take(1),
-    timeout(5000), // Timeout after 5 seconds
+    timeout(10000), // Increased timeout to 10 seconds for slow connections
     map(() => {
       const isAuthenticated = authService.isAuthenticated();
 
@@ -77,9 +80,9 @@ export const guestGuard: CanActivateFn = (route, state) => {
       }
       return false;
     }),
-    catchError(() => {
-      // Timeout or error - allow access to guest pages
-      console.error('Guest guard timeout - allowing access');
+    catchError((error) => {
+      // Timeout or error - allow access to guest pages (necessary for users to reach login)
+      console.warn('Guest guard timeout - allowing access to auth pages (connection may be slow):', error);
       return of(true);
     })
   );

@@ -20,6 +20,9 @@ export class HomeComponent implements OnInit {
   recentSubmissions: TaskSubmission[] = [];
   isLoading = true;
   error: string | null = null;
+  isMobileMenuOpen = false;
+  isProfileMenuOpen = false;
+  private lastToggleTime = 0;
 
   stats = {
     completedTasks: 0,
@@ -111,5 +114,48 @@ export class HomeComponent implements OnInit {
   async logout(): Promise<void> {
     await this.authService.signOut();
     this.router.navigate(['/']);
+  }
+
+  toggleMobileMenu(): void {
+    // Prevent double-triggering from both touch and click events
+    const now = Date.now();
+    if (now - this.lastToggleTime < 300) {
+      return;
+    }
+    this.lastToggleTime = now;
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  toggleProfileMenu(): void {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
+
+  closeProfileMenu(): void {
+    this.isProfileMenuOpen = false;
+  }
+
+  getInitials(): string {
+    if (!this.user?.name) return 'U';
+    const names = this.user.name.split(' ');
+    if (names.length >= 2) {
+      return `${names[0][0]}${names[1][0]}`.toUpperCase();
+    }
+    return names[0][0].toUpperCase();
+  }
+
+  isAdmin(): boolean {
+    return this.user?.role === 'admin';
+  }
+
+  isStudent(): boolean {
+    return this.user?.role === 'candidate' || !this.user?.role;
+  }
+
+  isEnterprise(): boolean {
+    return this.user?.role === 'enterprise_rep';
+  }
+
+  isSupport(): boolean {
+    return this.user?.role === 'platform_support';
   }
 }

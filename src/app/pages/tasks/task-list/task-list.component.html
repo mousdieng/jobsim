@@ -1,34 +1,65 @@
 <div class="px-4 py-6 sm:px-0">
-  <!-- Header -->
-  <div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">{{ 'task.list.title' | translate }}</h1>
-    <p class="mt-1 text-sm text-gray-500">{{ 'task.list.subtitle' | translate }}</p>
+  <!-- Enhanced Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-extrabold text-gray-900">{{ 'task.list.title' | translate }}</h1>
+        <p class="mt-2 text-base text-gray-600">{{ 'task.list.subtitle' | translate }}</p>
+      </div>
+      <div class="hidden md:flex items-center space-x-4">
+        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl px-4 py-2 border border-indigo-100">
+          <div class="flex items-center space-x-2">
+            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+            </svg>
+            <span class="text-sm font-semibold text-gray-700">Missions Certifiées</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Filters -->
-  <div class="bg-white shadow rounded-lg p-4 mb-6">
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
-      <!-- Search -->
+  <!-- Enhanced Filters -->
+  <div class="bg-gradient-to-br from-white to-gray-50 shadow-lg rounded-2xl p-6 mb-8 border border-gray-100">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-4">
+      <!-- Search with Icon -->
       <div class="sm:col-span-2">
-        <label for="search" class="block text-sm font-medium text-gray-700">{{ 'task.list.filters.search' | translate }}</label>
-        <input
-          type="text"
-          id="search"
-          [(ngModel)]="searchQuery"
-          (ngModelChange)="onSearchChange()"
-          [placeholder]="'task.list.search_placeholder' | translate"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-        />
+        <label for="search" class="block text-sm font-semibold text-gray-700 mb-2">
+          <svg class="w-4 h-4 inline-block mr-1.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          {{ 'task.list.filters.search' | translate }}
+        </label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="search"
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="onSearchChange()"
+            [placeholder]="'task.list.search_placeholder' | translate"
+            class="pl-10 block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all sm:text-sm hover:border-gray-300"
+          />
+        </div>
       </div>
 
-      <!-- Job Field Filter -->
+      <!-- Job Field Filter with Icon -->
       <div>
-        <label for="jobField" class="block text-sm font-medium text-gray-700">{{ 'task.list.filters.job_field' | translate }}</label>
+        <label for="jobField" class="block text-sm font-semibold text-gray-700 mb-2">
+          <svg class="w-4 h-4 inline-block mr-1.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          {{ 'task.list.filters.job_field' | translate }}
+        </label>
         <select
           id="jobField"
           [(ngModel)]="selectedJobField"
           (ngModelChange)="onFilterChange()"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          class="block w-full px-4 py-3 border-2 border-gray-200 bg-white rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all sm:text-sm hover:border-gray-300 cursor-pointer"
         >
           <option *ngFor="let field of jobFields" [value]="field">
             <ng-container *ngIf="field === ''; else jobFieldLabel">{{ 'task.list.filters.all' | translate }}</ng-container>
@@ -37,14 +68,19 @@
         </select>
       </div>
 
-      <!-- Difficulty Filter -->
+      <!-- Difficulty Filter with Icon -->
       <div>
-        <label for="difficulty" class="block text-sm font-medium text-gray-700">{{ 'task.list.filters.difficulty' | translate }}</label>
+        <label for="difficulty" class="block text-sm font-semibold text-gray-700 mb-2">
+          <svg class="w-4 h-4 inline-block mr-1.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          {{ 'task.list.filters.difficulty' | translate }}
+        </label>
         <select
           id="difficulty"
           [(ngModel)]="selectedDifficulty"
           (ngModelChange)="onFilterChange()"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          class="block w-full px-4 py-3 border-2 border-gray-200 bg-white rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all sm:text-sm hover:border-gray-300 cursor-pointer"
         >
           <option *ngFor="let level of difficultyLevels" [value]="level">
             <ng-container *ngIf="level === ''; else difficultyLabel">{{ 'task.list.filters.all' | translate }}</ng-container>
@@ -54,12 +90,15 @@
       </div>
     </div>
 
-    <!-- Clear Filters -->
-    <div class="mt-4 flex justify-end">
+    <!-- Clear Filters Button -->
+    <div class="mt-5 flex justify-end">
       <button
         (click)="clearFilters()"
-        class="text-sm text-indigo-600 hover:text-indigo-500"
+        class="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors duration-200"
       >
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
         Effacer tous les filtres
       </button>
     </div>
@@ -87,80 +126,126 @@
 
   <!-- Tasks Grid -->
   <div *ngIf="!isLoading && !error">
-    <!-- Results Count -->
-    <p class="text-sm text-gray-500 mb-4">
-      Affichage de {{ filteredTasks.length }} tâche{{ filteredTasks.length !== 1 ? 's' : '' }}
-    </p>
-
-    <!-- Empty State -->
-    <div *ngIf="filteredTasks.length === 0" class="text-center py-12 bg-white rounded-lg shadow">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-      </svg>
-      <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune tâche trouvée</h3>
-      <p class="mt-1 text-sm text-gray-500">Essayez d'ajuster vos filtres ou votre recherche.</p>
+    <!-- Results Count with Animation -->
+    <div class="mb-6 flex items-center justify-between">
+      <p class="text-sm font-medium text-gray-600 flex items-center">
+        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <span class="font-semibold text-indigo-600">{{ filteredTasks.length }}</span>
+        <span class="ml-1">mission{{ filteredTasks.length !== 1 ? 's' : '' }} disponible{{ filteredTasks.length !== 1 ? 's' : '' }}</span>
+      </p>
     </div>
 
-    <!-- Task Cards -->
+    <!-- Enhanced Empty State -->
+    <div *ngIf="filteredTasks.length === 0" class="text-center py-16 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-lg border border-indigo-100">
+      <div class="relative inline-block">
+        <div class="absolute inset-0 bg-indigo-200 rounded-full blur-2xl opacity-20 animate-pulse"></div>
+        <svg class="relative mx-auto h-20 w-20 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+      </div>
+      <h3 class="mt-6 text-xl font-bold text-gray-900">Aucune mission trouvée</h3>
+      <p class="mt-2 text-base text-gray-600 max-w-md mx-auto">
+        Ajustez vos filtres ou votre recherche pour découvrir plus de missions adaptées à votre profil.
+      </p>
+      <button
+        (click)="clearFilters()"
+        class="mt-6 inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
+      >
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Réinitialiser les filtres
+      </button>
+    </div>
+
+    <!-- Enhanced Task Cards -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <div
         *ngFor="let task of filteredTasks"
-        class="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow"
+        class="group bg-white overflow-hidden shadow-md rounded-2xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
       >
-        <div class="p-5">
-          <!-- Header -->
-          <div class="flex items-start justify-between mb-3">
-            <h3 class="text-lg font-medium text-gray-900 line-clamp-2">{{ task.title }}</h3>
+        <!-- Gradient Header with Difficulty -->
+        <div [ngClass]="{
+          'bg-gradient-to-r from-green-400 to-green-500': task.difficulty_level === 'beginner',
+          'bg-gradient-to-r from-yellow-400 to-orange-500': task.difficulty_level === 'intermediate',
+          'bg-gradient-to-r from-orange-500 to-red-500': task.difficulty_level === 'advanced',
+          'bg-gradient-to-r from-red-500 to-pink-600': task.difficulty_level === 'expert'
+        }" class="h-2"></div>
+
+        <div class="p-6">
+          <!-- Header with Icon -->
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex-1">
+              <div class="flex items-center mb-2">
+                <div class="p-2 bg-indigo-100 rounded-lg mr-3">
+                  <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <span [ngClass]="getDifficultyColor(task.difficulty_level)" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                  {{ 'task.difficulty.' + task.difficulty_level | translate }}
+                </span>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 line-clamp-2 group-hover:text-indigo-600 transition-colors">{{ task.title }}</h3>
+            </div>
           </div>
 
-          <!-- Badges -->
-          <div class="flex flex-wrap gap-2 mb-3">
-            <span [ngClass]="getDifficultyColor(task.difficulty_level)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-              {{ 'task.difficulty.' + task.difficulty_level | translate }}
-            </span>
-            <span [ngClass]="getCreatorBadge(task.created_by)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+          <!-- Creator & Field Badges -->
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span [ngClass]="getCreatorBadge(task.created_by)" class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold shadow-sm">
+              <svg class="w-3.5 h-3.5 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+              </svg>
               {{ task.created_by | titlecase }}
             </span>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 shadow-sm">
+              <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
               {{ 'job_field.' + task.job_field | translate }}
             </span>
           </div>
 
           <!-- Description -->
-          <p class="text-sm text-gray-500 mb-4 line-clamp-3">{{ task.description }}</p>
+          <p class="text-sm text-gray-600 mb-5 line-clamp-3 leading-relaxed">{{ task.description }}</p>
 
-          <!-- Meta Info -->
-          <div class="flex items-center text-xs text-gray-400 mb-4">
-            <span *ngIf="task.estimated_duration">
-              <svg class="inline-block h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <!-- Meta Info with Icons -->
+          <div class="flex items-center gap-4 text-xs text-gray-500 mb-5 pb-5 border-b border-gray-100">
+            <span *ngIf="task.estimated_duration" class="flex items-center">
+              <svg class="h-4 w-4 mr-1.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              {{ task.estimated_duration }}
+              <span class="font-medium">{{ task.estimated_duration }}</span>
             </span>
-            <span *ngIf="task.deadline" class="ml-4">
-              <svg class="inline-block h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span *ngIf="task.deadline" class="flex items-center">
+              <svg class="h-4 w-4 mr-1.5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              {{ task.deadline | date:'shortDate' }}
+              <span class="font-medium">{{ task.deadline | date:'shortDate' }}</span>
             </span>
           </div>
 
           <!-- Tags -->
-          <div *ngIf="task.tags.length > 0" class="flex flex-wrap gap-1 mb-4">
-            <span *ngFor="let tag of task.tags.slice(0, 3)" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
-              {{ tag }}
+          <div *ngIf="task.tags.length > 0" class="flex flex-wrap gap-2 mb-5">
+            <span *ngFor="let tag of task.tags.slice(0, 3)" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+              #{{ tag }}
             </span>
-            <span *ngIf="task.tags.length > 3" class="text-xs text-gray-400">
-              +{{ task.tags.length - 3 }} de plus
+            <span *ngIf="task.tags.length > 3" class="inline-flex items-center text-xs font-medium text-indigo-600">
+              +{{ task.tags.length - 3 }} plus
             </span>
           </div>
 
-          <!-- Action -->
+          <!-- Action Button -->
           <a
             [routerLink]="['/app/tasks', task.id]"
-            class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            class="w-full inline-flex justify-center items-center px-5 py-3 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-lg hover:shadow-xl transition-all duration-200 transform group-hover:scale-105"
           >
-            Voir les Détails
+            <span>Voir les Détails</span>
+            <svg class="ml-2 w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
           </a>
         </div>
       </div>

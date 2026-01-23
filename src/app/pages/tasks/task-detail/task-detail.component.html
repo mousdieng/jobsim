@@ -1,13 +1,15 @@
 <div class="px-4 py-6 sm:px-0">
-  <!-- Back Button -->
+  <!-- Enhanced Back Button -->
   <button
     (click)="goBack()"
-    class="mb-6 inline-flex items-center text-sm text-gray-500 hover:text-gray-700"
+    class="mb-8 inline-flex items-center text-sm font-medium text-gray-600 hover:text-indigo-600 transition-colors duration-200 group"
   >
-    <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-    </svg>
-    Retour aux Tâches
+    <div class="mr-2 p-1.5 rounded-lg bg-gray-100 group-hover:bg-indigo-100 transition-colors duration-200">
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+    </div>
+    <span class="group-hover:translate-x-0.5 transition-transform duration-200">Retour aux Tâches</span>
   </button>
 
   <!-- Loading State -->
@@ -32,20 +34,44 @@
 
   <!-- Task Content -->
   <div *ngIf="!isLoading && !error && task">
-    <!-- Start Task Section -->
-    <div *ngIf="!taskStarted && !userSubmission" class="mb-6 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-1">Prêt à commencer?</h3>
-          <p class="text-sm text-gray-600">Démarrez cette tâche pour obtenir votre date limite et des simulations de réunion assistées par IA</p>
-          <p *ngIf="startTaskError" class="mt-2 text-sm text-red-600">{{ startTaskError }}</p>
+    <!-- Enhanced Start Task Section -->
+    <div *ngIf="!taskStarted && !userSubmission" class="mb-8 relative overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 border-2 border-indigo-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <!-- Decorative Elements -->
+      <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full opacity-10 blur-2xl"></div>
+      <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-gradient-to-tr from-purple-400 to-pink-500 rounded-full opacity-10 blur-2xl"></div>
+
+      <div class="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div class="flex-1">
+          <div class="flex items-center mb-3">
+            <div class="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl mr-3 shadow-lg">
+              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900">Prêt à commencer?</h3>
+          </div>
+          <p class="text-base text-gray-700 leading-relaxed max-w-2xl">
+            Démarrez cette tâche pour obtenir votre date limite et des simulations de réunion assistées par IA
+          </p>
+          <div *ngIf="startTaskError" class="mt-3 flex items-center p-3 bg-red-50 border border-red-200 rounded-lg">
+            <svg class="h-5 w-5 text-red-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-sm font-medium text-red-800">{{ startTaskError }}</p>
+          </div>
         </div>
         <button
           (click)="startTask()"
           [disabled]="isStartingTask"
-          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
+          class="flex-shrink-0 inline-flex items-center px-8 py-4 border border-transparent text-base font-bold rounded-xl shadow-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 transform hover:scale-105 transition-all duration-200"
         >
-          <span *ngIf="!isStartingTask">Démarrer la Tâche</span>
+          <span *ngIf="!isStartingTask" class="flex items-center">
+            <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Démarrer la Tâche
+          </span>
           <span *ngIf="isStartingTask" class="flex items-center">
             <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -70,22 +96,40 @@
       </div>
     </div>
 
-    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-      <!-- Header -->
-      <div class="px-4 py-5 sm:px-6">
+    <div class="bg-white shadow-xl overflow-hidden rounded-2xl border border-gray-100">
+      <!-- Enhanced Header -->
+      <div class="px-6 py-8 sm:px-8 bg-gradient-to-br from-white via-gray-50 to-indigo-50/30">
         <div class="flex justify-between items-start">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900">{{ task.title }}</h1>
-            <div class="mt-2 flex flex-wrap gap-2">
-              <span [ngClass]="getDifficultyColor(task.difficulty_level)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                {{ 'task.difficulty.' + task.difficulty_level | translate }}
-              </span>
-              <span [ngClass]="getCreatorBadge(task.created_by)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                {{ task.created_by | titlecase }}
-              </span>
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                {{ 'job_field.' + task.job_field | translate }}
-              </span>
+          <div class="flex-1">
+            <div class="flex items-start mb-4">
+              <div class="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl mr-4 shadow-lg">
+                <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-3">{{ task.title }}</h1>
+                <div class="flex flex-wrap gap-2">
+                  <span [ngClass]="getDifficultyColor(task.difficulty_level)" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">
+                    <svg class="h-3.5 w-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    {{ 'task.difficulty.' + task.difficulty_level | translate }}
+                  </span>
+                  <span [ngClass]="getCreatorBadge(task.created_by)" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">
+                    <svg class="h-3.5 w-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    {{ task.created_by | titlecase }}
+                  </span>
+                  <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 shadow-sm">
+                    <svg class="h-3.5 w-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    {{ 'job_field.' + task.job_field | translate }}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
           <!-- Action Buttons based on state -->
@@ -179,26 +223,54 @@
         </div>
       </div>
 
-      <!-- Details -->
-      <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
-        <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-          <div *ngIf="task.estimated_duration">
-            <dt class="text-sm font-medium text-gray-500">Durée Estimée</dt>
-            <dd class="mt-1 text-sm text-gray-900">{{ task.estimated_duration }}</dd>
+      <!-- Enhanced Details -->
+      <div class="border-t-2 border-gray-100 px-6 py-6 sm:px-8 bg-gradient-to-br from-gray-50/50 to-white">
+        <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div *ngIf="task.estimated_duration" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+            <dt class="flex items-center text-sm font-semibold text-gray-600 mb-2">
+              <div class="p-1.5 bg-blue-100 rounded-lg mr-2">
+                <svg class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              Durée Estimée
+            </dt>
+            <dd class="ml-9 text-base font-medium text-gray-900">{{ task.estimated_duration }}</dd>
           </div>
-          <div *ngIf="task.deadline">
-            <dt class="text-sm font-medium text-gray-500">Date Limite</dt>
-            <dd class="mt-1 text-sm text-gray-900">{{ task.deadline | date:'fullDate' }}</dd>
+          <div *ngIf="task.deadline" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+            <dt class="flex items-center text-sm font-semibold text-gray-600 mb-2">
+              <div class="p-1.5 bg-red-100 rounded-lg mr-2">
+                <svg class="h-4 w-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              Date Limite
+            </dt>
+            <dd class="ml-9 text-base font-medium text-gray-900">{{ task.deadline | date:'fullDate' }}</dd>
           </div>
-          <div *ngIf="task.enterprise">
-            <dt class="text-sm font-medium text-gray-500">Entreprise</dt>
-            <dd class="mt-1 text-sm text-gray-900">{{ task.enterprise.name }}</dd>
+          <div *ngIf="task.enterprise" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+            <dt class="flex items-center text-sm font-semibold text-gray-600 mb-2">
+              <div class="p-1.5 bg-purple-100 rounded-lg mr-2">
+                <svg class="h-4 w-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              Entreprise
+            </dt>
+            <dd class="ml-9 text-base font-medium text-gray-900">{{ task.enterprise.name }}</dd>
           </div>
-          <div *ngIf="task.skills_required && task.skills_required.length > 0">
-            <dt class="text-sm font-medium text-gray-500">Compétences Requises</dt>
-            <dd class="mt-1">
-              <div class="flex flex-wrap gap-1">
-                <span *ngFor="let skill of task.skills_required" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+          <div *ngIf="task.skills_required && task.skills_required.length > 0" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200 sm:col-span-2">
+            <dt class="flex items-center text-sm font-semibold text-gray-600 mb-3">
+              <div class="p-1.5 bg-green-100 rounded-lg mr-2">
+                <svg class="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+              </div>
+              Compétences Requises
+            </dt>
+            <dd class="ml-9">
+              <div class="flex flex-wrap gap-2">
+                <span *ngFor="let skill of task.skills_required" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-green-100 to-teal-100 text-green-800 shadow-sm">
                   {{ skill }}
                 </span>
               </div>
@@ -207,91 +279,156 @@
         </dl>
       </div>
 
-      <!-- Description -->
-      <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-3">Description</h3>
-        <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ task.description }}</p>
-      </div>
-
-      <!-- Instructions -->
-      <div *ngIf="task.instructions" class="border-t border-gray-200 px-4 py-5 sm:px-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-3">Instructions</h3>
-        <div class="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap">{{ task.instructions }}</div>
-      </div>
-
-      <!-- Deliverables -->
-      <div *ngIf="task.deliverables && task.deliverables.length > 0" class="border-t border-gray-200 px-4 py-5 sm:px-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-3">Livrables</h3>
-        <ul class="space-y-3">
-          <li *ngFor="let deliverable of task.deliverables" class="flex items-start">
-            <svg class="h-5 w-5 text-indigo-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      <!-- Enhanced Description -->
+      <div class="border-t-2 border-gray-100 px-6 py-6 sm:px-8 bg-gradient-to-br from-white to-gray-50/50">
+        <div class="flex items-center mb-4">
+          <div class="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg mr-3 shadow-md">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <div>
-              <p class="text-sm font-medium text-gray-900">{{ deliverable.title }}</p>
-              <p class="text-xs text-gray-500">{{ deliverable.description }}</p>
-              <span *ngIf="deliverable.required" class="text-xs text-red-600">Requis</span>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900">Description</h3>
+        </div>
+        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <p class="text-base text-gray-700 whitespace-pre-wrap leading-relaxed">{{ task.description }}</p>
+        </div>
+      </div>
+
+      <!-- Enhanced Instructions -->
+      <div *ngIf="task.instructions" class="border-t-2 border-gray-100 px-6 py-6 sm:px-8 bg-gradient-to-br from-white to-indigo-50/30">
+        <div class="flex items-center mb-4">
+          <div class="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg mr-3 shadow-md">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900">Instructions</h3>
+        </div>
+        <div class="bg-white rounded-xl p-5 shadow-sm border border-indigo-100">
+          <div class="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap leading-relaxed">{{ task.instructions }}</div>
+        </div>
+      </div>
+
+      <!-- Enhanced Deliverables -->
+      <div *ngIf="task.deliverables && task.deliverables.length > 0" class="border-t-2 border-gray-100 px-6 py-6 sm:px-8 bg-gradient-to-br from-white to-orange-50/30">
+        <div class="flex items-center mb-4">
+          <div class="p-2 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg mr-3 shadow-md">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900">Livrables</h3>
+        </div>
+        <ul class="space-y-3">
+          <li *ngFor="let deliverable of task.deliverables" class="flex items-start bg-white rounded-xl p-4 shadow-sm border border-orange-100 hover:shadow-md transition-shadow duration-200">
+            <div class="flex-shrink-0 p-2 bg-orange-100 rounded-lg mr-3">
+              <svg class="h-5 w-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <div class="flex-1">
+              <p class="text-base font-bold text-gray-900">{{ deliverable.title }}</p>
+              <p class="text-sm text-gray-600 mt-1">{{ deliverable.description }}</p>
+              <span *ngIf="deliverable.required" class="inline-flex items-center mt-2 px-2 py-0.5 rounded-md text-xs font-bold bg-red-100 text-red-700">
+                <svg class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                Requis
+              </span>
             </div>
           </li>
         </ul>
       </div>
 
-      <!-- Resources -->
-      <div *ngIf="task.resources && task.resources.length > 0" class="border-t border-gray-200 px-4 py-5 sm:px-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-3">Ressources</h3>
-        <ul class="space-y-2">
+      <!-- Enhanced Resources -->
+      <div *ngIf="task.resources && task.resources.length > 0" class="border-t-2 border-gray-100 px-6 py-6 sm:px-8 bg-gradient-to-br from-white to-blue-50/30">
+        <div class="flex items-center mb-4">
+          <div class="p-2 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg mr-3 shadow-md">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900">Ressources</h3>
+        </div>
+        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <li *ngFor="let resource of task.resources">
-            <a [href]="resource.url" target="_blank" class="flex items-center text-sm text-indigo-600 hover:text-indigo-500">
-              <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-              {{ resource.title }}
+            <a [href]="resource.url" target="_blank" class="flex items-center bg-white rounded-xl p-4 shadow-sm border border-blue-100 hover:shadow-md hover:border-blue-300 transition-all duration-200 group">
+              <div class="flex-shrink-0 p-2 bg-blue-100 rounded-lg mr-3 group-hover:bg-blue-200 transition-colors duration-200">
+                <svg class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </div>
+              <span class="text-sm font-medium text-blue-600 group-hover:text-blue-700">{{ resource.title }}</span>
             </a>
           </li>
         </ul>
       </div>
 
-      <!-- Tags -->
-      <div *ngIf="task.tags && task.tags.length > 0" class="border-t border-gray-200 px-4 py-5 sm:px-6">
-        <h3 class="text-sm font-medium text-gray-500 mb-2">Étiquettes</h3>
+      <!-- Enhanced Tags -->
+      <div *ngIf="task.tags && task.tags.length > 0" class="border-t-2 border-gray-100 px-6 py-6 sm:px-8 bg-gradient-to-br from-white to-gray-50">
+        <div class="flex items-center mb-3">
+          <div class="p-1.5 bg-gray-200 rounded-lg mr-2">
+            <svg class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+          </div>
+          <h3 class="text-base font-bold text-gray-700">Étiquettes</h3>
+        </div>
         <div class="flex flex-wrap gap-2">
-          <span *ngFor="let tag of task.tags" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+          <span *ngFor="let tag of task.tags" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <svg class="h-3 w-3 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
             {{ tag }}
           </span>
         </div>
       </div>
     </div>
 
-    <!-- Submission History Section -->
-    <div *ngIf="taskStarted && userSubmissions && userSubmissions.length > 0" class="mt-6 bg-white shadow overflow-hidden sm:rounded-lg">
-      <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-medium text-gray-900">Historique des Soumissions</h3>
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
-            {{ userSubmissions.length }} soumission{{ userSubmissions.length > 1 ? 's' : '' }} sur 5
+    <!-- Enhanced Submission History Section -->
+    <div *ngIf="taskStarted && userSubmissions && userSubmissions.length > 0" class="mt-8 bg-white shadow-xl overflow-hidden rounded-2xl border border-gray-100">
+      <div class="px-6 py-6 sm:px-8 border-b-2 border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div class="flex items-center">
+            <div class="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl mr-3 shadow-lg">
+              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-gray-900">Historique des Soumissions</h3>
+              <p class="text-sm text-gray-600 mt-0.5">Vous pouvez soumettre jusqu'à 5 tentatives pour cette tâche</p>
+            </div>
+          </div>
+          <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 shadow-sm">
+            {{ userSubmissions.length }} / 5 soumissions
           </span>
         </div>
-        <p class="mt-1 text-sm text-gray-500">Vous pouvez soumettre jusqu'à 5 tentatives pour cette tâche</p>
       </div>
-      <ul class="divide-y divide-gray-200">
-        <li *ngFor="let submission of userSubmissions; let i = index" class="px-4 py-4 sm:px-6">
+      <ul class="divide-y divide-gray-100">
+        <li *ngFor="let submission of userSubmissions; let i = index" class="px-6 py-5 sm:px-8 hover:bg-gray-50 transition-colors duration-200">
           <div class="flex items-center justify-between">
-            <div>
-              <div class="flex items-center gap-3">
-                <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-indigo-100 text-indigo-800 text-sm font-medium">
+            <div class="flex items-center gap-4">
+              <div class="flex-shrink-0">
+                <span class="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-base font-bold shadow-lg">
                   #{{ i + 1 }}
                 </span>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">Tentative {{ i + 1 }}</p>
-                  <p class="text-xs text-gray-500">{{ submission.submitted_at | date:'medium' }}</p>
-                </div>
+              </div>
+              <div>
+                <p class="text-base font-bold text-gray-900">Tentative {{ i + 1 }}</p>
+                <p class="text-sm text-gray-500 flex items-center mt-1">
+                  <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  {{ submission.submitted_at | date:'medium' }}
+                </p>
               </div>
             </div>
             <div class="flex items-center gap-3">
-              <span [ngClass]="getStatusColor(submission.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+              <span [ngClass]="getStatusColor(submission.status)" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">
                 {{ submission.status }}
               </span>
-              <span *ngIf="submission.score" class="text-sm font-medium text-gray-900">
+              <span *ngIf="submission.score" class="inline-flex items-center px-4 py-2 rounded-xl text-base font-bold bg-gradient-to-r from-green-100 to-teal-100 text-green-800 shadow-sm">
                 {{ submission.score }}/100
               </span>
             </div>
@@ -300,47 +437,68 @@
       </ul>
     </div>
 
-    <!-- Meetings Section -->
-    <div *ngIf="taskStarted && meetings && meetings.length > 0" class="mt-6 bg-white shadow overflow-hidden sm:rounded-lg">
-      <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-medium text-gray-900">Réunions Générées par IA</h3>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+    <!-- Enhanced Meetings Section -->
+    <div *ngIf="taskStarted && meetings && meetings.length > 0" class="mt-8 bg-white shadow-xl overflow-hidden rounded-2xl border border-gray-100">
+      <div class="px-6 py-6 sm:px-8 border-b-2 border-gray-100 bg-gradient-to-r from-purple-50 to-pink-50">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div class="flex items-center">
+            <div class="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl mr-3 shadow-lg">
+              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-gray-900">Réunions Générées par IA</h3>
+              <p class="text-sm text-gray-600 mt-0.5">Simulations réalistes pour pratiquer des scénarios professionnels</p>
+            </div>
+          </div>
+          <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 shadow-sm">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path d="M13 7H7v6h6V7z"/>
               <path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"/>
             </svg>
-            {{ meetings.length }} AI Simulations
+            {{ meetings.length }} Simulations
           </span>
         </div>
-        <p class="mt-1 text-sm text-gray-500">Realistic meeting simulations to practice workplace scenarios</p>
       </div>
-      <ul class="divide-y divide-gray-200">
-        <li *ngFor="let meeting of meetings" class="px-4 py-4 sm:px-6 hover:bg-gray-50 transition-colors">
+      <ul class="divide-y divide-gray-100">
+        <li *ngFor="let meeting of meetings" class="px-6 py-5 sm:px-8 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-200">
           <div class="flex items-center justify-between">
             <div class="flex-1">
               <div class="flex items-center">
-                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                  <svg class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="flex-shrink-0 h-14 w-14 rounded-xl bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center shadow-md">
+                  <svg class="h-7 w-7 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
-                <div class="ml-4">
-                  <p class="text-sm font-medium text-gray-900">{{ meeting.meeting_title }}</p>
-                  <p class="text-xs text-gray-500">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800 mr-2">
+                <div class="ml-5">
+                  <p class="text-base font-bold text-gray-900">{{ meeting.meeting_title }}</p>
+                  <div class="flex items-center gap-2 mt-2">
+                    <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 shadow-sm">
                       {{ meeting.meeting_type | titlecase }}
                     </span>
-                    {{ meeting.scheduled_for | date:'medium' }}
-                  </p>
-                  <p *ngIf="meeting.duration_minutes" class="text-xs text-gray-400 mt-1">
+                    <span class="text-sm text-gray-500 flex items-center">
+                      <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      {{ meeting.scheduled_for | date:'medium' }}
+                    </span>
+                  </div>
+                  <p *ngIf="meeting.duration_minutes" class="text-xs text-gray-400 mt-1.5 flex items-center">
+                    <svg class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                     Durée: {{ meeting.duration_minutes }} minutes
                   </p>
                 </div>
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <span [class]="meeting.completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+              <span [class]="meeting.completed ? 'bg-gradient-to-r from-green-100 to-teal-100 text-green-800' : 'bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800'" class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold shadow-sm">
+                <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path *ngIf="meeting.completed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path *ngIf="!meeting.completed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
                 {{ meeting.completed ? 'Complété' : 'Planifié' }}
               </span>
             </div>

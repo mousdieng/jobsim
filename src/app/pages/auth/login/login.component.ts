@@ -19,6 +19,7 @@ export class LoginComponent {
   errorMessage: string | null = null;
   showPassword = false;
   returnUrl: string = '/app/dashboard';
+  connectionWarning = false;
 
   constructor(
     private fb: FormBuilder,
@@ -29,6 +30,18 @@ export class LoginComponent {
   ) {
     // Get return URL from route parameters or default to dashboard
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/app/dashboard';
+
+    // Check if there was a connection error
+    if (this.route.snapshot.queryParams['connectionError'] === 'true') {
+      this.connectionWarning = true;
+      // Clear the query param to avoid showing the warning after page refresh
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { connectionError: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true
+      });
+    }
 
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],

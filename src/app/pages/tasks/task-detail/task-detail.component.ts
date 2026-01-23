@@ -75,15 +75,43 @@ export class TaskDetailComponent implements OnInit {
       this.task = result.data;
       this.isLoading = false;
 
-      // Check if user is enrolled
       const currentUser = this.authService.getCurrentUser();
-      if (currentUser?.candidateProfile) {
-        this.isEnrolled = currentUser.candidateProfile.current_task_id === taskId;
-      }
+      if (currentUser) {
+        // Load candidate's progress on this task
+        this.loadTaskProgress(taskId);
 
-      // Load user's submission history for this task
-      if (currentUser && this.isEnrolled) {
+        // Load user's submission history for this task
         this.loadUserSubmissions(taskId, currentUser.id);
+      }
+    });
+  }
+
+  loadTaskProgress(taskId: string): void {
+    this.taskService.getCandidateTaskProgress(taskId).subscribe(result => {
+      if (result.data) {
+        const progress = result.data;
+        this.taskStarted = progress.status === 'in_progress' || progress.status === 'completed';
+
+        if (progress.deadline) {
+          this.taskDeadline = new Date(progress.deadline);
+        }
+
+        // Load AI meetings if task is started
+        if (this.taskStarted) {
+          this.loadAIMeetings(taskId);
+        }
+      }
+    });
+  }
+
+  loadAIMeetings(taskId: string): void {
+    this.taskService.getTaskMeetings(taskId).subscribe(result => {
+      if (result.data) {
+        this.meetings = result.data.map((meeting: any) => ({
+          ...meeting,
+          scheduled_for: new Date(meeting.scheduled_for),
+          completed: meeting.status === 'completed'
+        }));
       }
     });
   }
@@ -119,14 +147,31 @@ export class TaskDetailComponent implements OnInit {
     this.isStartingTask = true;
     this.startTaskError = null;
 
-    // Set task as started and set deadline
-    this.taskStarted = true;
-    if (this.task.estimated_time_minutes) {
-      const deadline = new Date();
-      deadline.setMinutes(deadline.getMinutes() + this.task.estimated_time_minutes);
-      this.taskDeadline = deadline;
-    }
-    this.isStartingTask = false;
+    this.taskService.startTask(this.task.id).subscribe(result => {
+      this.isStartingTask = false;
+
+      if (result.error) {
+        this.startTaskError = result.error;
+        return;
+      }
+
+      // Update UI state
+      this.taskStarted = true;
+
+      if (result.data?.deadline) {
+        this.taskDeadline = new Date(result.data.deadline);
+      }
+
+      // Load AI meetings that were generated
+      if (this.task) {
+        this.loadAIMeetings(this.task.id);
+      }
+
+      // Scroll to task details
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
+    });
   }
 
   openSubmissionForm(): void {

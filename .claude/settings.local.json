@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(claude mcp add:*)",
+      "Bash(claude mcp list:*)",
+      "Bash(claude mcp auth:*)",
+      "Bash(curl:*)",
+      "Bash(git checkout:*)",
+      "Bash(supabase:*)",
+      "Bash(npm --version:*)",
+      "Bash(npm install:*)",
+      "Bash(npx supabase --version)",
+      "Bash(mkdir:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx supabase:*)",
+      "mcp__supabase__apply_migration",
+      "mcp__supabase__deploy_edge_function",
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__get_logs",
+      "mcp__supabase__get_publishable_keys",
+      "mcp__supabase__list_tables",
+      "Bash(ls:*)",
+      "Bash(if [ -f \"C:\\\\Users\\\\Moussa Dieng\\\\Desktop\\\\Dev\\\\jobsim\\\\src\\\\app\\\\pages\\\\admin\\\\task-create\\\\task-create.component.css\" ])",
+      "Bash(then cp \"C:\\\\Users\\\\Moussa Dieng\\\\Desktop\\\\Dev\\\\jobsim\\\\src\\\\app\\\\pages\\\\admin\\\\task-create\\\\task-create.component.css\" \"C:\\\\Users\\\\Moussa Dieng\\\\Desktop\\\\Dev\\\\jobsim\\\\src\\\\app\\\\pages\\\\enterprise\\\\tasks\\\\task-create.component.css\")",
+      "Bash(else echo \"/* Enterprise Task Create Styles */\")",
+      "Bash(fi)",
+      "Bash(wc:*)",
+      "Bash(dir:*)",
+      "Bash(if exist .angular rmdir /s /q .angular)",
+      "Bash(if exist node_modules.cache rmdir /s /q node_modules.cache)",
+      "Bash(npm start)",
+      "Bash(test:*)",
+      "Bash(npx ng build:*)",
+      "Bash(findstr:*)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}
