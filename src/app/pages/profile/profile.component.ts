@@ -67,6 +67,23 @@ export class ProfileComponent implements OnInit {
     this.populateEditForm();
   }
 
+  getUserRoleLabel(): string {
+    if (!this.user) return 'User';
+
+    switch (this.user.role) {
+      case 'candidate':
+        return 'Candidat';
+      case 'enterprise_rep':
+        return 'Représentant d\'Entreprise';
+      case 'admin':
+        return 'Administrateur';
+      case 'platform_support':
+        return 'Support Plateforme';
+      default:
+        return 'Utilisateur';
+    }
+  }
+
   async saveProfile(): Promise<void> {
     this.isSaving = true;
     this.saveError = null;

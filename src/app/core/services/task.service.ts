@@ -437,4 +437,260 @@ export class TaskService {
       }))
     );
   }
+
+  /**
+   * Start a task - Creates candidate_tasks record and calculates deadline
+   * (Candidate only)
+   */
+  startTask(taskId: string): Observable<ApiResponse<any>> {
+    return from(
+      (async () => {
+        const user = this.authService.getCurrentUser();
+
+        if (!user || user.role !== 'candidate') {
+          return {
+            data: null,
+            error: { message: 'Only candidates can start tasks' }
+          };
+        }
+
+        // First, check if candidate_tasks record exists
+        const { data: existingRecord, error: checkError } = await this.supabase.client
+          .from('candidate_tasks')
+          .select('*')
+          .eq('candidate_id', user.id)
+          .eq('task_id', taskId)
+          .maybeSingle();
+
+        if (checkError && checkError.code !== 'PGRST116') {
+          return { data: null, error: checkError };
+        }
+
+        // Get task details to calculate deadline
+        const { data: task, error: taskError } = await this.supabase.client
+          .from('tasks')
+          .select('estimated_time_minutes')
+          .eq('id', taskId)
+          .single();
+
+        if (taskError) {
+          return { data: null, error: taskError };
+        }
+
+        // Calculate deadline
+        const startTime = new Date();
+        const estimatedMinutes = task.estimated_time_minutes || 10080; // Default 7 days
+        const deadline = new Date(startTime.getTime() + estimatedMinutes * 60000);
+
+        if (existingRecord) {
+          // Update existing record to start it
+          const { data, error } = await this.supabase.client
+            .from('candidate_tasks')
+            .update({
+              started_at: startTime.toISOString(),
+              deadline: deadline.toISOString(),
+              status: 'in_progress'
+            })
+            .eq('id', existingRecord.id)
+            .select()
+            .single();
+
+          return { data, error };
+        } else {
+          // Create new candidate_tasks record
+          const { data, error } = await this.supabase.client
+            .from('candidate_tasks')
+            .insert({
+              candidate_id: user.id,
+              task_id: taskId,
+              enrolled_at: startTime.toISOString(),
+              started_at: startTime.toISOString(),
+              deadline: deadline.toISOString(),
+              status: 'in_progress'
+            })
+            .select()
+            .single();
+
+          return { data, error };
+        }
+      })()
+    ).pipe(
+      map(({ data, error }) => ({
+        data,
+        error: error?.message || null
+      }))
+    );
+  }
+
+  /**
+   * Get candidate's progress on a specific task
+   */
+  getCandidateTaskProgress(taskId: string): Observable<ApiResponse<any>> {
+    return from(
+      (async () => {
+        const user = this.authService.getCurrentUser();
+
+        if (!user || user.role !== 'candidate') {
+          return { data: null, error: null };
+        }
+
+        const { data, error } = await this.supabase.client
+          .from('candidate_tasks')
+          .select('*')
+          .eq('candidate_id', user.id)
+          .eq('task_id', taskId)
+          .maybeSingle();
+
+        return { data, error };
+      })()
+    ).pipe(
+      map(({ data, error }) => ({
+        data,
+        error: error?.message || null
+      }))
+    );
+  }
+
+  /**
+   * Get AI meetings for a candidate's task
+   */
+  getTaskMeetings(taskId: string): Observable<ApiResponse<any[]>> {
+    return from(
+      (async () => {
+        const user = this.authService.getCurrentUser();
+
+        if (!user || user.role !== 'candidate') {
+          return { data: null, error: { message: 'Only candidates can view meetings' } };
+        }
+
+        const { data, error } = await this.supabase.client
+          .from('ai_meetings')
+          .select('*')
+          .eq('candidate_id', user.id)
+          .eq('task_id', taskId)
+          .order('scheduled_for', { ascending: true });
+
+        return { data, error };
+      })()
+    ).pipe(
+      map(({ data, error }) => ({
+        data,
+        error: error?.message || null
+      }))
+    );
+  }
+
+  /**
+   * Complete a task (mark as completed)
+   */
+  completeTask(taskId: string, finalScore?: number, finalFeedback?: string): Observable<ApiResponse<any>> {
+    return from(
+      (async () => {
+        const user = this.authService.getCurrentUser();
+
+        if (!user || user.role !== 'candidate') {
+          return {
+            data: null,
+            error: { message: 'Only candidates can complete tasks' }
+          };
+        }
+
+        const { data, error } = await this.supabase.client
+          .from('candidate_tasks')
+          .update({
+            status: 'completed',
+            completed_at: new Date().toISOString(),
+            final_score: finalScore,
+            final_feedback: finalFeedback
+          })
+          .eq('candidate_id', user.id)
+          .eq('task_id', taskId)
+          .select()
+          .single();
+
+        return { data, error };
+      })()
+    ).pipe(
+      map(({ data, error }) => ({
+        data,
+        error: error?.message || null
+      }))
+    );
+  }
+
+  /**
+   * Abandon a task in progress
+   */
+  abandonTaskInProgress(taskId: string): Observable<ApiResponse<any>> {
+    return from(
+      (async () => {
+        const user = this.authService.getCurrentUser();
+
+        if (!user || user.role !== 'candidate') {
+          return {
+            data: null,
+            error: { message: 'Only candidates can abandon tasks' }
+          };
+        }
+
+        const { data, error } = await this.supabase.client
+          .from('candidate_tasks')
+          .update({
+            status: 'abandoned',
+            abandoned_at: new Date().toISOString()
+          })
+          .eq('candidate_id', user.id)
+          .eq('task_id', taskId)
+          .select()
+          .single();
+
+        return { data, error };
+      })()
+    ).pipe(
+      map(({ data, error }) => ({
+        data,
+        error: error?.message || null
+      }))
+    );
+  }
+
+  /**
+   * Get all in-progress tasks for the current candidate
+   */
+  getInProgressTasks(): Observable<ApiResponse<any[]>> {
+    return from(
+      (async () => {
+        const user = this.authService.getCurrentUser();
+
+        if (!user || user.role !== 'candidate') {
+          return { data: null, error: { message: 'Only candidates can view tasks' } };
+        }
+
+        const { data, error } = await this.supabase.client
+          .from('candidate_tasks')
+          .select(`
+            *,
+            tasks (
+              id,
+              title,
+              description,
+              category,
+              difficulty,
+              base_xp,
+              estimated_time_minutes
+            )
+          `)
+          .eq('candidate_id', user.id)
+          .eq('status', 'in_progress')
+          .order('started_at', { ascending: false });
+
+        return { data, error };
+      })()
+    ).pipe(
+      map(({ data, error }) => ({
+        data,
+        error: error?.message || null
+      }))
+    );
+  }
 }

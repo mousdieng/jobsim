@@ -21,6 +21,7 @@ export class DashboardComponent implements OnInit {
   levelInfo: LevelInfo | null = null;
   currentTask: Task | null = null;
   recentAchievements: any[] = [];
+  inProgressTasks: any[] = [];
 
   constructor(
     private authService: AuthService,
@@ -38,7 +39,10 @@ export class DashboardComponent implements OnInit {
         // Calculate level info from overall XP
         this.levelInfo = this.xpService.getLevelInfo(user.candidateProfile.overall_xp);
 
-        // Load current task if enrolled
+        // Load in-progress tasks
+        this.loadInProgressTasks();
+
+        // Load current task if enrolled (legacy)
         if (user.candidateProfile.current_task_id) {
           this.loadCurrentTask(user.candidateProfile.current_task_id);
         }
@@ -53,6 +57,18 @@ export class DashboardComponent implements OnInit {
     this.taskService.getTask(taskId).subscribe(result => {
       if (result.data) {
         this.currentTask = result.data;
+      }
+    });
+  }
+
+  loadInProgressTasks(): void {
+    this.taskService.getInProgressTasks().subscribe(result => {
+      console.log('📊 In-Progress Tasks Response:', result);
+      if (result.data) {
+        this.inProgressTasks = result.data;
+        console.log('✅ In-Progress Tasks Loaded:', this.inProgressTasks);
+      } else {
+        console.log('❌ No in-progress tasks or error:', result.error);
       }
     });
   }
@@ -89,6 +105,42 @@ export class DashboardComponent implements OnInit {
   navigateToCurrentTask(): void {
     if (this.currentTask) {
       this.router.navigate(['/app/tasks', this.currentTask.id]);
+    }
+  }
+
+  navigateToTask(taskId: string): void {
+    this.router.navigate(['/app/tasks', taskId]);
+  }
+
+  getTimeRemaining(deadline: string): string {
+    const now = new Date().getTime();
+    const deadlineTime = new Date(deadline).getTime();
+    const diff = deadlineTime - now;
+
+    if (diff < 0) {
+      return 'Expired';
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+    if (days > 0) {
+      return `${days} jour${days > 1 ? 's' : ''} restant${days > 1 ? 's' : ''}`;
+    } else if (hours > 0) {
+      return `${hours} heure${hours > 1 ? 's' : ''} restante${hours > 1 ? 's' : ''}`;
+    } else {
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      return `${minutes} minute${minutes > 1 ? 's' : ''} restante${minutes > 1 ? 's' : ''}`;
+    }
+  }
+
+  getDifficultyColor(difficulty: string): string {
+    switch (difficulty) {
+      case 'beginner': return 'bg-green-100 text-green-800';
+      case 'intermediate': return 'bg-yellow-100 text-yellow-800';
+      case 'advanced': return 'bg-orange-100 text-orange-800';
+      case 'expert': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   }
 }
